@@ -1,2 +1,2 @@
-# MSNR
-Seminarski rad za potrebe kursa Metodologija stručnog i naučnog rada.
+# Fit++
+Projekat u okviru kursa razvoj softvera 2.
