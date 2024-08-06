@@ -1,0 +1,11 @@
+services:
+  trainerdb:
+    image: mongo
+  trainerservice.api:
+    image: ${DOCKER_REGISTRY-}trainerserviceapi
+    build:
+      context: .
+      dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
+
+volumes:
+  mongo_data:    
