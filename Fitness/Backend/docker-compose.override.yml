@@ -7,6 +7,7 @@ services:
     volumes:
       - mongo_data:/data/db
 
+
   trainerservice.api:
     container_name: trainerservice.api
     environment:
@@ -16,3 +17,12 @@ services:
       - trainerdb
     ports:
       - "8000:8080"
+
+  clientservice.api:
+    container_name: clientservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "8080"
+

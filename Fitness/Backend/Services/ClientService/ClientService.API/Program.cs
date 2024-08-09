@@ -1,4 +1,12 @@
+using Amazon.Runtime.Internal;
+using ClientService.API.Data;
+using ClientService.API.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddScoped<IContext, Context>();
+builder.Services.AddScoped<IRepository, Repository>();
 
 // Add services to the container.
 

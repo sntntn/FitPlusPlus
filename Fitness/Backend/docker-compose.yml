@@ -6,6 +6,12 @@ services:
     build:
       context: .
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
+  
+  clientservice.api:
+    image: ${DOCKER_REGISTRY-}clientserviceapi
+    build:
+      context: .
+      dockerfile: Services/ClientService/ClientService.API/Dockerfile
 
 volumes:
   mongo_data:    
