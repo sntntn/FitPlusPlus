@@ -7,6 +7,16 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  mssql:
+    container_name: mssql
+    environment:
+      - SA_PASSWORD=MATF12345678rs2
+      - ACCEPT_EULA=Y 
+    restart: always
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql/data 
 
   trainerservice.api:
     container_name: trainerservice.api
@@ -26,3 +36,12 @@ services:
     ports:
       - "8080"
 
+  identityserver:
+    container_name: identityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:IdentityConnectionString=Server=mssql;Database=IdentityDb;User Id=sa;Password=MATF12345678rs2;TrustServerCertificate=True;Encrypt=False;"
+    depends_on:
+      - mssql
+    ports:
+      - "4000:8080"

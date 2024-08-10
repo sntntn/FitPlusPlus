@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrainerService.API", "Servi
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E3DEB1A3-16AA-40D4-9212-80A17C4DFC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.API", "Services\ClientService\ClientService.API\ClientService.API.csproj", "{3D32A8C6-1E80-4691-A885-F3ACF66C5C66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientService.API", "Services\ClientService\ClientService.API\ClientService.API.csproj", "{3D32A8C6-1E80-4691-A885-F3ACF66C5C66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{89F11E05-9275-456A-B680-9E47AEFC6A05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer", "Security\IdentityServer\IdentityServer.csproj", "{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +31,16 @@ Global
 		{3D32A8C6-1E80-4691-A885-F3ACF66C5C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D32A8C6-1E80-4691-A885-F3ACF66C5C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D32A8C6-1E80-4691-A885-F3ACF66C5C66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8} = {89F11E05-9275-456A-B680-9E47AEFC6A05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B317DCB6-F066-4D68-9E03-E9DF67260B22}
