@@ -35,7 +35,7 @@
                   </CInputGroup>
                   <CRow>
                     <CCol :xs="6">
-                      <CButton color="primary" class="px-4"> Login </CButton>
+                      <CButton color="primary" class="px-4" v-on:click="login"> Login </CButton>
                     </CCol>
                   </CRow>
                 </CForm>
@@ -61,7 +61,37 @@ export default {
     }
   },
   methods: {
-    
+    login(event) {
+      
+      let loader = this.$loading.show();
+      dataServices.methods.login(this.username, this.password)
+        .then((response) => { 
+          sessionStorage.setItem('accessToken', response.data.accessToken);
+          sessionStorage.setItem('refreshToken', response.data.refreshToken);
+          
+          const role = dataServices.methods.save_access_token_data(response.data.accessToken);
+          console.log(role);
+          if(role == 'Trainer') {
+            this.$router.push('/trainer');
+          }
+          else if(role == 'Admin') {
+            console.log('Rola Admin');
+            this.$router.push('/administrator');
+          }
+          else {
+            this.$router.push('/client');
+          }
+
+          loader.hide();
+          
+          console.log('Uspeo login');
+        })
+        .catch( (error) => {
+          loader.hide();
+          console.log('Neuspeo login!');
+        });  
+      
+    }
     
   },
 

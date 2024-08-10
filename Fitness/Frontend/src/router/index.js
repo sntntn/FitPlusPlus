@@ -56,29 +56,25 @@ const router = createRouter({
   },
 })
 
-router.beforeEach(async (to, from) => {
+/*router.beforeEach(async (to, from) => {
   if (to.path == '/') {
     router.push('/administrator'); // Preusmeravanje na Administrator stranicu
     return false;
   }
   return true;
-})
+})*/
 
-/*router.beforeEach(async (to, from) => {
+router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login') {
-    if(to.path == '/') {
-      return false;
-    }
-    else
-      return true;
+    return true;
   }
   else {
     router.push('/login');
     return false;
   }
 
-})*/
+})
 
 export default router
