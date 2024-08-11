@@ -20,7 +20,13 @@ const routes = [
         name: 'Administrator Operations',
         component: () =>
           import(/* webpackChunkName: "dashboard" */ '@/views/pages/AdministratorCRUD.vue')
-      }
+      },
+
+      {
+        path: '/trainer/:id',
+        name: 'Trainer',
+        component: () => import('@/views/pages/Trainer.vue'),
+      },
     ],
   },
   {
