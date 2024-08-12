@@ -9,7 +9,24 @@ const routes = [
     name: 'Home',
     component: DefaultLayout,
     children: [
-      
+      {
+        path: '/administrator',
+        name: 'Administrators',
+        component: () => import('@/views/pages/Administrator.vue'),
+      },
+
+      {
+        path: '/administrator/:id',
+        name: 'Administrator Operations',
+        component: () =>
+          import(/* webpackChunkName: "dashboard" */ '@/views/pages/AdministratorCRUD.vue')
+      },
+
+      {
+        path: '/trainer/:id',
+        name: 'Trainer',
+        component: () => import('@/views/pages/Trainer.vue'),
+      },
     ],
   },
   {
@@ -46,6 +63,14 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
+  if (to.path == '/') {
+    router.push('/administrator'); // Preusmeravanje na Administrator stranicu
+    return false;
+  }
+  return true;
+})
+
+/*router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login') {
@@ -60,6 +85,6 @@ router.beforeEach(async (to, from) => {
     return false;
   }
 
-})
+})*/
 
 export default router
