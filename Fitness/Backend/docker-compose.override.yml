@@ -41,7 +41,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017" 
     ports:
-      - "8100:8081"
+      - "8100:8080"
 
 
   reviewservice.api:
