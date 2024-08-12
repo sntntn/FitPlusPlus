@@ -7,6 +7,13 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  clientdb:
+    container_name: clientdb
+    restart: always
+    ports:
+    - 27018:27017
+    volumes: 
+    - mongo_data:/data/db
 
   trainerservice.api:
     container_name: trainerservice.api
@@ -22,7 +29,8 @@ services:
     container_name: clientservice.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTP_PORTS=8081
+      - "DatabaseSettings:ConnectionString=mongodb://clientdb:27018" 
     ports:
-      - "8080"
+      - "8001:8081"
 
