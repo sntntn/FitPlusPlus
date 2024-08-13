@@ -26,8 +26,15 @@ services:
       context: .
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
 
+  reviewservice.grpc:
+    image: ${DOCKER_REGISTRY-}reviewservicegrpc
+    build:
+      context: .
+      dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
+
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
+
 

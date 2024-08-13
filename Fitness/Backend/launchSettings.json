@@ -6,7 +6,8 @@
       "serviceActions": {
         "trainerservice.api": "StartDebugging",
         "clientservice.api": "StartDebugging",
-        "reviewservice.api": "StartDebugging"
+        "reviewservice.api": "StartDebugging",
+        "reviewservice.grpc": "StartDebugging"
       }
     }
   }

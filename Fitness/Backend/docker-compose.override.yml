@@ -30,6 +30,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
+      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
     depends_on:
       - trainerdb
     ports:
@@ -54,3 +55,13 @@ services:
     ports:
       - "8001:8080"
 
+
+  reviewservice.grpc:
+    container_name: reviewservice.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://reviewdb:27017"
+    depends_on:
+      - reviewdb
+    ports:
+      - "8002:8080"
