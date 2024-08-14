@@ -12,7 +12,8 @@
           <CTableHeaderCell class="test">{{ headers.contactEmail }}</CTableHeaderCell>
           <CTableHeaderCell class="test">{{ headers.contactPhone }}</CTableHeaderCell>
           <CTableHeaderCell class="test">{{ headers.trainingType }}</CTableHeaderCell>
-          <CTableHeaderCell class="test">Bio</CTableHeaderCell>
+          <CTableHeaderCell class="test">{{ headers.rating }}</CTableHeaderCell>
+          <CTableHeaderCell class="test">{{ headers.bio }}</CTableHeaderCell>
           <CTableHeaderCell class="test action-column">Actions</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
@@ -23,6 +24,10 @@
           <CTableDataCell class="test">{{ trainer.contactEmail }}</CTableDataCell>
           <CTableDataCell class="test">{{ trainer.contactPhone }}</CTableDataCell>
           <CTableDataCell class="test">{{ getTrainingTypes(trainer.trainingTypes) }}</CTableDataCell>
+          <CTableDataCell class="test">
+            <span v-if="trainer.averageRating === 0.0">/</span>
+            <span v-else>{{ trainer.averageRating.toFixed(1) }}</span>
+          </CTableDataCell>
           <CTableDataCell class="test" v-on:click="toggleBio(index)">
             <span v-if="isBioExpanded[index]">{{ trainer.bio }}</span>
             <span v-else @click="toggleBio(index)">{{ trainer.bio.substring(0, 30) }}...</span>
@@ -59,6 +64,8 @@ export default {
         contactEmail: "Email",
         contactPhone: "Phone",
         trainingType: "Training Type",
+        rating: "Rating",
+        bio: "Bio"
       },
       trainers: [],
       isBioExpanded: [],
