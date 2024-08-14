@@ -13,16 +13,22 @@
                   <CInputGroup style="width:70%; margin-bottom: 10px !important">
                     <CFormInput id="name" v-model="name" :disabled="!isAdd" placeholder="Please insert trainer name" />
                   </CInputGroup>
+                  <span v-if="errors.name" style="color: red">{{ errors.name }}</span>
+
 
                   <CFormLabel for="contactEmail" style="display: block;">Contact Email</CFormLabel>
                   <CInputGroup style="width:70%; margin-bottom: 10px !important">
                     <CFormInput id="contactEmail" placeholder="Please insert contact email" v-model="contactEmail" />
                   </CInputGroup>
+                  <span v-if="errors.contactEmail" style="color: red">{{ errors.contactEmail }}</span>
+
 
                   <CFormLabel for="contactPhone" style="display: block;">Contact Phone</CFormLabel>
                   <CInputGroup style="width:70%; margin-bottom: 10px !important">
                     <CFormInput id="contactPhone" placeholder="Please insert contact phone" v-model="contactPhone" />
                   </CInputGroup>
+                  <span v-if="errors.contactPhone" style="color: red">{{ errors.contactPhone }}</span>
+
 
                   <CFormLabel for="bio" style="display: block;">Bio</CFormLabel>
                   <CInputGroup style="width:90%; margin-bottom: 10px !important">
@@ -58,11 +64,36 @@ export default {
             contactPhone: "",
             bio: "",
             trainingType: "",
-            rating: null
+            rating: null,
+            errors: {
+              name: null,
+              contactEmail: null,
+              contactPhone: null
+            }
         };
     },
     methods: {
+        validateEmail(email) {
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return emailPattern.test(email);
+        },
+        validateFullName(name) {
+          return name.split(' ').length >= 2;
+        },
+        validatePhone(phone) {
+          const phonePattern = /^\d{3}-\d{4}$/;
+          return phonePattern.test(phone);
+        },
+        validateForm() {
+          this.errors.name = !this.validateFullName(this.name) ? 'Name must contain at least first and last name.' : null;
+          this.errors.contactEmail = !this.validateEmail(this.contactEmail) ? 'Email must contain "@" and be in a valid format.' : null;
+          this.errors.contactPhone = !this.validatePhone(this.contactPhone) ? 'Phone number must be in the format NNN-NNNN.' : null;
+
+          return !this.errors.name && !this.errors.contactEmail && !this.errors.contactPhone;
+        },
         addTrainer() {
+          if (!this.validateForm()) return;
+
           var request = {
               Id: this.id,
               FullName: this.name,
@@ -79,6 +110,8 @@ export default {
           });
         },
         uptTrainer() {
+          if (!this.validateForm()) return;
+
           let id = this.$route.params.id;
           dataServices.methods.get_trainer_by_id(id).then((response) => {
             const trainer = response.data;
