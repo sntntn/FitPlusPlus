@@ -95,6 +95,15 @@
         <CButton class="spacing" color="dark" @click="addType">Add</CButton>
       </div>
     </div>
+    <CButton class="spacing" color="dark" @click="toggleReviews">{{reviewsButtonText}}</CButton>
+    <div v-if="showReviews" class="reviews-section">
+      <p><strong>Average Rating:</strong> {{ trainer.averageRating.toFixed(1) }}</p>
+      <ul>
+        <li v-for="review in trainer.reviews" :key="review.comment">
+          {{ review.comment }} - Rating: {{ review.rating }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -114,6 +123,7 @@
         editEmail: false,
         editPhone: false,
         addTrainingType: false,
+        showReviews: false,
         newBio: '',
         newEmail: '',
         newPhone: '',
@@ -139,12 +149,20 @@
         }
       };
     },
+    computed: {
+      reviewsButtonText() {
+        return this.showReviews ? 'Hide Reviews' : 'Show Reviews';
+      }
+    },
     methods: {
       fetchTrainer() {
         const id = this.$route.params.id;
         dataServices.methods.get_trainer_by_id(id).then((response) => {
           this.trainer = response.data;
         });
+      },
+      toggleReviews() {
+        this.showReviews = !this.showReviews;
       },
       toggleEditBio() {
         this.editBio = !this.editBio;
