@@ -8,6 +8,7 @@
     <div v-if="editEmail" class="email-section">
       <CFormInput v-model="newEmail" placeholder="Update your email" />
       <CButton class="spacing_2" color="dark" @click="updateEmail">Save Email</CButton>
+      <p v-if="emailError" class="error-message">{{ emailError }}</p>
     </div>
 
     <div class="editable-field">
@@ -17,6 +18,7 @@
     <div v-if="editPhone" class="phone-section">
       <CFormInput v-model="newPhone" placeholder="Update your phone" />
       <CButton class="spacing_2" color="dark" @click="updatePhone">Save Phone</CButton>
+      <p v-if="phoneError" class="error-message">{{ phoneError }}</p>
     </div>
 
     <div class="editable-field">
@@ -127,6 +129,8 @@
         newBio: '',
         newEmail: '',
         newPhone: '',
+        phoneError: '',
+        emailError: '',
         trainingType: {
           id: '',
           name: '',
@@ -155,6 +159,15 @@
       }
     },
     methods: {
+      validatePhone(phone) {
+        const phonePattern = /^\d{3}-\d{4}$/;
+        return phonePattern.test(phone);
+      },
+
+      validateEmail(email) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+      },
       fetchTrainer() {
         const id = this.$route.params.id;
         dataServices.methods.get_trainer_by_id(id).then((response) => {
@@ -185,6 +198,10 @@
         this.newEmail = this.trainer.contactEmail;
       },
       updateEmail() {
+        if (!this.validateEmail(this.newEmail)) {
+          this.emailError = 'Email must contain "@" and be in a valid format.';
+          return;
+        }
         const id = this.$route.params.id;
         dataServices.methods.get_trainer_by_id(id).then((response) => {
           const trainer = response.data;
@@ -201,6 +218,10 @@
         this.newPhone = this.trainer.contactPhone;
       },
       updatePhone() {
+        if (!this.validatePhone(this.newPhone)) {
+          this.phoneError = 'Phone number must be in the format NNN-NNNN.';
+          return;
+        }
         const id = this.$route.params.id;
         dataServices.methods.get_trainer_by_id(id).then((response) => {
           const trainer = response.data;
@@ -324,5 +345,10 @@
   .action-column {
     width: 140px;
   }
+  .error-message {
+    color: red;
+    font-size: 14px;
+  }
+
 </style>
 
