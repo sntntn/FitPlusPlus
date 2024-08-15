@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Backend",
+    "\\Backend\\Services",
+    "\\Backend\\Services\\ClientService",
+    "\\Backend\\Services\\ClientService\\ClientService.API",
+    "\\Backend\\Services\\ClientService\\ClientService.API\\Controllers",
+    "\\Backend\\Services\\ClientService\\ClientService.API\\Data",
+    "\\Backend\\Services\\ClientService\\ClientService.API\\Entities",
+    "\\Backend\\Services\\TrainerService\\TrainerService.API",
+    "\\Backend\\Services\\TrainerService\\TrainerService.API\\Entities"
+  ],
+  "PreviewInSolutionExplorer": false
+}

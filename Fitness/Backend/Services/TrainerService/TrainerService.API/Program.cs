@@ -1,4 +1,7 @@
+using ReviewService.GRPC.Protos;
 using TrainerService.API.Data;
+using TrainerService.API.Entities;
+using TrainerService.API.GrpcServices;
 using TrainerService.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ITrainerContext, TrainerContext>();
 builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
+
+builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
+    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
+builder.Services.AddScoped<ReviewGrpcService>();
+
+builder.Services.AddAutoMapper(configuration =>
+{
+    configuration.CreateMap<GetReviewsResponse, ReviewType>().ReverseMap();
+    configuration.CreateMap<GetReviewsResponse.Types.ReviewReply, ReviewType>().ReverseMap();
+});
 
 builder.Services.AddCors(options =>
 {

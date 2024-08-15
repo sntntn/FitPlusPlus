@@ -5,7 +5,9 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "trainerservice.api": "StartDebugging",
-        "clientservice.api": "StartDebugging"
+        "clientservice.api": "StartDebugging",
+        "reviewservice.api": "StartDebugging",
+        "reviewservice.grpc": "StartDebugging"
       }
     }
   }
