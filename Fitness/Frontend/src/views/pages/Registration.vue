@@ -1,0 +1,84 @@
+<template>
+    <div class="bg-light d-flex flex-row align-items-center">
+    <CContainer style="margin-top: 50px;">
+      <CRow class="justify-content-center">
+        <CCol md="8">
+          <CCardGroup>
+            <CCard class="p-4">
+              <CCardBody class="form">
+                <CForm>
+                    
+                  <h1  style="margin-bottom: 20px">Register client</h1>                 
+                  <CFormLabel for="firstname" style="display: block;">First Name</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
+                    <CFormInput  id="firstname" placeholder="Please insert first name" v-model="firstname" />
+                  </CInputGroup>
+
+                  <CFormLabel for="lastname">Last Name</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
+                    <CFormInput id="lastname" placeholder="Please insert last name" v-model="lastname"/>
+                  </CInputGroup>
+                  <CFormLabel for="username">Username</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
+                    <CFormInput id="username" placeholder="Please insert username" v-model="username"/>
+                  </CInputGroup>
+                  <CFormLabel for="pw">Password</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
+                    <CFormInput id="pw" placeholder="Please insert password" v-model="password"/>
+                  </CInputGroup>
+                  <CFormLabel for="email">Email</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
+                    <CFormInput id="email" placeholder="Please insert email" v-model="email"/>
+                  </CInputGroup>
+                  <CFormLabel for="phnum">Phone number</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
+                    <CFormInput id="phnum" placeholder="Please insert phone number" v-model="phonenumber"/>
+                  </CInputGroup>
+                  
+                  <div class="d-grid d-md-block" style="text-align: center; margin-top:40px">
+                      <CButton color="light" class="px-4" v-on:click="cancel" style="margin: 0 10px">Cancel</CButton>  
+                      <CButton color="dark" class="px-4" v-on:click="register" style="margin: 0 10px">Register</CButton>
+                  </div>
+                </CForm>
+              
+              </CCardBody>
+            </CCard>
+          </CCardGroup>
+        </CCol>
+      </CRow>
+    </CContainer>
+  </div>
+</template>
+
+<script>
+import dataServices from '../../services/data_services'
+
+export default {
+    data() {
+        return {
+            firstname: "",
+            lastname: "",
+            username: "",
+            password: "",
+            email: "",
+            phonenumber: ""
+        }
+    },
+
+    methods: {
+
+      register() {
+
+      },
+
+      cancel() {
+         this.$router.push('/login'); 
+      }
+    },
+
+    created() {
+    }
+    
+}
+
+</script>

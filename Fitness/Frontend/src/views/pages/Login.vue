@@ -37,6 +37,9 @@
                     <CCol :xs="6">
                       <CButton color="primary" class="px-4" v-on:click="login"> Login </CButton>
                     </CCol>
+                    <CCol :xs="6" class="text-end">
+                      <CButton color="link" class="px-0" v-on:click="goToRegister"> Register now. </CButton>
+                    </CCol>
                   </CRow>
                 </CForm>
               </CCardBody>
@@ -91,6 +94,10 @@ export default {
           console.log('Neuspeo login!');
         });  
       
+    },
+
+    goToRegister() {
+      this.$router.push('/registration');
     }
     
   },
