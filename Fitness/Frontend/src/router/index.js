@@ -27,6 +27,12 @@ const routes = [
         name: 'Trainer',
         component: () => import('@/views/pages/Trainer.vue'),
       },
+
+      {
+        path: '/schedule',
+        name: 'Schedule',
+        component: () => import('@/views/pages/Schedule.vue')
+      }
     ],
   },
   {
