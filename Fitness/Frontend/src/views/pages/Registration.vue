@@ -57,6 +57,30 @@
         </CCol>
       </CRow>
     </CContainer>
+
+    <CModal :visible="showSuccessModal" @close="closeSuccessModal">
+      <CModalHeader>
+        <CModalTitle>Registration Successful</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        Your registration was successful!
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="primary" @click="closeSuccessModal">OK</CButton>
+      </CModalFooter>
+    </CModal>
+
+     <CModal :visible="showFailModal" @close="closeFailModal">
+      <CModalHeader>
+        <CModalTitle>Registration Failed</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        Your registration has failed!
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="primary" @click="closeFailModal">OK</CButton>
+      </CModalFooter>
+    </CModal>
   </div>
 </template>
 
@@ -72,7 +96,9 @@ export default {
             password: "",
             email: "",
             phonenumber: "",
-            showPassword: false // For toggling password visibility
+            showPassword: false,
+            showSuccessModal: false,
+            showFailModal: false
         }
     },
 
@@ -81,11 +107,22 @@ export default {
       register() {
         dataServices.methods.register(this.firstname, this.lastname, this.username, this.password, this.email, this.phonenumber, "Client")
           .then( (response) => {
-              this.$router.push('/login');  
+              if(response.status >= 200 && response.status < 300)
+                this.showSuccessModal = true;
+              else
+                this.showFailModal = true;  
           })
           .catch( (error) => {
               console.log(error);
           });  
+      },
+
+      closeSuccessModal() {
+        this.$router.push('/login');
+      },
+
+      closeFailModal() {
+        this.showFailModal = false;
       },
 
       cancel() {
