@@ -27,12 +27,23 @@ const routes = [
         name: 'Trainer',
         component: () => import('@/views/pages/Trainer.vue'),
       },
+
+      {
+        path: '/schedule',
+        name: 'Schedule',
+        component: () => import('@/views/pages/Schedule.vue')
+      }
     ],
   },
   {
     path: '/login',
     name: 'OurLogin',
     component: () => import('@/views/pages/Login.vue')
+  },
+  {
+    path: '/registration',
+    name: 'Registration',
+    component: () => import('@/views/pages/Registration.vue')
   },
   {
     path: '/pages',
@@ -62,18 +73,12 @@ const router = createRouter({
   },
 })
 
-/*router.beforeEach(async (to, from) => {
-  if (to.path == '/') {
-    router.push('/administrator'); // Preusmeravanje na Administrator stranicu
-    return false;
-  }
-  return true;
-})*/
+
 
 router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
-  if ((token && token != 'null') || to.path == '/login') {
+  if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
     return true;
   }
   else {
