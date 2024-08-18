@@ -2,7 +2,7 @@ import axios from "axios";
 
 const TRAINERS = "http://localhost:8000";
 const LOGIN_URL = "http://localhost:4000/api/v1/authentication/Login";
-
+const REGISTER_URL = "http://localhost:4000/api/v1/authentication/Register";
 
 export default {
     methods: {
@@ -19,8 +19,21 @@ export default {
           return axios.post(LOGIN_URL, data, { headers });                  
         },
 
-        register(firstname, lastname, username, password, email, phonenumber) {
-            
+        register(firstname, lastname, username, password, email, phonenumber, role) {
+          const data = {
+            firstname: firstname,
+            lastname: lastname,
+            username: username,
+            password: password,
+            email: email,
+            phonenumber: phonenumber
+          }; 
+
+          const headers = {
+            'Content-Type': 'application/json'
+          };
+
+          return axios.post(REGISTER_URL + role, data, { headers });
         },
 
         parse_access_token(access_token) {

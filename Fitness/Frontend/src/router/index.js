@@ -67,18 +67,12 @@ const router = createRouter({
   },
 })
 
-/*router.beforeEach(async (to, from) => {
-  if (to.path == '/') {
-    router.push('/administrator'); // Preusmeravanje na Administrator stranicu
-    return false;
-  }
-  return true;
-})*/
+
 
 router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
-  if ((token && token != 'null') || to.path == '/login') {
+  if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
     return true;
   }
   else {
