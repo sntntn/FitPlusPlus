@@ -126,5 +126,19 @@ namespace TrainerService.API.Controllers
         {
             return Ok(await _repository.DeleteTrainer(id));
         }
+
+        [Route("[action]/{id}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TrainerSchedule>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<TrainerSchedule>> GetTrainerScheduleByTrainerId(string id)
+        {
+            var result = await _repository.GetTrainerScheduleByTrainerId(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
     }
 }

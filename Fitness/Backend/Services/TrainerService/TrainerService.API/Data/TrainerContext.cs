@@ -12,8 +12,11 @@ namespace TrainerService.API.Data
 
             Trainers = database.GetCollection<Trainer>("Trainers");
             TrainerContextSeed.SeedData(Trainers);
+
+            TrainerSchedules = database.GetCollection<TrainerSchedule>("TrainerSchedules");
         }
 
         public IMongoCollection<Trainer> Trainers { get; }
+        public IMongoCollection<TrainerSchedule> TrainerSchedules { get; }
     }
 }

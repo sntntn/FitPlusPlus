@@ -32,6 +32,8 @@ namespace ClientService.API.Repositories
         public async Task CreateClient(Client client)
         {
             await _context.Clients.InsertOneAsync(client);
+            var clientSchedule = new ClientSchedule(client.Id);
+            await _context.ClientSchedules.InsertOneAsync(clientSchedule);
         }
         public async Task<bool> UpdateClient(Client client)
         {
@@ -41,11 +43,29 @@ namespace ClientService.API.Repositories
         public async Task<bool> DeleteClient(string id)
         {
             var resultClient = await _context.Clients.DeleteOneAsync(p => p.Id == id);
-            return resultClient.IsAcknowledged && resultClient.DeletedCount > 0;
+            var resultSchedule = await _context.ClientSchedules.DeleteOneAsync(p => p.ClientId == id);
+
+            return resultClient.IsAcknowledged && resultClient.DeletedCount > 0
+                && resultSchedule.IsAcknowledged && resultSchedule.DeletedCount>0;
         }
         public async Task DeleteAllClients()
         {
             await _context.Clients.DeleteManyAsync(p => true);
+        }
+
+        public async Task<ClientSchedule> GetClientScheduleByClientId(string id)
+        {
+            return await _context.ClientSchedules.Find(s => s.ClientId == id).FirstOrDefaultAsync();
+        }
+        public async Task<WeeklySchedule> GetClientWeekSchedule(string clientId, int weekId)
+        {
+            var clientSchedule = await GetClientScheduleByClientId(clientId);
+            return clientSchedule?.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == weekId);
+        }
+        public async Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule)
+        {
+            var result = await _context.ClientSchedules.ReplaceOneAsync(cs => cs.ClientId == clientSchedule.ClientId, clientSchedule, new ReplaceOptions { IsUpsert = true });
+            return result.IsAcknowledged && result.ModifiedCount > 0;
         }
     }
 }

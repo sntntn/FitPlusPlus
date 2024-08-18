@@ -6,5 +6,6 @@ namespace TrainerService.API.Data
     public interface ITrainerContext
     {
         IMongoCollection<Trainer> Trainers { get; }
+        IMongoCollection<TrainerSchedule> TrainerSchedules {  get; }
     }
 }

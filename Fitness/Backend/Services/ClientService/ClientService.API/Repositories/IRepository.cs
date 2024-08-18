@@ -12,5 +12,8 @@ namespace ClientService.API.Repositories
         Task<bool> UpdateClient(Client client);
         Task<bool> DeleteClient(string id);
         Task DeleteAllClients();
+        Task<ClientSchedule> GetClientScheduleByClientId(string id);
+        Task<WeeklySchedule> GetClientWeekSchedule(string clientId, int weekId);
+        Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule);
     }
 }

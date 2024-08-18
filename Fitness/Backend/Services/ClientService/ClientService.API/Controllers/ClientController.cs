@@ -85,5 +85,42 @@ namespace ClientService.API.Controllers
             await _repository.DeleteAllClients();
             return Ok();
         }
+
+        [Route("[action]/{id}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ClientSchedule>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ClientSchedule>> GetClientScheduleByClientId(string id)
+        {
+            var result = await _repository.GetClientScheduleByClientId(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [Route("[action]/{clientId}/{weekId}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(WeeklySchedule), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<WeeklySchedule>> GetClientWeekSchedule(string clientId, int weekId)
+        {
+            var result = await _repository.GetClientWeekSchedule(clientId, weekId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [Route("[action]")]
+        [HttpPut]
+        [ProducesResponseType(typeof(ClientSchedule), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateClientSchedule([FromBody] ClientSchedule clientSchedule)
+        {
+            return Ok(await _repository.UpdateClientSchedule(clientSchedule));
+
+        }
     }
 }
