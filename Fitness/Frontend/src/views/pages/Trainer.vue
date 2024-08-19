@@ -3,13 +3,8 @@
     <h1>{{ trainer.fullName }}</h1>
     <div class="editable-field">
       <p><strong>Email:</strong> {{ trainer.contactEmail }}</p>
-      <CButton class="edit-btn" color="dark" @click="toggleEditEmail">Edit Email</CButton>
     </div>
-    <div v-if="editEmail" class="email-section">
-      <CFormInput v-model="newEmail" placeholder="Update your email" />
-      <CButton class="spacing_2" color="dark" @click="updateEmail">Save Email</CButton>
-      <p v-if="emailError" class="error-message">{{ emailError }}</p>
-    </div>
+
 
     <div class="editable-field">
       <p><strong>Phone:</strong> {{ trainer.contactPhone }}</p>
@@ -122,12 +117,10 @@
       return {
         trainer: {},
         editBio: false,
-        editEmail: false,
         editPhone: false,
         addTrainingType: false,
         showReviews: false,
         newBio: '',
-        newEmail: '',
         newPhone: '',
         phoneError: '',
         emailError: '',
@@ -163,11 +156,6 @@
         const phonePattern = /^\d{3}-\d{4}$/;
         return phonePattern.test(phone);
       },
-
-      validateEmail(email) {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailPattern.test(email);
-      },
       fetchTrainer() {
         const id = this.$route.params.id;
         dataServices.methods.get_trainer_by_id(id).then((response) => {
@@ -190,26 +178,6 @@
           dataServices.methods.upt_trainer(id, trainer).then(() => {
             this.trainer.bio = this.newBio;
             this.editBio = false;
-          });
-        });
-      },
-      toggleEditEmail() {
-        this.editEmail = !this.editEmail;
-        this.newEmail = this.trainer.contactEmail;
-      },
-      updateEmail() {
-        if (!this.validateEmail(this.newEmail)) {
-          this.emailError = 'Email must contain "@" and be in a valid format.';
-          return;
-        }
-        const id = this.$route.params.id;
-        dataServices.methods.get_trainer_by_id(id).then((response) => {
-          const trainer = response.data;
-          trainer.ContactEmail = this.newEmail;
-
-          dataServices.methods.upt_trainer(id, trainer).then(() => {
-            this.trainer.contactEmail = this.newEmail;
-            this.editEmail = false;
           });
         });
       },

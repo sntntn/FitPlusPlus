@@ -18,7 +18,7 @@
 
                   <CFormLabel for="contactEmail" style="display: block;">Contact Email</CFormLabel>
                   <CInputGroup style="width:70%; margin-bottom: 10px !important">
-                    <CFormInput id="contactEmail" placeholder="Please insert contact email" v-model="contactEmail" />
+                    <CFormInput id="contactEmail" :disabled="!isAdd" placeholder="Please insert contact email" v-model="contactEmail" />
                   </CInputGroup>
                   <span v-if="errors.contactEmail" style="color: red">{{ errors.contactEmail }}</span>
 
