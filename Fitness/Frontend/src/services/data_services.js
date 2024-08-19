@@ -54,7 +54,7 @@ export default {
           return at_data[role];
         },
 
-        get_trainers(inf_id) {
+        get_trainers() {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.get(`${TRAINERS}/api/v1/Trainer`);
         },

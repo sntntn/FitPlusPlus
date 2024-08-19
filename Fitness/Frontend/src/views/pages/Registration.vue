@@ -7,8 +7,17 @@
             <CCard class="p-4">
               <CCardBody class="form">
                 <CForm>
-                    
-                  <h1 style="margin-bottom: 20px">Register client</h1>                 
+
+                  <h1 style="margin-bottom: 20px">Register</h1>  
+
+                  <CFormLabel for="roles" style="display: block;">Role</CFormLabel>
+                  <CInputGroup style="width:70%; margin-bottom: 10px !important">
+                    <CFormSelect id="roles" v-model="role">
+                      <option value="Client">Client</option>
+                      <option value="Trainer">Trainer</option>
+                    </CFormSelect>
+                  </CInputGroup>
+
                   <CFormLabel for="firstname" style="display: block;">First Name</CFormLabel>
                   <CInputGroup style="width:70%; margin-bottom: 15px !important" class="mb-4">
                     <CFormInput id="firstname" placeholder="Please insert first name" v-model="firstname" />
@@ -98,14 +107,37 @@ export default {
             phonenumber: "",
             showPassword: false,
             showSuccessModal: false,
-            showFailModal: false
+            showFailModal: false,
+            role: "Client",
+            trainers: []
         }
     },
 
     methods: {
 
       register() {
-        dataServices.methods.register(this.firstname, this.lastname, this.username, this.password, this.email, this.phonenumber, "Client")
+
+        if(this.role == "Trainer") {
+          console.log('Usao u if');
+          dataServices.methods.get_trainers()
+            .then( (response) => {
+                console.log('Usao u then');
+                var emailFound = false;
+                response.data.forEach( trainer => {
+                  if(trainer.contactEmail == this.email)
+                    emailFound = true;
+                });
+                if(!emailFound) {
+                  this.showFailModal = true;
+                  return;
+                }
+            })
+            .catch( (error) => {
+              return;
+            });
+        }
+
+        dataServices.methods.register(this.firstname, this.lastname, this.username, this.password, this.email, this.phonenumber, this.role)
           .then( (response) => {
               if(response.status >= 200 && response.status < 300)
                 this.showSuccessModal = true;
