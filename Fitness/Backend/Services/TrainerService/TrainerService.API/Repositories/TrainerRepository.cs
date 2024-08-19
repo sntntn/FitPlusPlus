@@ -25,6 +25,11 @@ namespace TrainerService.API.Repositories
             return await _context.Trainers.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
 
+        public async Task<Trainer> GetTrainerByEmail(string email)
+        {
+            return await _context.Trainers.Find(p => p.ContactEmail == email).FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<Trainer>> GetTrainersByTrainingType(string trainingTypeName)
         {
             return await _context.Trainers.Find(p => p.TrainingTypes.Any(pp => pp.Name == trainingTypeName)).ToListAsync();

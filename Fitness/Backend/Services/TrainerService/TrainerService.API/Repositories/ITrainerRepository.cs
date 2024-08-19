@@ -10,6 +10,8 @@ namespace TrainerService.API.Repositories
 
         Task<IEnumerable<Trainer>> GetTrainersByTrainingType(string trainingTypeName);
 
+        Task<Trainer> GetTrainerByEmail(string email);
+
         Task CreateTrainer(Trainer trainer);
 
         Task<bool> UpdateTrainer(Trainer trainer);

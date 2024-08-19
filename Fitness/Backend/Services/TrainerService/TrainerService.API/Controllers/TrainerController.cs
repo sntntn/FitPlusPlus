@@ -55,6 +55,24 @@ namespace TrainerService.API.Controllers
             }
         }
 
+        [HttpGet("[action]/{email}", Name = "GetTrainerByEmail")]
+        [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Trainer), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Trainer>> GetTrainerByEmail(string email)
+        {
+            var trainer = await _repository.GetTrainerByEmail(email);
+            if (trainer == null)
+            {
+                return NotFound(null);
+            }
+            else
+            {
+                var reviews = await _reviewGrpcService.GetReviews(trainer.Id);
+                trainer.Reviews = _mapper.Map<List<ReviewType>>(reviews.Reviews);
+                return Ok(trainer);
+            }
+        }
+
         [Route("[action]/{minRating}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
