@@ -34,10 +34,8 @@ namespace IdentityServer.Controllers
             return Ok(_mapper.Map<IEnumerable<UserDetailsDto>>(users));
         }
 
-        [Authorize(Roles = "Admin")]
-        [Authorize(Roles = "Client")]
-        [Authorize(Roles = "Trainer")]
         [HttpGet("{username}")]
+        [Authorize(Roles = "Admin, Client, Trainer")]
         [ProducesResponseType(typeof(UserDetailsDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<UserDetailsDto>>> GetUser(string username)
         {

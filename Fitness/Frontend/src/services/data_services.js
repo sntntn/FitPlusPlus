@@ -3,6 +3,7 @@ import axios from "axios";
 const TRAINERS = "http://localhost:8000";
 const LOGIN_URL = "http://localhost:4000/api/v1/authentication/Login";
 const REGISTER_URL = "http://localhost:4000/api/v1/authentication/Register";
+const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
 
 export default {
     methods: {
@@ -52,6 +53,27 @@ export default {
           sessionStorage.setItem('role', at_data[role]);
 
           return at_data[role];
+        },
+
+        get_user(username) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(MSSQL_USERS + username);
+        },
+
+        get_user_id(role, email) {
+          if(role == 'Trainer')
+            return this.get_trainer_id(email);
+          else if(role == 'Client')
+            return this.get_client_id(email);
+        },
+
+        get_trainer_id(email) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainerByEmail/${email}`);
+        },
+
+        get_client_id(email) {
+
         },
 
         get_trainers() {

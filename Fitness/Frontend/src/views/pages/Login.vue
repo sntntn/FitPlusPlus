@@ -60,7 +60,8 @@ export default {
   data() {
     return {
       username: "",
-      password: "",   
+      password: "",
+      email: "",   
     }
   },
   methods: {
@@ -74,20 +75,30 @@ export default {
           
           const role = dataServices.methods.save_access_token_data(response.data.accessToken);
           console.log(role);
-          if(role == 'Trainer') {
-            this.$router.push('/trainer');
-          }
-          else if(role == 'Admin') {
-            console.log('Rola Admin');
-            this.$router.push('/administrator');
-          }
-          else {
-            this.$router.push('/client');
-          }
-
-          loader.hide();
           
-          console.log('Uspeo login');
+          dataServices.methods.get_user(this.username)
+            .then( (response) => {
+              this.email = response.data.email;
+              dataServices.methods.get_trainer_id(this.email)
+                .then( (response) => {
+                  sessionStorage.setItem('userId', response.data.id);
+                  const id = response.data.id;
+                  if(role == 'Trainer') {
+                    this.$router.push('/trainer/' + id);
+                  }
+                  else if(role == 'Admin') {
+                    console.log('Rola Admin');
+                    this.$router.push('/administrator');
+                  }
+                  else {
+                    this.$router.push('/client/' + id);
+                  }
+
+                  loader.hide();
+                  
+                  console.log('Uspeo login');
+              });
+            });
         })
         .catch( (error) => {
           loader.hide();
