@@ -14,7 +14,7 @@ namespace ReviewService.API.Controllers
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
-        [HttpGet("trainerId", Name = "GetReviews")]
+        [HttpGet("{trainerId}", Name = "GetReviews")]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<ReviewDTO>>> GetReviews(string trainerId)
@@ -44,7 +44,7 @@ namespace ReviewService.API.Controllers
             return Ok(await _repository.UpdateReview(review));
         }
 
-        [HttpDelete(Name = "DeleteReview")]
+        [HttpDelete("{reviewId}", Name = "DeleteReview")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> DeleteReview(string reviewId)
         {
