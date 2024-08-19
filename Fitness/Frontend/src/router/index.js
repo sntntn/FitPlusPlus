@@ -29,6 +29,13 @@ const routes = [
       },
 
       {
+        path: '/client/:id',
+        name: 'Client',
+        component: () => import('@/views/pages/Client.vue'),
+      },
+
+
+      {
         path: '/schedule',
         name: 'Schedule',
         component: () => import('@/views/pages/Schedule.vue')
@@ -72,7 +79,6 @@ const router = createRouter({
     return { top: 0 }
   },
 })
-
 
 
 router.beforeEach(async (to, from) => {

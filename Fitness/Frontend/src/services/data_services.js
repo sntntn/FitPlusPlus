@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const TRAINERS = "http://localhost:8000";
+const REVIEW = "http://localhost:8001";
 const LOGIN_URL = "http://localhost:4000/api/v1/authentication/Login";
 const REGISTER_URL = "http://localhost:4000/api/v1/authentication/Register";
 const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
@@ -96,9 +97,39 @@ export default {
           return axios.get(`${TRAINERS}/api/v1/Trainer/${tra_id}`);
         },
 
+        get_trainers_by_type(type) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainersByTrainingType/${type}`);
+        },
+
+        get_trainers_by_rating(rating) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainersByRating/${rating}`);
+        },
+
         remove_trainer(tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.delete(`${TRAINERS}/api/v1/Trainer/${tra_id}`);
+        },
+
+        add_review(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${REVIEW}/api/v1/Review`, request);
+        },
+
+        get_reviews(tra_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${REVIEW}/api/v1/Review/${tra_id}`);
+        },
+
+        delete_review(rev_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.delete(`${REVIEW}/api/v1/Review/${rev_id}`);
+        },
+
+        update_review(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.put(`${REVIEW}/api/v1/Review`, request);
         }
     }
 }

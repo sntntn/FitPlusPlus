@@ -73,10 +73,6 @@ export default {
         };
     },
     methods: {
-        validateEmail(email) {
-          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          return emailPattern.test(email);
-        },
         validateFullName(name) {
           return name.split(' ').length >= 2;
         },
@@ -86,10 +82,9 @@ export default {
         },
         validateForm() {
           this.errors.name = !this.validateFullName(this.name) ? 'Name must contain at least first and last name.' : null;
-          this.errors.contactEmail = !this.validateEmail(this.contactEmail) ? 'Email must contain "@" and be in a valid format.' : null;
           this.errors.contactPhone = !this.validatePhone(this.contactPhone) ? 'Phone number must be in the format NNN-NNNN.' : null;
 
-          return !this.errors.name && !this.errors.contactEmail && !this.errors.contactPhone;
+          return !this.errors.name && !this.errors.contactPhone;
         },
         addTrainer() {
           if (!this.validateForm()) return;
