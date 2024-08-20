@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/ClientService/ClientService.API/ClientService.API.csproj", "Services/ClientService/ClientService.API/"]
+COPY ["Common/EventBus.Messages/EventBus.Messages.csproj", "Common/EventBus.Messages/"]
 RUN dotnet restore "./Services/ClientService/ClientService.API/ClientService.API.csproj"
 COPY . .
 WORKDIR "/src/Services/ClientService/ClientService.API"

@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="..\..\ReviewService\ReviewService.GRPC\Protos\review.proto" GrpcServices="Client">
       <Link>Protos\review.proto</Link>
     </Protobuf>

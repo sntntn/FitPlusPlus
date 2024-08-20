@@ -23,7 +23,13 @@ services:
       - 27018:27017
     volumes:
       - reviewmongo_data:/data/db
-
+  
+  rabbitmq:
+    container_name: rabbitmq2
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:16572
   mssql:
     container_name: mssql
     environment:

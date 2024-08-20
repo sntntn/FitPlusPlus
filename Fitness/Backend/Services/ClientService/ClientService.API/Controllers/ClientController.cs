@@ -1,5 +1,8 @@
-﻿using ClientService.API.Entities;
+﻿using AutoMapper;
+using ClientService.API.Entities;
 using ClientService.API.Repositories;
+using EventBus.Messages.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientService.API.Controllers
@@ -9,10 +12,14 @@ namespace ClientService.API.Controllers
     public class ClientController:ControllerBase
     {
         private readonly IRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ClientController(IRepository repository)
+        public ClientController(IRepository repository, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         [HttpGet]
@@ -133,8 +140,8 @@ namespace ClientService.API.Controllers
             if (result)
             {
                 //send to trainer
-                //var eventMessage = _mapper.Map<TrainingBookingEvent>(ctb);
-                //await _publishEndpoint.Publish(eventMessage);
+                var eventMessage = _mapper.Map<BookTrainingEvent>(bti);
+                await _publishEndpoint.Publish(eventMessage);
                 return Ok();
             }
             return BadRequest();
