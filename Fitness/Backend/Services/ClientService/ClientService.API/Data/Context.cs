@@ -10,7 +10,7 @@ namespace ClientService.API.Data
         {
 
             var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-            var database = client.GetDatabase("FitDB");
+            var database = client.GetDatabase("ClientsAndSchedules");
 
             Clients = database.GetCollection<Client>("Clients");
             ClientSchedules = database.GetCollection<ClientSchedule>("ClientSchedules");

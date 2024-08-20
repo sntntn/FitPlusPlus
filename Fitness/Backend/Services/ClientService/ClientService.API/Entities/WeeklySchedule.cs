@@ -30,7 +30,7 @@
             var timeslots = new List<ScheduleItem>();
             var startTime = new TimeSpan(8, 0, 0); // 8:00 AM
             var endTime = new TimeSpan(20, 0, 0); // 8:00 PM
-
+            
             while (startTime < endTime)
             {
                 var nextTime = startTime.Add(TimeSpan.FromMinutes(15));

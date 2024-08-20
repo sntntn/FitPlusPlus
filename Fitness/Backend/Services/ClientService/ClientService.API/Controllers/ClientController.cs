@@ -122,5 +122,22 @@ namespace ClientService.API.Controllers
             return Ok(await _repository.UpdateClientSchedule(clientSchedule));
 
         }
+
+        [Route("[action]")]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> BookTraining([FromBody] BookTrainingInformation bti)
+        {
+            var result = await _repository.BookTraining(bti);
+            if (result)
+            {
+                //send to trainer
+                //var eventMessage = _mapper.Map<TrainingBookingEvent>(ctb);
+                //await _publishEndpoint.Publish(eventMessage);
+                return Ok();
+            }
+            return BadRequest();
+        }
     }
 }

@@ -1,13 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ClientService.API.Entities
 {
     public class ScheduleItem
     {
-        [BsonIgnore]
-        public TimeSpan StartTime { get; set; }
-        [BsonIgnore]
-        public TimeSpan EndTime { get; set; }
+ 
         public int StartHour { get; set; }
         public int StartMinute { get; set; }
         public int EndHour { get; set; }
@@ -19,8 +17,7 @@ namespace ClientService.API.Entities
 
         public ScheduleItem(TimeSpan startTime, TimeSpan endTime,bool isAvailable)
         {
-            StartTime = startTime;
-            EndTime = endTime;
+
             StartHour = startTime.Hours;
             StartMinute = startTime.Minutes;
             EndHour = endTime.Hours;
@@ -30,5 +27,6 @@ namespace ClientService.API.Entities
             TrainerId = "";
             TrainerName = "";
         }
+
     }
 }

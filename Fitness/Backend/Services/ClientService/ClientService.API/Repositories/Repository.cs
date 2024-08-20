@@ -62,10 +62,60 @@ namespace ClientService.API.Repositories
             var clientSchedule = await GetClientScheduleByClientId(clientId);
             return clientSchedule?.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == weekId);
         }
+        
         public async Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule)
         {
             var result = await _context.ClientSchedules.ReplaceOneAsync(cs => cs.ClientId == clientSchedule.ClientId, clientSchedule, new ReplaceOptions { IsUpsert = true });
             return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
+
+        public async Task<bool> BookTraining(BookTrainingInformation bti)
+        {
+            var clientSchedule = await GetClientScheduleByClientId(bti.ClientId);
+            if (clientSchedule == null)
+            {
+                return false;
+            }
+            
+            var weeklySchedule = clientSchedule.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == bti.WeekId);
+            if (weeklySchedule == null)
+            {
+                return false;
+            }
+
+            if (!weeklySchedule.DailySchedules.TryGetValue(bti.DayName, out var dailySchedule))
+                return false;
+            
+            int numberOfCells = (int)bti.Duration.TotalMinutes / 15;
+            
+
+            var startSlotIndex = dailySchedule.FindIndex(slot => slot.StartHour == bti.StartHour && slot.StartMinute == bti.StartMinute);
+
+            if (startSlotIndex == -1 || startSlotIndex + numberOfCells > dailySchedule.Count)
+                return false;
+
+            for (int i = startSlotIndex; i < startSlotIndex + numberOfCells; i++)
+            {
+                if (bti.IsBooking)
+                {
+                    if (!dailySchedule[i].IsAvailable)
+                        return false;
+
+                    dailySchedule[i].IsAvailable = false;
+                    dailySchedule[i].TrainerId = bti.TrainerId;
+                    dailySchedule[i].TrainingType = bti.TrainingType;
+                }
+                else
+                {
+                    dailySchedule[i].IsAvailable = true;
+                    dailySchedule[i].TrainerId = "";
+                    dailySchedule[i].TrainingType = "";
+                }
+            }
+
+            await UpdateClientSchedule(clientSchedule);
+            
+            return true;
         }
     }
 }

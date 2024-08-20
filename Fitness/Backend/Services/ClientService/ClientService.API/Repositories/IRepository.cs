@@ -15,5 +15,6 @@ namespace ClientService.API.Repositories
         Task<ClientSchedule> GetClientScheduleByClientId(string id);
         Task<WeeklySchedule> GetClientWeekSchedule(string clientId, int weekId);
         Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule);
+        Task<bool> BookTraining(BookTrainingInformation bti);
     }
 }
