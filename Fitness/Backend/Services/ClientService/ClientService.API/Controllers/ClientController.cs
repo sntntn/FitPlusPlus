@@ -76,7 +76,7 @@ namespace ClientService.API.Controllers
             return CreatedAtRoute("GetClient", new { id = client.Id }, client);
 
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Client")]
         [HttpPut]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateClient([FromBody] Client client)
