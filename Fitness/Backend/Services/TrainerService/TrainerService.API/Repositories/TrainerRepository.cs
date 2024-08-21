@@ -71,5 +71,31 @@ namespace TrainerService.API.Repositories
             var result = await _context.TrainerSchedules.ReplaceOneAsync(cs => cs.TrainerId == trainerSchedule.TrainerId, trainerSchedule, new ReplaceOptions { IsUpsert = true });
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
+        public async Task BookTraining(BookTrainingInformation bti)
+        {
+            var trainerSchedule = await GetTrainerScheduleByTrainerId(bti.TrainerId);
+            var weeklySchedule = trainerSchedule.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == bti.WeekId);
+            //neki exception?
+            weeklySchedule.DailySchedules.TryGetValue(bti.DayName, out var dailySchedule);
+
+            int numberOfCells = (int)bti.Duration.TotalMinutes / 15;
+            var startSlotIndex = dailySchedule.FindIndex(slot => slot.StartHour == bti.StartHour && slot.StartMinute == bti.StartMinute);
+            for (int i = startSlotIndex; i < startSlotIndex + numberOfCells; i++)
+            {
+                if (bti.IsBooking)
+                {
+                    dailySchedule[i].IsAvailable = false;
+                    dailySchedule[i].ClientId = bti.ClientId;
+                    dailySchedule[i].TrainingType = bti.TrainingType;
+                }
+                else
+                {
+                    dailySchedule[i].IsAvailable = true;
+                    dailySchedule[i].ClientId = "";
+                    dailySchedule[i].TrainingType = "";
+                }
+            }
+            await UpdateTrainerSchedule(trainerSchedule);
+        }
     }
 }

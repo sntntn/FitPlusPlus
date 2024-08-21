@@ -25,7 +25,7 @@ services:
       - reviewmongo_data:/data/db
   
   rabbitmq:
-    container_name: rabbitmq2
+    container_name: rabbitmq
     restart: always
     ports:
       - 5672:5672
@@ -47,8 +47,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
       - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq5672" 
     depends_on:
       - trainerdb
+      - rabbitmq
     ports:
       - "8000:8080"
 
@@ -56,7 +58,11 @@ services:
     container_name: clientservice.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017" 
+      - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq5672"  
+    depends_on:
+      - clientdb
+      - rabbitmq 
     ports:
       - "8100:8080"
 

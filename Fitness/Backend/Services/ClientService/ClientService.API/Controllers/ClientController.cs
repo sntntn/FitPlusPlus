@@ -140,8 +140,9 @@ namespace ClientService.API.Controllers
             if (result)
             {
                 //send to trainer
+                
                 var eventMessage = _mapper.Map<BookTrainingEvent>(bti);
-                await _publishEndpoint.Publish(eventMessage);
+                await _publishEndpoint.Publish(eventMessage); 
                 return Ok();
             }
             return BadRequest();

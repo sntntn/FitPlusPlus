@@ -1,6 +1,11 @@
+using EventBus.Messages.Constants;
+using EventBus.Messages.Events;
+using MassTransit;
 using ReviewService.GRPC.Protos;
+using System.Reflection;
 using TrainerService.API.Data;
 using TrainerService.API.Entities;
+using TrainerService.API.EventBusConsumers;
 using TrainerService.API.GrpcServices;
 using TrainerService.API.Repositories;
 
@@ -19,6 +24,21 @@ builder.Services.AddAutoMapper(configuration =>
 {
     configuration.CreateMap<GetReviewsResponse, ReviewType>().ReverseMap();
     configuration.CreateMap<GetReviewsResponse.Types.ReviewReply, ReviewType>().ReverseMap();
+    configuration.CreateMap<BookTrainingInformation, BookTrainingEvent>().ReverseMap();
+});
+
+//EventBus
+builder.Services.AddMassTransit(config =>
+{
+    config.AddConsumer<BookTrainingConsumer>();
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+        cfg.ReceiveEndpoint(EventBusConstants.BookTrainingQueue,c =>
+        {
+            c.ConfigureConsumer<BookTrainingConsumer>(ctx);
+        });
+    });
 });
 
 builder.Services.AddCors(options =>
