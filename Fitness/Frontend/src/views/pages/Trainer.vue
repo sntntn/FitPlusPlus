@@ -259,6 +259,7 @@
     },
     mounted() {
       this.fetchTrainer();
+      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
     }
   };
 </script>
