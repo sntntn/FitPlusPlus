@@ -29,7 +29,7 @@ services:
     restart: always
     ports:
       - 5672:5672
-      - 15672:16572
+      - 15672:15672
   mssql:
     container_name: mssql
     environment:
@@ -47,7 +47,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
       - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq5672" 
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
     depends_on:
       - trainerdb
       - rabbitmq
@@ -59,7 +59,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq5672"  
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"  
     depends_on:
       - clientdb
       - rabbitmq 

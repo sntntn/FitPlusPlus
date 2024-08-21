@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppSidebar />
+    <AppSidebar :id="userData.id" :type="userData.type"/>
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
       <AppHeader />
       <div class="body flex-grow-1 px-3">
@@ -25,6 +25,20 @@ export default {
     AppHeader,
     AppSidebar,
     CContainer,
-  },
+    },
+    data() {
+      return {
+        userData: {
+          id: null,
+          type: null
+        },
+      };
+    },
+    methods: {
+      setUserData(id,type) {
+        this.userData.id = id;
+        this.userData.type = type;
+      }
+    }
 }
 </script>

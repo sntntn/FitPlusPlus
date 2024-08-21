@@ -18,7 +18,7 @@
         :height="35"
       />
     </CSidebarBrand>
-    <AppSidebarNav />
+    <AppSidebarNav  :id="id" :type="type"/>
   </CSidebar>
 </template>
 
@@ -32,6 +32,10 @@ export default {
   name: 'AppSidebar',
   components: {
     AppSidebarNav,
+  },
+  props:{
+    id:String,
+    type:String
   },
   setup() {
     const store = useStore()

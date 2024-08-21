@@ -1,4 +1,4 @@
-import { defineComponent, h, onMounted, ref, resolveComponent } from 'vue'
+import { defineComponent, h, onMounted, ref, resolveComponent, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
 import {
@@ -8,7 +8,7 @@ import {
   CNavGroup,
   CNavTitle,
 } from '@coreui/vue'
-import nav from '@/_nav.js'
+import { generateTrainerNav, generateClientNav } from '@/_nav.js'
 
 const normalizePath = (path) =>
   decodeURI(path)
@@ -49,22 +49,36 @@ const AppSidebarNav = defineComponent({
     CNavGroup,
     CNavTitle,
   },
-  setup() {
+  props: {
+    id: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    }
+  },
+  setup(props) {
     const route = useRoute()
-    const firstRender = ref(true)
+    const nav = ref([])
+    const updateNav = () => {
+      if (props.type === 'trainer') {
+        nav.value = generateTrainerNav(props.id)
+      } else if (props.type === 'client') {
+        nav.value = generateClientNav(props.id)
+      }
+    }
 
-    onMounted(() => {
-      firstRender.value = false
-    })
+    watch(() => [props.id, props.type], updateNav, { immediate: true })
+
 
     const renderItem = (item) => {
       if (item.items) {
         return h(
           CNavGroup,
           {
-            ...(firstRender.value && {
-              visible: item.items.some((child) => isActiveItem(route, child)),
-            }),
+            visible: item.items.some((child) => isActiveItem(route, child)),
           },
           {
             togglerContent: () => [
@@ -81,51 +95,51 @@ const AppSidebarNav = defineComponent({
 
       return item.to
         ? h(
-            RouterLink,
-            {
-              to: item.to,
-              custom: true,
-            },
-            {
-              default: (props) =>
-                h(
-                  resolveComponent(item.component),
-                  {
-                    active: props.isActive,
-                    href: props.href,
-                    onClick: () => props.navigate(),
-                  },
-                  {
-                    default: () => [
-                      item.icon &&
-                        h(resolveComponent('CIcon'), {
-                          customClassName: 'nav-icon text-danger',
-                          name: item.icon,
-                        }),
-                      item.name,
-                      item.badge &&
-                        h(
-                          CBadge,
-                          {
-                            class: 'ms-auto',
-                            color: item.badge.color,
-                          },
-                          {
-                            default: () => item.badge.text,
-                          },
-                        ),
-                    ],
-                  },
-                ),
-            },
-          )
+          RouterLink,
+          {
+            to: item.to,
+            custom: true,
+          },
+          {
+            default: (props) =>
+              h(
+                resolveComponent(item.component),
+                {
+                  active: props.isActive,
+                  href: props.href,
+                  onClick: () => props.navigate(),
+                },
+                {
+                  default: () => [
+                    item.icon &&
+                    h(resolveComponent('CIcon'), {
+                      customClassName: 'nav-icon text-danger',
+                      name: item.icon,
+                    }),
+                    item.name,
+                    item.badge &&
+                    h(
+                      CBadge,
+                      {
+                        class: 'ms-auto',
+                        color: item.badge.color,
+                      },
+                      {
+                        default: () => item.badge.text,
+                      },
+                    ),
+                  ],
+                },
+              ),
+          },
+        )
         : h(
-            resolveComponent(item.component),
-            {},
-            {
-              default: () => item.name,
-            },
-          )
+          resolveComponent(item.component),
+          {},
+          {
+            default: () => item.name,
+          },
+        )
     }
 
     return () =>
@@ -133,9 +147,10 @@ const AppSidebarNav = defineComponent({
         CSidebarNav,
         {},
         {
-          default: () => nav.map((item) => renderItem(item)),
+          default: () => nav.value.map((item) => renderItem(item)),
         },
       )
-  },
+  }
 })
+
 export { AppSidebarNav }
