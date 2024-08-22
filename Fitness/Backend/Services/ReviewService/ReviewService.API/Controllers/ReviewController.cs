@@ -5,7 +5,7 @@ using ReviewService.Common.Repositories;
 
 namespace ReviewService.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ReviewController : ControllerBase
@@ -17,7 +17,7 @@ namespace ReviewService.API.Controllers
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        //[Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("{trainerId}", Name = "GetReviews")]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
@@ -31,7 +31,7 @@ namespace ReviewService.API.Controllers
             return Ok(reviews);
         }
 
-        [Authorize(Roles = "Client")]
+        //[Authorize(Roles = "Client")]
         [HttpPost]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status201Created)]
         public async Task<ActionResult<ReviewDTO>> CreateReview([FromBody] CreateReviewDTO reviewDTO)
@@ -42,7 +42,7 @@ namespace ReviewService.API.Controllers
             return CreatedAtRoute("GetReviews", new { trainerId = reviewDTO.TrainerId }, newReview);
         }
 
-        [Authorize(Roles = "Client")]
+        //[Authorize(Roles = "Client")]
         [HttpPut]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> UpdateReview([FromBody] UpdateReviewDTO review)
@@ -50,7 +50,7 @@ namespace ReviewService.API.Controllers
             return Ok(await _repository.UpdateReview(review));
         }
 
-        [Authorize(Roles = "Client")]
+        //[Authorize(Roles = "Client")]
         [HttpDelete("{reviewId}", Name = "DeleteReview")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> DeleteReview(string reviewId)

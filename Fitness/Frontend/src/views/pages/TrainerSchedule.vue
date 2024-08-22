@@ -17,8 +17,8 @@
         <tr v-for="number in 48" :key="number">
           <!-- Only add the hour cell for every 4th row -->
           <td v-if="number % 4 === 1" :rowspan="4" style="font-size:8px; vertical-align: top">{{ calculateHour(number) }}</td>
-          <td v-for="day in weekDays" :key="day + number" @click="addEvent(day, number)" class="time-slot" :class="{ 'active': isEvent(day, number) }">
-            <div v-if="getEvent(day, number)">{{ getEvent(day, number).name }} - {{ getEvent(day, number).trainer }}</div>
+          <td v-for="day in weekDays" :key="day + number" class="time-slot">
+            <div v-if="getEvent(day, number)">{{ getEvent(day, number).name }} - {{ getEvent(day, number).type }}</div>
           </td>
         </tr>
       </tbody>
@@ -28,13 +28,14 @@
 
 
 <script>
+  import dataServices from '../../services/data_services';
+
+
   export default {
     data() {
       return {
         currentDate: new Date(),
         events: [],
-        trainingType: 'Yoga',
-        trainerName: 'John Doe',
       };
     },
     computed: {
@@ -59,9 +60,65 @@
       },
     },
     methods: {
+      async fetchEvents() {
+        try {
+          const weekId = this.getWeekId(this.currentDate);
+          const response = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.id);
+          const data = response.data;
+          console.log(data)
+
+          if (data.dailySchedules) {
+            const events = [];
+
+            for (const [day, slots] of Object.entries(data.dailySchedules)) {
+              for (const slot of slots) {
+                if (!slot.isAvailable) {
+                  const startSlot = this.timeToSlot(slot.startHour, slot.startMinute);
+                  const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
+
+            // Fetch client details for each slot
+                  const clientResponse = await dataServices.methods.get_client_by_id(slot.clientId);
+                  const client = clientResponse.data;
+                  const clientName = `${client.name} ${client.surname}`;
+
+                  for (let slotNumber = startSlot; slotNumber < endSlot; slotNumber++) {
+                    events.push({
+                    day,
+                    timeSlot: slotNumber,
+                    name: clientName,
+                    type: `${slot.trainingType}`
+                  });
+                }
+              }
+            }
+          }
+
+          this.events = events;
+        } else {
+            console.error('Invalid data structure:', data);
+          }
+        } catch (error) {
+          console.error('Error fetching events:', error);
+        }
+      },
+      getWeekId(date) {
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const daysBetween = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
+        const weekNumber = Math.ceil((daysBetween + startOfYear.getDay() + 1) / 7) + 1;
+
+        return weekNumber - this.getWeekNumber(new Date());
+      },
+      getWeekNumber(date) {
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const daysBetween = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
+        return Math.ceil((daysBetween + startOfYear.getDay() + 1) / 7);
+      },
+      timeToSlot(hour, minute) {
+        return Math.floor((hour - 8) * 4 + minute / 15 + 1);
+      },
       getStartOfWeek(date) {
         const day = date.getDay();
-        const diff = date.getDate() - day + (day === 0 ? -6 : 1); 
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
         return new Date(date.setDate(diff));
       },
       formatDate(date) {
@@ -71,47 +128,23 @@
           year: 'numeric',
         });
       },
-      changeWeek(direction) {
+      async changeWeek(direction) {
         this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + direction * 7));
-      },
-      isEvent(day, timeSlot) {
-        const startOfWeek = this.getStartOfWeek(this.currentDate);
-        const dayIndex = this.weekDays.indexOf(day);
-        const date = new Date(startOfWeek);
-        date.setDate(date.getDate() + dayIndex);
-        return this.events.some(event => new Date(event.day).getTime() === date.getTime() && event.timeSlot === timeSlot);
+        await this.fetchEvents();
       },
       getEvent(day, timeSlot) {
-        const startOfWeek = this.getStartOfWeek(this.currentDate);
-        const dayIndex = this.weekDays.indexOf(day);
-        const date = new Date(startOfWeek);
-        date.setDate(date.getDate() + dayIndex);
-        return this.events.find(event => new Date(event.day).getTime() === date.getTime() && event.timeSlot === timeSlot);
-      },
-      addEvent(day, startSlot) {
-        const duration = 4;
-        const startOfWeek = this.getStartOfWeek(this.currentDate);
-        const dayIndex = this.weekDays.indexOf(day);
-        const date = new Date(startOfWeek);
-        date.setDate(date.getDate() + dayIndex);
-        for (let i = 0; i < duration; i++) {
-          this.events.push({
-            day: date.toString().split('T')[0], 
-            timeSlot: startSlot + i,
-            name: this.trainingType,
-            trainer: this.trainerName
-          });
-        }
+        return this.events.find(event => event.day === day && event.timeSlot === timeSlot);
       },
       calculateHour(number) {
         const hours = Math.floor((number - 1) / 4) + 8;
         return hours.toString() + ':00';
       }
     },
-    mounted(){
-      this.$parent.$parent.$parent.setUserData(this.$route.params.id,"trainer");
+    mounted() {
+      this.fetchEvents();
+      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
     }
-  };
+  }
 </script>
 
 

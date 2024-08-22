@@ -2,6 +2,7 @@ import axios from "axios";
 
 const TRAINERS = "http://localhost:8000";
 const REVIEW = "http://localhost:8001";
+const CLIENT = "http://localhost:8100";
 const LOGIN_URL = "http://localhost:4000/api/v1/authentication/Login";
 const REGISTER_URL = "http://localhost:4000/api/v1/authentication/Register";
 const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
@@ -130,6 +131,16 @@ export default {
         update_review(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.put(`${REVIEW}/api/v1/Review`, request);
-        }
+        },
+
+        get_trainer_week_schedule_by_id(week_id, tra_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainerWeekSchedule/${tra_id}/${week_id}`);
+        },
+
+        get_client_by_id(cli_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${CLIENT}/api/v1/Client/${cli_id}`);
+        },
     }
 }
