@@ -76,19 +76,23 @@ export default {
           const role = dataServices.methods.save_access_token_data(response.data.accessToken);
           console.log(role);
           
+
+          if(role == 'Admin') {
+            console.log('Rola Admin');
+            this.$router.push('/administrator');
+            loader.hide();
+            return;
+          }
+
           dataServices.methods.get_user(this.username)
             .then( (response) => {
               this.email = response.data.email;
-              dataServices.methods.get_trainer_id(this.email)
+              dataServices.methods.get_user_id(role, this.email)
                 .then( (response) => {
                   sessionStorage.setItem('userId', response.data.id);
                   const id = response.data.id;
                   if(role == 'Trainer') {
                     this.$router.push('/trainer/' + id);
-                  }
-                  else if(role == 'Admin') {
-                    console.log('Rola Admin');
-                    this.$router.push('/administrator');
                   }
                   else {
                     this.$router.push('/client/' + id);

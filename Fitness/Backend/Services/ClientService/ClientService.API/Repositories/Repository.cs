@@ -25,6 +25,10 @@ namespace ClientService.API.Repositories
         {
             return await _context.Clients.Find(p => p.Name == name).ToListAsync();
         }
+        public async Task<Client> GetClientByEmail(string email)
+        {
+            return await _context.Clients.Find(p => p.Email == email).FirstOrDefaultAsync();
+        }
         public async Task<IEnumerable<Client>> GetClientsBySurname(string surname)
         {
             return await _context.Clients.Find(p => p.Surname == surname).ToListAsync();
@@ -117,5 +121,6 @@ namespace ClientService.API.Repositories
             
             return true;
         }
+
     }
 }

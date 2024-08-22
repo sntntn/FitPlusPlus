@@ -75,7 +75,8 @@ export default {
         },
 
         get_client_id(email) {
-
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${CLIENT}/api/v1/Client/GetClientByEmail/${email}`);
         },
 
         get_trainers() {
@@ -136,6 +137,11 @@ export default {
         get_trainer_week_schedule_by_id(week_id, tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainerWeekSchedule/${tra_id}/${week_id}`);
+        },
+
+        get_client_week_schedule_by_id(week_id, cl_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${CLIENT}/api/v1/Client/GetClientWeekSchedule/${cl_id}/${week_id}`);
         },
 
         get_client_by_id(cli_id) {

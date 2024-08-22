@@ -36,9 +36,9 @@ const routes = [
 
 
       {
-        path: '/schedule',
-        name: 'Schedule',
-        component: () => import('@/views/pages/Schedule.vue')
+        path: '/client/:id/schedule',
+        name: 'Client Schedule',
+        component: () => import('@/views/pages/ClientSchedule.vue')
       },
 
       {
@@ -87,17 +87,17 @@ const router = createRouter({
   },
 })
 
-router.beforeEach(async(to,from)=>{
-  var token = sessionStorage.getItem('accessToken');
-  if (to.path == '/') {
-    router.push('/trainer');
-    return false;
-  }
-  return true;
-})
+// router.beforeEach(async(to,from)=>{
+//   var token = sessionStorage.getItem('accessToken');
+//   if (to.path == '/') {
+//     router.push('/trainer');
+//     return false;
+//   }
+//   return true;
+// })
 
 
-/*router.beforeEach(async (to, from) => {
+router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
@@ -108,6 +108,6 @@ router.beforeEach(async(to,from)=>{
     return false;
   }
 
-})*/
+})
 
 export default router

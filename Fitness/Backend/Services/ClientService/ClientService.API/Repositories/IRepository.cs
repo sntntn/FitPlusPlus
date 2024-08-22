@@ -8,6 +8,7 @@ namespace ClientService.API.Repositories
         Task<Client> GetClientById(string id);
         Task<IEnumerable<Client>> GetClientsByName(string name);
         Task<IEnumerable<Client>> GetClientsBySurname(string surname);
+        Task<Client> GetClientByEmail(string email);
         Task CreateClient(Client client);
         Task<bool> UpdateClient(Client client);
         Task<bool> DeleteClient(string id);

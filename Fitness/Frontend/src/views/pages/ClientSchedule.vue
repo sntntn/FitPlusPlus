@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="date-navigation">
-      <button @click="changeWeek(-1)" :disabled="moveCounter == 0">&#9664;</button>
+      <button @click="changeWeek(-1)" :disabled= "moveCounter == 0">&#9664;</button>
       <span>{{ formattedStartDate }} - {{ formattedEndDate }}</span>
-      <button @click="changeWeek(1)" :disabled="moveCounter == 2">&#9654;</button>
+      <button @click="changeWeek(1)" :disabled= "moveCounter == 2">&#9654;</button>
     </div>
 
     <table class="schedule-table">
@@ -64,7 +64,7 @@
       async fetchEvents() {
         try {
           const weekId = this.getWeekId(this.currentDate);
-          const response = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.id);
+          const response = await dataServices.methods.get_client_week_schedule_by_id(weekId, this.$route.params.id);
           const data = response.data;
           console.log(data)
 
@@ -78,15 +78,15 @@
                   const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
 
             // Fetch client details for each slot
-                  const clientResponse = await dataServices.methods.get_client_by_id(slot.clientId);
-                  const client = clientResponse.data;
-                  const clientName = `${client.name} ${client.surname}`;
+                  const trainerResponse = await dataServices.methods.get_trainer_by_id(slot.trainerId);
+                  const trainer = trainerResponse.data;
+                  const trainerName = `${trainer.fullName}`;
 
                   for (let slotNumber = startSlot; slotNumber < endSlot; slotNumber++) {
                     events.push({
                     day,
                     timeSlot: slotNumber,
-                    name: clientName,
+                    name: trainerName,
                     type: `${slot.trainingType}`
                   });
                 }
@@ -130,7 +130,7 @@
         });
       },
       async changeWeek(direction) {
-
+        
         this.moveCounter += direction;
 
         this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + direction * 7));
@@ -146,7 +146,7 @@
     },
     mounted() {
       this.fetchEvents();
-      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
     }
   }
 </script>

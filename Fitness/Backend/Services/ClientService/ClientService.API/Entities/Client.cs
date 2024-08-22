@@ -11,6 +11,7 @@ namespace ClientService.API.Entities
         public string Name { get; set; }
         public string Surname { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public string Email { get; set; }
        
     }
 }

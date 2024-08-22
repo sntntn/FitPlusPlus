@@ -67,6 +67,15 @@ namespace ClientService.API.Controllers
             return Ok(results);
         }
 
+        [Route("[action]/{email}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Client>> GetClientByEmail(string email)
+        {
+            var result = await _repository.GetClientByEmail(email);
+            return Ok(result);
+        }
+
         //[Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(IEnumerable<Client>), StatusCodes.Status201Created)]

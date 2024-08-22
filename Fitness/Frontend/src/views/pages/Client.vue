@@ -138,6 +138,8 @@ export default {
   },
   mounted() {
     this.fetchTrainers();
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
+
   }
 }
 </script>
