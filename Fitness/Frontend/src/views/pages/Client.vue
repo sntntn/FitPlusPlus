@@ -30,7 +30,7 @@
           <CTableHeaderCell class="test">Training Types</CTableHeaderCell>
           <CTableHeaderCell class="test">Rating</CTableHeaderCell>
           <CTableHeaderCell class="test">Bio</CTableHeaderCell>
-          <CTableHeaderCell class="test">Reviews</CTableHeaderCell>
+          <CTableHeaderCell class="test">Actions</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
       <CTableBody>
@@ -45,8 +45,11 @@
             <span v-else @click="toggleBio(index)">{{ trainer.bio.substring(0, 30) }}...</span>
           </CTableDataCell>
           <CTableDataCell class="test">
-            <CButton color="light" class="px-3" @click="showReviews(trainer.id,trainer.fullName,trainer.reviews)">
+            <CButton style="margin-right: 10px" color="light" class="px-3" @click="showReviews(trainer.id,trainer.fullName,trainer.reviews)">
               View Reviews
+            </CButton>
+            <CButton color="light" class="px-3" @click="bookTraining(trainer.id)">
+              Book Training
             </CButton>
           </CTableDataCell>
         </CTableRow>
@@ -85,6 +88,9 @@ export default {
     };
   },
   methods: {
+    bookTraining(trainerId) {
+      this.$router.push(`/client/${this.$route.params.id}/schedule/${trainerId}`);
+    },
     getTrainingTypes(trainingTypes) {
       return trainingTypes.map(type => type.name).join(', ');
     },

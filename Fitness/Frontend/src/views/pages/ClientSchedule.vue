@@ -1,4 +1,17 @@
 <template>
+
+   <div v-if="enableBooking" style="margin-bottom: 45px; border-bottom: 1px solid black; display: flex; flex-direction: column; align-items: center;">
+  <h2>Book a training</h2>
+  <h3>Trainer name: {{ trainerData.name }}</h3>
+  <h5>Choose training type:</h5>
+  <CFormSelect v-model="selectedType" style="width: 20%; margin-bottom: 5px;">
+    <option value=""></option>
+    <option v-for="type in trainerData.trainingTypes" :key="type" :value="type">
+      {{ type }}
+    </option>
+  </CFormSelect>
+</div>
+
   <div>
     <div class="date-navigation">
       <button @click="changeWeek(-1)" :disabled= "moveCounter == 0">&#9664;</button>
@@ -36,7 +49,13 @@
       return {
         currentDate: new Date(),
         events: [],
-        moveCounter: 0
+        moveCounter: 0,
+        enableBooking: false,
+        selectedType: "",
+        trainerData: {
+          trainingTypes: [],
+          name: ""
+        }
       };
     },
     computed: {
@@ -147,6 +166,18 @@
     mounted() {
       this.fetchEvents();
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
+
+      const trainerId = this.$route.params.trainerId;
+      if(trainerId) {
+        this.enableBooking = true;
+        dataServices.methods.get_trainer_by_id(trainerId)
+          .then( (response) => {
+            this.trainerData.name = response.data.fullName;
+            this.trainerData.trainingTypes = response.data.trainingTypes.map(type => type.name + ' (' + type.duration + ')');
+          })
+        console.log('Booking');
+      }
+
     }
   }
 </script>

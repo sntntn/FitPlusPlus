@@ -42,6 +42,12 @@ const routes = [
       },
 
       {
+        path: '/client/:id/schedule/:trainerId',
+        name: 'Book Training',
+        component: () => import('@/views/pages/ClientSchedule.vue')
+      },
+
+      {
         path: '/trainer/:id/schedule',
         name: 'Trainer Schedule',
         component: () => import('@/views/pages/TrainerSchedule.vue')
