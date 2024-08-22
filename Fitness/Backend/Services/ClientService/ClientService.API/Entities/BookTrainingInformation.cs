@@ -3,6 +3,7 @@
     public class BookTrainingInformation
     {
         public string ClientId { get; set; }
+        public string TrainerName { get; set; }
         public string TrainerId { get; set; }
         public string TrainingType { get; set; }
         public TimeSpan Duration { get; set; }

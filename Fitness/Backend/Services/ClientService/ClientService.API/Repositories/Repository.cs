@@ -108,6 +108,7 @@ namespace ClientService.API.Repositories
                     dailySchedule[i].IsAvailable = false;
                     dailySchedule[i].TrainerId = bti.TrainerId;
                     dailySchedule[i].TrainingType = bti.TrainingType;
+                    dailySchedule[i].TrainerName = bti.TrainerName;
                 }
                 else
                 {

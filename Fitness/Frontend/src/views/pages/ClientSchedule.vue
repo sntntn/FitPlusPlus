@@ -1,22 +1,21 @@
 <template>
-
-   <div v-if="enableBooking" style="margin-bottom: 45px; border-bottom: 1px solid black; display: flex; flex-direction: column; align-items: center;">
-  <h2>Book a training</h2>
-  <h3>Trainer name: {{ trainerData.name }}</h3>
-  <h5>Choose training type:</h5>
-  <CFormSelect v-model="selectedType" style="width: 20%; margin-bottom: 5px;">
-    <option value=""></option>
-    <option v-for="type in trainerData.trainingTypes" :key="type" :value="type">
-      {{ type }}
-    </option>
-  </CFormSelect>
-</div>
+  <div v-if="enableBooking" style="margin-bottom: 45px; border-bottom: 1px solid black; display: flex; flex-direction: column; align-items: center;">
+    <h2>Book a training</h2>
+    <h3>Trainer name: {{ trainerData.name }}</h3>
+    <h5>Choose training type:</h5>
+    <CFormSelect v-model="selectedType" style="width: 20%; margin-bottom: 5px;">
+      <option value=""></option>
+      <option v-for="type in trainerData.trainingTypes" :key="type" :value="type">
+        {{ type }}
+      </option>
+    </CFormSelect>
+  </div>
 
   <div>
     <div class="date-navigation">
-      <button @click="changeWeek(-1)" :disabled= "moveCounter == 0">&#9664;</button>
+      <button @click="changeWeek(-1)" :disabled="moveCounter == 0">&#9664;</button>
       <span>{{ formattedStartDate }} - {{ formattedEndDate }}</span>
-      <button @click="changeWeek(1)" :disabled= "moveCounter == 2">&#9654;</button>
+      <button @click="changeWeek(1)" :disabled="moveCounter == 2">&#9654;</button>
     </div>
 
     <table class="schedule-table">
@@ -30,8 +29,14 @@
         <tr v-for="number in 48" :key="number">
           <!-- Only add the hour cell for every 4th row -->
           <td v-if="number % 4 === 1" :rowspan="4" style="font-size:8px; vertical-align: top">{{ calculateHour(number) }}</td>
-          <td v-for="day in weekDays" :key="day + number" class="time-slot" :class="{active:getEvent(day, number)}">
-            <div v-if="getEvent(day, number)">{{ getEvent(day, number).name }} - {{ getEvent(day, number).type }}</div>
+          <td v-for="day in weekDays"
+              :key="day + number"
+              class="time-slot"
+              :class="{ active: getEvent(day, number) }"
+              @click="bookTraining(day, number)">
+            <div v-if="getEvent(day, number)">
+              {{ getEvent(day, number).name }} - {{ getEvent(day, number).type }}
+            </div>
           </td>
         </tr>
       </tbody>
@@ -40,9 +45,9 @@
 </template>
 
 
+
 <script>
   import dataServices from '../../services/data_services';
-
 
   export default {
     data() {
@@ -68,7 +73,6 @@
         });
       },
       formattedStartDate() {
-        console.log("Usao u formattedStartDate");
         const startOfWeek = this.getStartOfWeek(this.currentDate);
         return this.formatDate(startOfWeek);
       },
@@ -85,7 +89,6 @@
           const weekId = this.getWeekId(this.currentDate);
           const response = await dataServices.methods.get_client_week_schedule_by_id(weekId, this.$route.params.id);
           const data = response.data;
-          console.log(data)
 
           if (data.dailySchedules) {
             const events = [];
@@ -96,25 +99,22 @@
                   const startSlot = this.timeToSlot(slot.startHour, slot.startMinute);
                   const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
 
-            // Fetch client details for each slot
-                  const trainerResponse = await dataServices.methods.get_trainer_by_id(slot.trainerId);
-                  const trainer = trainerResponse.data;
-                  const trainerName = `${trainer.fullName}`;
+                  const trainerName = slot.trainerName;
 
                   for (let slotNumber = startSlot; slotNumber < endSlot; slotNumber++) {
                     events.push({
-                    day,
-                    timeSlot: slotNumber,
-                    name: trainerName,
-                    type: `${slot.trainingType}`
-                  });
+                      day,
+                      timeSlot: slotNumber,
+                      name: trainerName,
+                      type: `${slot.trainingType}`
+                    });
+                  }
                 }
               }
             }
-          }
 
-          this.events = events;
-        } else {
+            this.events = events;
+          } else {
             console.error('Invalid data structure:', data);
           }
         } catch (error) {
@@ -149,9 +149,7 @@
         });
       },
       async changeWeek(direction) {
-        
         this.moveCounter += direction;
-
         this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + direction * 7));
         await this.fetchEvents();
       },
@@ -161,6 +159,45 @@
       calculateHour(number) {
         const hours = Math.floor((number - 1) / 4) + 8;
         return hours.toString() + ':00';
+      },
+      async bookTraining(day, timeSlot) {
+        if(!this.enableBooking)
+          return;
+
+        if (!this.selectedType) {
+          alert('Please select a training type before booking.');
+          return;
+        }
+
+        const startHour = Math.floor((timeSlot - 1) / 4) + 8;
+        const startMinute = ((timeSlot - 1) % 4) * 15;
+        const duration = this.selectedType.split('(')[1].split(')')[0];
+        const trainingType = this.selectedType.split(' (')[0];
+
+        const bookingData = {
+          clientId: this.$route.params.id,
+          trainerName: this.trainerData.name,
+          trainerId: this.$route.params.trainerId,
+          trainingType: trainingType,
+          duration: duration,
+          weekId: this.getWeekId(this.currentDate),
+          dayName: day,
+          startHour: startHour,
+          startMinute: startMinute,
+          isBooking: true
+        };
+
+        try {
+          const response = await dataServices.methods.booking(bookingData);
+          if (response.status === 200) {
+            this.fetchEvents();
+          } else {
+            alert('This time slot is already booked. Please choose other time.')
+          }
+        } catch (error) {
+          console.error('Error during booking:', error);
+          alert('Failed to book the training.');
+        }
       }
     },
     mounted() {
@@ -168,19 +205,18 @@
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
 
       const trainerId = this.$route.params.trainerId;
-      if(trainerId) {
+      if (trainerId) {
         this.enableBooking = true;
         dataServices.methods.get_trainer_by_id(trainerId)
-          .then( (response) => {
+          .then((response) => {
             this.trainerData.name = response.data.fullName;
-            this.trainerData.trainingTypes = response.data.trainingTypes.map(type => type.name + ' (' + type.duration + ')');
-          })
-        console.log('Booking');
+            this.trainerData.trainingTypes = response.data.trainingTypes.map(type => `${type.name} (${type.duration})`);
+          });
       }
-
     }
-  }
+  };
 </script>
+
 
 
 <style scoped>
