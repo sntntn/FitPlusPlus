@@ -32,9 +32,12 @@
           <td v-for="day in weekDays"
               :key="day + number"
               class="time-slot"
-              :class="{ active: getEvent(day, number) }"
+              :class="{ active: getEvent(day, number) && !getEvent(day, number).isBooked, booked: getEvent(day, number)?.isBooked }"
               @click="bookTraining(day, number)">
-            <div v-if="getEvent(day, number)">
+            <div v-if="getEvent(day,number)?.isBooked">
+              Reserved
+            </div>
+            <div v-else-if="getEvent(day, number)">
               {{ getEvent(day, number).name }} - {{ getEvent(day, number).type }}
             </div>
           </td>
@@ -53,13 +56,14 @@
     data() {
       return {
         currentDate: new Date(),
-        events: [],
+        clientEvents: [],
+        trainerEvents: [],
         moveCounter: 0,
         enableBooking: false,
         selectedType: "",
         trainerData: {
           trainingTypes: [],
-          name: ""
+          name: "",
         }
       };
     },
@@ -87,39 +91,62 @@
       async fetchEvents() {
         try {
           const weekId = this.getWeekId(this.currentDate);
-          const response = await dataServices.methods.get_client_week_schedule_by_id(weekId, this.$route.params.id);
-          const data = response.data;
 
-          if (data.dailySchedules) {
-            const events = [];
+          const clientScheduleResponse = await dataServices.methods.get_client_week_schedule_by_id(weekId, this.$route.params.id);
+          this.clientEvents = this.parseSchedule(clientScheduleResponse.data.dailySchedules,"client",weekId);
 
-            for (const [day, slots] of Object.entries(data.dailySchedules)) {
-              for (const slot of slots) {
-                if (!slot.isAvailable) {
-                  const startSlot = this.timeToSlot(slot.startHour, slot.startMinute);
-                  const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
+          if (this.enableBooking) {
+            const trainerScheduleResponse = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.trainerId);
+            this.trainerEvents = this.parseSchedule(trainerScheduleResponse.data.dailySchedules,"trainer",weekId);
+          }
 
-                  const trainerName = slot.trainerName;
-
-                  for (let slotNumber = startSlot; slotNumber < endSlot; slotNumber++) {
-                    events.push({
-                      day,
-                      timeSlot: slotNumber,
-                      name: trainerName,
-                      type: `${slot.trainingType}`
-                    });
+        } catch (error) {
+          console.error('Error fetching schedules:', error);
+        }
+      },
+      parseSchedule(dailySchedules,type,weekId) {
+        const events = [];
+        if (dailySchedules) {
+          for (const [day, slots] of Object.entries(dailySchedules)) {
+            for (const slot of slots) {
+              if (!slot.isAvailable) {
+                const startSlot = this.timeToSlot(slot.startHour, slot.startMinute);
+                const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
+                let eventDetails; 
+                if (type == "client") {
+                  eventDetails = {
+                    day,
+                    name: slot.trainerName,
+                    type: `${slot.trainingType}`,
+                    isBooked: false
+                  };
+                }
+                else if (type == "trainer") {
+                  eventDetails = {
+                    weekId,
+                    day,
+                    startHour: slot.startHour,
+                    startMinute: slot.startMinute,
+                    endHour: slot.endHour,
+                    endMinute: slot.endMinute,
+                    isBooked: true
                   }
+                }
+                for (let slotNumber = startSlot; slotNumber < endSlot; slotNumber++) {
+                  events.push({ ...eventDetails, timeSlot: slotNumber });
                 }
               }
             }
-
-            this.events = events;
-          } else {
-            console.error('Invalid data structure:', data);
           }
-        } catch (error) {
-          console.error('Error fetching events:', error);
         }
+        return events;
+      },
+      getEvent(day, timeSlot) {
+        return (
+          this.clientEvents.find(event => event.day === day && event.timeSlot === timeSlot) ||
+          this.trainerEvents.find(event => event.day === day && event.timeSlot === timeSlot) ||
+          null
+        );
       },
       getWeekId(date) {
         const startOfYear = new Date(date.getFullYear(), 0, 1);
@@ -127,6 +154,10 @@
         const weekNumber = Math.ceil((daysBetween + startOfYear.getDay() + 1) / 7) + 1;
 
         return weekNumber - this.getWeekNumber(new Date());
+      },
+      parseDuration(duration) {
+        const [hours, minutes] = duration.split(':').map(Number);
+        return { hours, minutes };
       },
       getWeekNumber(date) {
         const startOfYear = new Date(date.getFullYear(), 0, 1);
@@ -153,12 +184,19 @@
         this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + direction * 7));
         await this.fetchEvents();
       },
-      getEvent(day, timeSlot) {
-        return this.events.find(event => event.day === day && event.timeSlot === timeSlot);
-      },
       calculateHour(number) {
         const hours = Math.floor((number - 1) / 4) + 8;
         return hours.toString() + ':00';
+      },
+      isSlotOverlapping(existingSlots, newSlot) {
+        return existingSlots.some(slot => {
+          return (
+            newSlot.weekId === slot.weekId &&
+            (newSlot.day === slot.day) &&
+            (newSlot.startHour < slot.endHour || (newSlot.startHour === slot.endHour && newSlot.startMinute < slot.endMinute)) &&
+            (newSlot.endHour > slot.startHour || (newSlot.endHour === slot.startHour && newSlot.endMinute > slot.startMinute))
+          );
+        });
       },
       async bookTraining(day, timeSlot) {
         if(!this.enableBooking)
@@ -169,10 +207,29 @@
           return;
         }
 
+        const event = this.getEvent(day, timeSlot);
+
         const startHour = Math.floor((timeSlot - 1) / 4) + 8;
         const startMinute = ((timeSlot - 1) % 4) * 15;
         const duration = this.selectedType.split('(')[1].split(')')[0];
         const trainingType = this.selectedType.split(' (')[0];
+        const { hours: durationHours, minutes: durationMinutes } = this.parseDuration(duration);
+        const endHour = startHour + durationHours + Math.floor((startMinute + durationMinutes) / 60);
+        const endMinute = (startMinute + durationMinutes) % 60;
+
+        const newSlot = {
+          weekId: this.getWeekId(this.currentDate),
+          day: day,
+          startHour: startHour,
+          startMinute: startMinute,
+          endHour: endHour,
+          endMinute: endMinute
+        };
+
+        if (this.isSlotOverlapping(this.trainerEvents, newSlot)) {
+          alert('The new training time overlaps with an existing booking. Please choose another time.');
+          return;
+        }
 
         const bookingData = {
           clientId: this.$route.params.id,
@@ -192,7 +249,7 @@
           if (response.status === 200) {
             this.fetchEvents();
           } else {
-            alert('This time slot is already booked. Please choose other time.')
+            alert('It is too late for that training.')
           }
         } catch (error) {
           console.error('Error during booking:', error);
@@ -203,7 +260,7 @@
     mounted() {
       this.fetchEvents();
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
-
+      const weekId = this.getWeekId(this.currentDate);
       const trainerId = this.$route.params.trainerId;
       if (trainerId) {
         this.enableBooking = true;
@@ -276,5 +333,9 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  .time-slot.booked {
+    background-color: #FF0000;
+    color: white;
   }
 </style>
