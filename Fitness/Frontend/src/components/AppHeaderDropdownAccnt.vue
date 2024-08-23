@@ -21,7 +21,8 @@ export default {
   },
   methods: {
     logout: function() {
-      
+      sessionStorage.setItem("accessToken", null);
+      this.$router.push('/login');
     }
   }
 }

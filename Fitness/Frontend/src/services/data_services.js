@@ -39,6 +39,11 @@ export default {
           return axios.post(REGISTER_URL + role, data, { headers });
         },
 
+        add_client(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${CLIENT}/api/v1/Client`, request);
+        },
+
         parse_access_token(access_token) {
           const at_parts = access_token.split('.');
           const payload_string = at_parts[1];

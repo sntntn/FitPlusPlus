@@ -139,8 +139,24 @@ export default {
 
         dataServices.methods.register(this.firstname, this.lastname, this.username, this.password, this.email, this.phonenumber, this.role)
           .then( (response) => {
-              if(response.status >= 200 && response.status < 300)
+              if(response.status >= 200 && response.status < 300) {
+                
+                if(this.role == 'Client') {
+                  var request = {
+                    id: "",
+                    name: this.firstname,
+                    surname: this.lastname,
+                    email: this.email
+                  };
+
+                  dataServices.methods.add_client(request)
+                    .then( (response) => {
+                      console.log('Dodat klijent');
+                    });
+                }
+                
                 this.showSuccessModal = true;
+              }
               else
                 this.showFailModal = true;  
           })
