@@ -44,13 +44,15 @@
             <span v-if="isBioExpanded[index]">{{ trainer.bio }}</span>
             <span v-else @click="toggleBio(index)">{{ trainer.bio.substring(0, 30) }}...</span>
           </CTableDataCell>
-          <CTableDataCell class="test">
-            <CButton style="margin-right: 10px" color="light" class="px-3" @click="showReviews(trainer.id,trainer.fullName,trainer.reviews)">
-              View Reviews
-            </CButton>
-            <CButton color="light" class="px-3" @click="bookTraining(trainer.id)">
-              Book Training
-            </CButton>
+          <CTableDataCell class="test action-column">
+            <div class="action-buttons">
+              <CButton class="px-3 btn" color="light" @click="showReviews(trainer.id, trainer.fullName, trainer.reviews)">
+                View reviews
+              </CButton>
+              <CButton class="px-3 btn" color="light" @click="bookTraining(trainer.id)">
+                Book training
+              </CButton>
+            </div>
           </CTableDataCell>
         </CTableRow>
       </CTableBody>
@@ -164,6 +166,18 @@ export default {
 
   .action-column {
     width: 140px;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .action-buttons .btn {
+    font-size: 15px; 
+    padding: 2px 5px; 
+    min-width: 60px; 
   }
 
   .filter-container {

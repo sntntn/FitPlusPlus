@@ -66,7 +66,27 @@ namespace ClientService.API.Repositories
             var clientSchedule = await GetClientScheduleByClientId(clientId);
             return clientSchedule?.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == weekId);
         }
-        
+
+        public async Task<IEnumerable<string>> GetTrainerIdsFromClientSchedule(string clientId)
+        {
+            var clientSchedule = await GetClientScheduleByClientId(clientId);
+
+            if (clientSchedule == null)
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            // Assuming `clientSchedule` contains a collection of training slots
+            var trainerIds = clientSchedule.WeeklySchedules
+                .SelectMany(ws => ws.DailySchedules.Values)
+                .SelectMany(dayList => dayList)
+                .Select(si => si.TrainerId)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct();
+
+            return trainerIds;
+        }
+
         public async Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule)
         {
             var result = await _context.ClientSchedules.ReplaceOneAsync(cs => cs.ClientId == clientSchedule.ClientId, clientSchedule, new ReplaceOptions { IsUpsert = true });

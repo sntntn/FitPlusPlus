@@ -166,13 +166,31 @@
         this.showAddReviewForm = !this.showAddReviewForm;
       },
       addReview(trainerId) {
-        this.newReview.trainerId = trainerId;
-        this.newReview.clientId = this.$route.params.id;
-        dataServices.methods.add_review(this.newReview).then(() => {
-          this.fetchReviews();
-          this.newReview = { comment: '', rating: 0 };
-          this.showAddReviewForm = false;
-          this.$emit('review-added');
+        const clientId = this.$route.params.id;
+        dataServices.methods.get_schedule_trainers_by_client_id(clientId).
+        then((response) => {
+          const trainerIds = response.data;
+          const trainerExists = trainerIds.includes(trainerId);
+
+          if (!trainerExists) {
+            alert("You cannot add a review for a trainer that is not in your schedule.");
+            return;
+          }
+          this.newReview.trainerId = trainerId;
+          this.newReview.clientId = clientId;
+        
+          dataServices.methods.add_review(this.newReview).then(() => {
+            this.fetchReviews();
+            this.newReview = { comment: '', rating: 0 };
+            this.showAddReviewForm = false;
+            this.$emit('review-added');
+          }).catch(error => {
+            console.error("Error adding review: ", error);
+            alert("An error occurred while adding the review.");
+          });
+        }).catch(error => {
+          console.error("Error fetching client trainers: ", error);
+          alert("An error occurred while checking the trainer.");
         });
       },
       cancelAddReview() {

@@ -5,7 +5,7 @@ export function generateTrainerNav(id) {
       component: 'CNavItem',
       name: 'Home Page',
       to: `/trainer/${id}`,
-      icon: 'cil-menu'
+      icon: 'cil-user'
     },
     {
       component: 'CNavItem',
@@ -22,7 +22,7 @@ export function generateClientNav(id) {
       component: 'CNavItem',
       name: 'Home Page',
       to: `/client/${id}`,
-      icon: 'cil-menu'
+      icon: 'cil-user'
     },
     {
       component: 'CNavItem',

@@ -158,5 +158,9 @@ export default {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.get(`${CLIENT}/api/v1/Client/${cli_id}`);
         },
+        get_schedule_trainers_by_client_id(cli_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${CLIENT}/api/v1/Client/GetTrainerIdsFromClientSchedule/${cli_id}`);
+        },
     }
 }

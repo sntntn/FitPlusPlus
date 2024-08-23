@@ -141,6 +141,20 @@ namespace ClientService.API.Controllers
             return Ok(result);
         }
 
+        [Route("[action]/{clientId}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<String>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<string>>> GetTrainerIdsFromClientSchedule(string clientId)
+        {
+            var result = await _repository.GetTrainerIdsFromClientSchedule(clientId);
+            if (result == null || !result.Any())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
         //[Authorize(Roles = "Client")]
         [Route("[action]")]
         [HttpPut]
