@@ -93,18 +93,18 @@
           const weekId = this.getWeekId(this.currentDate);
 
           const clientScheduleResponse = await dataServices.methods.get_client_week_schedule_by_id(weekId, this.$route.params.id);
-          this.clientEvents = this.parseSchedule(clientScheduleResponse.data.dailySchedules,"client",weekId);
+          this.clientEvents = this.parseSchedule(clientScheduleResponse.data.dailySchedules, "client", weekId);
 
           if (this.enableBooking) {
             const trainerScheduleResponse = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.trainerId);
-            this.trainerEvents = this.parseSchedule(trainerScheduleResponse.data.dailySchedules,"trainer",weekId);
+            this.trainerEvents = this.parseSchedule(trainerScheduleResponse.data.dailySchedules, "trainer", weekId);
           }
 
         } catch (error) {
           console.error('Error fetching schedules:', error);
         }
       },
-      parseSchedule(dailySchedules,type,weekId) {
+      parseSchedule(dailySchedules, type, weekId) {
         const events = [];
         if (dailySchedules) {
           for (const [day, slots] of Object.entries(dailySchedules)) {
@@ -112,7 +112,7 @@
               if (!slot.isAvailable) {
                 const startSlot = this.timeToSlot(slot.startHour, slot.startMinute);
                 const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
-                let eventDetails; 
+                let eventDetails;
                 if (type == "client") {
                   eventDetails = {
                     day,
@@ -198,12 +198,27 @@
           );
         });
       },
+      getDateFromDay(day) {
+        const startOfWeek = this.getStartOfWeek(this.currentDate);
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const dayIndex = daysOfWeek.indexOf(day);
+        const date = new Date(startOfWeek);
+        date.setDate(date.getDate() + dayIndex);
+        console.log(date);
+        return date;
+      },
       async bookTraining(day, timeSlot) {
-        if(!this.enableBooking)
+        if (!this.enableBooking)
           return;
 
         if (!this.selectedType) {
           alert('Please select a training type before booking.');
+          return;
+        }
+
+        const eventDate = this.getDateFromDay(day);
+        if (eventDate < new Date()) {
+          alert('Cannot book a training for a past date.');
           return;
         }
 
@@ -334,6 +349,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+
   .time-slot.booked {
     background-color: #FF0000;
     color: white;
