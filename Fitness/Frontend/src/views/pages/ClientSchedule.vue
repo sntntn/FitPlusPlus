@@ -100,6 +100,8 @@
             this.trainerEvents = this.parseSchedule(trainerScheduleResponse.data.dailySchedules, "trainer", weekId);
           }
 
+          console.log(this.clientEvents);
+
         } catch (error) {
           console.error('Error fetching schedules:', error);
         }
@@ -115,10 +117,21 @@
                 let eventDetails;
                 if (type == "client") {
                   eventDetails = {
+                    weekId,
                     day,
+                    startHour: slot.startHour,
+                    startMinute: slot.startMinute,
+                    endHour: slot.endHour,
+                    endMinute: slot.endMinute,
                     name: slot.trainerName,
                     type: `${slot.trainingType}`,
-                    isBooked: false
+                    isBooked: false,
+                    trainingStartHour: slot.trainingStartHour,
+                    trainingStartMinute: slot.trainingStartMinute,
+                    trainingDuration: slot.trainingDuration,
+                    trainerId: slot.trainerId,
+                    trainerName: slot.trainerName,
+                    trainingType: slot.trainingType
                   };
                 }
                 else if (type == "trainer") {
@@ -149,11 +162,7 @@
         );
       },
       getWeekId(date) {
-        const startOfYear = new Date(date.getFullYear(), 0, 1);
-        const daysBetween = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
-        const weekNumber = Math.ceil((daysBetween + startOfYear.getDay() + 1) / 7) + 1;
-
-        return weekNumber - this.getWeekNumber(new Date());
+        return this.moveCounter + 1;
       },
       parseDuration(duration) {
         const [hours, minutes] = duration.split(':').map(Number);
@@ -189,6 +198,10 @@
         return hours.toString() + ':00';
       },
       isSlotOverlapping(existingSlots, newSlot) {
+
+        console.log(existingSlots);
+        console.log(newSlot);
+
         return existingSlots.some(slot => {
           return (
             newSlot.weekId === slot.weekId &&
@@ -207,9 +220,55 @@
         console.log(date);
         return date;
       },
-      async bookTraining(day, timeSlot) {
-        if (!this.enableBooking)
+      async cancelBooking(day, timeSlot) {
+        const eventDate = this.getDateFromDay(day);
+        if (eventDate < new Date()) {
+          alert('Cannot cancel a training for a past date.');
           return;
+        }
+
+        const event = this.getEvent(day, timeSlot);
+        if(event == null)
+          return;
+
+        var startHour = event.trainingStartHour;
+        const startMinute = event.trainingStartMinute;
+        var duration = event.trainingDuration;
+      
+        console.log(event);
+
+        const bookingData = {
+          clientId: this.$route.params.id,
+          trainerName: event.trainerName,
+          trainerId: event.trainerId,
+          trainingType: event.trainingType,
+          duration: duration,
+          weekId: this.getWeekId(this.currentDate),
+          dayName: day,
+          startHour: startHour,
+          startMinute: startMinute,
+          isBooking: false
+        };
+
+        try {
+          const response = await dataServices.methods.booking(bookingData);
+          if (response.status === 200) {
+            this.fetchEvents();
+          } else {
+            alert('Unable to cancel training!')
+          }
+        } catch (error) {
+          console.error('Error during booking:', error);
+          alert('Failed to cancel the training.');
+        }
+
+      },
+
+      async bookTraining(day, timeSlot) {
+        if (!this.enableBooking) {
+          this.cancelBooking(day, timeSlot);
+          return;
+        }
 
         if (!this.selectedType) {
           alert('Please select a training type before booking.');
@@ -224,9 +283,9 @@
 
         const event = this.getEvent(day, timeSlot);
 
-        const startHour = Math.floor((timeSlot - 1) / 4) + 8;
+        var startHour = Math.floor((timeSlot - 1) / 4) + 8;
         const startMinute = ((timeSlot - 1) % 4) * 15;
-        const duration = this.selectedType.split('(')[1].split(')')[0];
+        var duration = this.selectedType.split('(')[1].split(')')[0];
         const trainingType = this.selectedType.split(' (')[0];
         const { hours: durationHours, minutes: durationMinutes } = this.parseDuration(duration);
         const endHour = startHour + durationHours + Math.floor((startMinute + durationMinutes) / 60);
@@ -241,7 +300,7 @@
           endMinute: endMinute
         };
 
-        if (this.isSlotOverlapping(this.trainerEvents, newSlot)) {
+        if (this.isSlotOverlapping(this.trainerEvents, newSlot) || this.isSlotOverlapping(this.clientEvents, newSlot)) {
           alert('The new training time overlaps with an existing booking. Please choose another time.');
           return;
         }

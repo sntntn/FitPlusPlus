@@ -129,12 +129,16 @@ namespace ClientService.API.Repositories
                     dailySchedule[i].TrainerId = bti.TrainerId;
                     dailySchedule[i].TrainingType = bti.TrainingType;
                     dailySchedule[i].TrainerName = bti.TrainerName;
+                    dailySchedule[i].TrainingStartHour = bti.StartHour;
+                    dailySchedule[i].TrainingDuration = bti.Duration;
+                    dailySchedule[i].TrainingStartMinute = bti.StartMinute;
                 }
                 else
                 {
                     dailySchedule[i].IsAvailable = true;
                     dailySchedule[i].TrainerId = "";
                     dailySchedule[i].TrainingType = "";
+                    dailySchedule[i].TrainingStartHour = -1;
                 }
             }
 
