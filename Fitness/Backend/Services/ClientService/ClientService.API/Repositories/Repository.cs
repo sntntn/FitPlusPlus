@@ -146,6 +146,26 @@ namespace ClientService.API.Repositories
             
             return true;
         }
+        public async Task CancelledTrainingByTrainer(CancelTrainingInformation cti)
+        {
+            //obavlja se validacija na frontu
+            var clientSchedule = await GetClientScheduleByClientId(cti.ClientId);
+            var weeklySchedule = clientSchedule.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == cti.WeekId);
+            weeklySchedule.DailySchedules.TryGetValue(cti.DayName, out var dailySchedule);
+            
+            int numberOfCells = (int)cti.Duration.TotalMinutes / 15;
+            var startSlotIndex = dailySchedule.FindIndex(slot => slot.StartHour == cti.StartHour && slot.StartMinute == cti.StartMinute);
+           
+            for (int i = startSlotIndex; i < startSlotIndex + numberOfCells; i++)
+            {
+                dailySchedule[i].IsAvailable = true;
+                dailySchedule[i].TrainerId = "";
+                dailySchedule[i].TrainingType = "";
+                dailySchedule[i].TrainingStartHour = -1;
+            }
+
+            await UpdateClientSchedule(clientSchedule);
+        }
 
     }
 }

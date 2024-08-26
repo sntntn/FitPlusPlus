@@ -203,8 +203,8 @@ namespace TrainerService.API.Controllers
             if (result)
             {
                 //send to client
-                //var eventMessage = _mapper.Map<TrainerCancellingTrainingEvent>(cti);
-                //await _publishEndpoint.Publish(eventMessage);
+                var eventMessage = _mapper.Map<TrainerCancellingTrainingEvent>(cti);
+                await _publishEndpoint.Publish(eventMessage);
                 return Ok();
             }
             return BadRequest();

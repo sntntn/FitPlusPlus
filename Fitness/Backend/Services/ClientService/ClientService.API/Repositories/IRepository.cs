@@ -18,5 +18,6 @@ namespace ClientService.API.Repositories
         Task<IEnumerable<string>> GetTrainerIdsFromClientSchedule(string clientId);
         Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule);
         Task<bool> BookTraining(BookTrainingInformation bti);
+        Task CancelledTrainingByTrainer(CancelTrainingInformation cti);
     }
 }
