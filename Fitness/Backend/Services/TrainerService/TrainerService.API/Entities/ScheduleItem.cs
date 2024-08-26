@@ -16,6 +16,9 @@ namespace TrainerService.API.Entities
         public string TrainingType { get; set; }
         public bool IsAvailable { get; set; }
         public string ClientId { get; set; }
+        public TimeSpan TrainingDuration { get; set; }
+        public int TrainingStartHour { get; set; }
+        public int TrainingStartMinute { get; set; }
 
         public ScheduleItem(TimeSpan startTime, TimeSpan endTime, bool isAvailable)
         {

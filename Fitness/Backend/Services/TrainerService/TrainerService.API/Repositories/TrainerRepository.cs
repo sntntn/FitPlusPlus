@@ -87,12 +87,16 @@ namespace TrainerService.API.Repositories
                     dailySchedule[i].IsAvailable = false;
                     dailySchedule[i].ClientId = bti.ClientId;
                     dailySchedule[i].TrainingType = bti.TrainingType;
+                    dailySchedule[i].TrainingDuration = bti.Duration;
+                    dailySchedule[i].TrainingStartHour = bti.StartHour;
+                    dailySchedule[i].TrainingStartMinute = bti.StartMinute;
                 }
                 else
                 {
                     dailySchedule[i].IsAvailable = true;
                     dailySchedule[i].ClientId = "";
                     dailySchedule[i].TrainingType = "";
+                    dailySchedule[i].TrainingStartHour = -1;
                 }
             }
             await UpdateTrainerSchedule(trainerSchedule);
