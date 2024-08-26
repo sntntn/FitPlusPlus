@@ -27,6 +27,7 @@ builder.Services.AddAutoMapper(configuration =>
     configuration.CreateMap<GetReviewsResponse, ReviewType>().ReverseMap();
     configuration.CreateMap<GetReviewsResponse.Types.ReviewReply, ReviewType>().ReverseMap();
     configuration.CreateMap<BookTrainingInformation, BookTrainingEvent>().ReverseMap();
+    configuration.CreateMap<TrainerCancellingTrainingEvent, CancelTrainingInformation>().ReverseMap();
 });
 
 //EventBus

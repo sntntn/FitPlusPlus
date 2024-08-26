@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using EventBus.Messages.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -17,14 +19,18 @@ namespace TrainerService.API.Controllers
         private readonly ITrainerRepository _repository;
         private readonly ReviewGrpcService _reviewGrpcService;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-
-        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper)
+        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _reviewGrpcService = reviewGrpcService ?? throw new ArgumentNullException(nameof(reviewGrpcService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
+
+
+
 
         //[Authorize(Roles = "Admin, Client")]
         [HttpGet]
@@ -184,6 +190,24 @@ namespace TrainerService.API.Controllers
                 return NotFound();
             }
             return Ok(result);
+        }
+
+        //[Authorize(Roles = "Trainer")]
+        [Route("[action]")]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CancelTraining([FromBody] CancelTrainingInformation cti)
+        {
+            var result = await _repository.CancelTraining(cti);
+            if (result)
+            {
+                //send to client
+                //var eventMessage = _mapper.Map<TrainerCancellingTrainingEvent>(cti);
+                //await _publishEndpoint.Publish(eventMessage);
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }

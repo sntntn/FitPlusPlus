@@ -22,5 +22,6 @@ namespace TrainerService.API.Repositories
         Task<WeeklySchedule> GetTrainerWeekSchedule(string trainerId, int weekId);
         Task<bool> UpdateTrainerSchedule(TrainerSchedule trainerSchedule);
         Task BookTraining(BookTrainingInformation bti);
+        Task<bool> CancelTraining(CancelTrainingInformation cti);
     }
 }

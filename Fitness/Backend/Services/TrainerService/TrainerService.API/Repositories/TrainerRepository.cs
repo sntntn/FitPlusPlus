@@ -75,7 +75,7 @@ namespace TrainerService.API.Repositories
         {
             var trainerSchedule = await GetTrainerScheduleByTrainerId(bti.TrainerId);
             var weeklySchedule = trainerSchedule.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == bti.WeekId);
-            //neki exception?
+            //provereno na frontu da moze da se zakaze
             weeklySchedule.DailySchedules.TryGetValue(bti.DayName, out var dailySchedule);
 
             int numberOfCells = (int)bti.Duration.TotalMinutes / 15;
@@ -96,6 +96,43 @@ namespace TrainerService.API.Repositories
                 }
             }
             await UpdateTrainerSchedule(trainerSchedule);
+        }
+
+        public async Task<bool> CancelTraining(CancelTrainingInformation cti)
+        {
+            var trainerSchedule = await GetTrainerScheduleByTrainerId(cti.TrainerId);
+            if(trainerSchedule == null)
+            {
+                return false;
+            }
+
+            var weeklySchedule = trainerSchedule.WeeklySchedules.FirstOrDefault(ws => ws.WeekId == cti.WeekId);
+            if(weeklySchedule == null)
+            {
+                return false;
+            }
+
+            if (!weeklySchedule.DailySchedules.TryGetValue(cti.DayName, out var dailySchedule))
+            {
+                return false;
+            }
+
+            int numberOfCells = (int)cti.Duration.TotalMinutes / 15;
+
+            var startSlotIndex = dailySchedule.FindIndex(slot => slot.StartHour == cti.StartHour && slot.StartMinute == cti.StartMinute);
+            if (startSlotIndex == -1 || startSlotIndex + numberOfCells > dailySchedule.Count)
+                return false;
+            for (int i = startSlotIndex; i < startSlotIndex + numberOfCells; i++)
+            {
+                dailySchedule[i].IsAvailable = true;
+                dailySchedule[i].ClientId = "";
+                dailySchedule[i].TrainingType = "";
+                //dailySchedule[i].TrainingStartHour = -1;
+            }
+
+            await UpdateTrainerSchedule(trainerSchedule);
+
+            return true;
         }
     }
 }
