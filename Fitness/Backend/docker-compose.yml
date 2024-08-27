@@ -9,6 +9,9 @@ services:
 
   reviewdb:
     image: mongo
+
+  paymentdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -42,9 +45,17 @@ services:
       context: .
       dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
 
+  paymentservice.api:
+    image: ${DOCKER_REGISTRY-}paymentserviceapi
+    build:
+      context: .
+      dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
+  paymentmongo_data:
   mssql_data:
+
 

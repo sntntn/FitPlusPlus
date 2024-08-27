@@ -23,6 +23,14 @@ services:
       - 27018:27017
     volumes:
       - reviewmongo_data:/data/db
+ 
+  paymentdb:
+    container_name: paymentdb
+    restart: always
+    ports:
+      - 27020:27017
+    volumes:
+      - paymentmongo_data:/data/db
   
   rabbitmq:
     container_name: rabbitmq
@@ -96,3 +104,16 @@ services:
       - reviewdb
     ports:
       - "8002:8080"
+
+  paymentservice.api:
+    container_name: paymentservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://paymentdb:27017"
+      - PAYPAL_CLIENT_ID="PayPalSettings:ClientId"
+      - PAYPAL_CLIENT_SECRET="PayPalSettings:ClientSecret"
+    depends_on:
+      - paymentdb
+    ports:
+      - "8003:8080"
+

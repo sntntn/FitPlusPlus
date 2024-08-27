@@ -7,7 +7,8 @@
         "trainerservice.api": "StartDebugging",
         "clientservice.api": "StartDebugging",
         "reviewservice.api": "StartDebugging",
-        "reviewservice.grpc": "StartDebugging"
+        "reviewservice.grpc": "StartDebugging",
+        "paymentservice.api": "StartDebugging"
       }
     }
   }
