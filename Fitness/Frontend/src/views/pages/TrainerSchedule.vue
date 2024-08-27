@@ -17,7 +17,7 @@
         <tr v-for="number in 48" :key="number">
           <!-- Only add the hour cell for every 4th row -->
           <td v-if="number % 4 === 1" :rowspan="4" style="font-size:8px; vertical-align: top">{{ calculateHour(number) }}</td>
-          <td v-for="day in weekDays" :key="day + number" class="time-slot" :class="{active:getEvent(day, number)}">
+          <td v-for="day in weekDays" :key="day + number" class="time-slot" :class="{active:getEvent(day, number)}" @click="cancelBooking(day, number)">
             <div v-if="getEvent(day, number)">{{ getEvent(day, number).name }} - {{ getEvent(day, number).type }}</div>
           </td>
         </tr>
@@ -87,7 +87,13 @@
                     day,
                     timeSlot: slotNumber,
                     name: clientName,
-                    type: `${slot.trainingType}`
+                    type: `${slot.trainingType}`,
+                    trainingDuration: slot.trainingDuration,
+                    trainingStartHour: slot.trainingStartHour,
+                    trainingStartMinute: slot.trainingStartMinute,
+                    clientId: slot.clientId,
+                    clientName: slot.clientName,
+                    trainingType: slot.trainingType
                   });
                 }
               }
@@ -103,11 +109,7 @@
         }
       },
       getWeekId(date) {
-        const startOfYear = new Date(date.getFullYear(), 0, 1);
-        const daysBetween = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
-        const weekNumber = Math.ceil((daysBetween + startOfYear.getDay() + 1) / 7) + 1;
-
-        return weekNumber - this.getWeekNumber(new Date());
+        return this.moveCounter + 1;
       },
       getWeekNumber(date) {
         const startOfYear = new Date(date.getFullYear(), 0, 1);
@@ -137,13 +139,63 @@
         await this.fetchEvents();
       },
       getEvent(day, timeSlot) {
-        return this.events.find(event => event.day === day && event.timeSlot === timeSlot);
+        return this.events.find(event => event.day === day && event.timeSlot === timeSlot) || null;
       },
       calculateHour(number) {
         const hours = Math.floor((number - 1) / 4) + 8;
         return hours.toString() + ':00';
-      }
+      },
+      getDateFromDay(day) {
+        const startOfWeek = this.getStartOfWeek(this.currentDate);
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const dayIndex = daysOfWeek.indexOf(day);
+        const date = new Date(startOfWeek);
+        date.setDate(date.getDate() + dayIndex);
+        return date;
+      },
+      async cancelBooking(day, timeSlot) {
+        const eventDate = this.getDateFromDay(day);
+        if (eventDate < new Date()) {
+          alert('Cannot cancel a training for a past date.');
+          return;
+        }
+
+        const event = this.getEvent(day, timeSlot);
+        if(event == null)
+          return;
+
+        var startHour = event.trainingStartHour;
+        const startMinute = event.trainingStartMinute;
+        var duration = event.trainingDuration;
+
+        console.log(event);
+
+        const bookingData = {
+          clientId: event.clientId,
+          trainerId: this.$route.params.id,
+          trainingType: event.trainingType,
+          duration: duration,
+          weekId: this.getWeekId(this.currentDate),
+          dayName: day,
+          startHour: startHour,
+          startMinute: startMinute,
+        };
+
+        try {
+          const response = await dataServices.methods.cancelBooking(bookingData);
+          if (response.status === 200) {
+            this.fetchEvents();
+          } else {
+            alert('Unable to cancel training!')
+          }
+        } catch (error) {
+          console.error('Error during booking:', error);
+          alert('Failed to cancel the training.');
+        }
+
+      },
     },
+    
     mounted() {
       this.fetchEvents();
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");

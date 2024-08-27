@@ -124,6 +124,11 @@ export default {
           return axios.put(`${CLIENT}/api/v1/Client/BookTraining`, request);
         },
 
+        cancelBooking(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.put(`${TRAINERS}/api/v1/Trainer/CancelTraining`, request);
+        },
+
         add_review(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.post(`${REVIEW}/api/v1/Review`, request);

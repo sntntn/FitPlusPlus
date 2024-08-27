@@ -11,7 +11,6 @@ namespace TrainerService.API.Data
             var database = client.GetDatabase("TrainerDB");
 
             Trainers = database.GetCollection<Trainer>("Trainers");
-            TrainerContextSeed.SeedData(Trainers);
 
             TrainerSchedules = database.GetCollection<TrainerSchedule>("TrainerSchedules");
         }
