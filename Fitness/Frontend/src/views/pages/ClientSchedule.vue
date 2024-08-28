@@ -98,8 +98,12 @@
           if (this.enableBooking) {
             const trainerScheduleResponse = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.trainerId);
             this.trainerEvents = this.parseSchedule(trainerScheduleResponse.data.dailySchedules, "trainer", weekId);
+            console.log(this.trainerEvents);
+            console.log('iffff');
           }
 
+          console.log('aaaaaa');
+          console.log(this.trainerEvents);
           console.log(this.clientEvents);
 
         } catch (error) {
@@ -199,9 +203,6 @@
       },
       isSlotOverlapping(existingSlots, newSlot) {
 
-        console.log(existingSlots);
-        console.log(newSlot);
-
         return existingSlots.some(slot => {
           return (
             newSlot.weekId === slot.weekId &&
@@ -264,6 +265,33 @@
 
       },
 
+      async initiatePayment(bookingData){
+        try{
+          const request = {
+            id: "",
+            userId: bookingData.clientId,
+            amount: 100,
+            currency: "USD",
+            trainerPayPalEmail: "trener1@gmail.com"
+          };
+          const response = await dataServices.methods.create_payment(request);
+          const paymentId = response.data.payment.id;
+          console.log("PaymentID:",paymentId);
+
+          console.log(response);
+          const approvalUrl = response.data.paymentLink;
+
+          window.location.href = approvalUrl;
+          return true;
+        } catch(error){
+
+          console.error('Error initiating payment:',error);
+          alert('Failed to initiate payment');
+          return false;
+        }
+
+      },
+
       async bookTraining(day, timeSlot) {
         if (!this.enableBooking) {
           this.cancelBooking(day, timeSlot);
@@ -318,20 +346,14 @@
           isBooking: true
         };
 
-        try {
-          const response = await dataServices.methods.booking(bookingData);
-          if (response.status === 200) {
-            this.fetchEvents();
-          } else {
-            alert('It is too late for that training.')
-          }
-        } catch (error) {
-          console.error('Error during booking:', error);
-          alert('Failed to book the training.');
-        }
+        sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+        const payment_response = await this.initiatePayment(bookingData);
+        
       }
     },
     mounted() {
+      
+      console.log('mounted');
       this.fetchEvents();
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
       const weekId = this.getWeekId(this.currentDate);

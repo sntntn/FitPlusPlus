@@ -44,14 +44,15 @@ namespace PaymentService.API.Controllers
         [ProducesResponseType(typeof(Payment), StatusCodes.Status201Created)]
         public async Task<ActionResult<Payment>> CreatePayment([FromBody] Payment payment)
         { 
-            var paymentLink = await _payPalClient.CreatePaymentAsync(payment.Amount, payment.Currency, payment.TrainerPayPalEmail);
+            payment.Status = PaymentStatus.Pending;
+            payment.PaymentDate = DateTime.UtcNow;
+            await _paymentRepository.CreatePaymentAsync(payment);
+
+            var paymentLink = await _payPalClient.CreatePaymentAsync(payment.Amount, payment.Currency, payment.TrainerPayPalEmail, payment.Id);
             if (string.IsNullOrEmpty(paymentLink))
             {
                 return BadRequest("Failed to create payment.");
             }
-            payment.Status = PaymentStatus.Pending;
-            payment.PaymentDate = DateTime.UtcNow;
-            await _paymentRepository.CreatePaymentAsync(payment);
 
             var paymentUrl = Url.Link("GetPayment", new { id = payment.Id });
 

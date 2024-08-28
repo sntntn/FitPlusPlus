@@ -17,7 +17,7 @@ namespace PaymentService.API.Services
             _client = new PayPalHttpClient(_environment);
         }
 
-        public async Task<string> CreatePaymentAsync(decimal amount, string currency, string trainerPayPalEmail)
+        public async Task<string> CreatePaymentAsync(decimal amount, string currency, string trainerPayPalEmail, string paymentId)
         {
             var request = new OrdersCreateRequest();
             request.Prefer("return=representation");
@@ -33,7 +33,7 @@ namespace PaymentService.API.Services
                             CurrencyCode = currency,
                             Value = amount.ToString("F")
                         },
-                        Payee = new Payee 
+                        Payee = new Payee
                         {
                             Email = trainerPayPalEmail
                         }
@@ -41,8 +41,8 @@ namespace PaymentService.API.Services
                 },
                 ApplicationContext = new ApplicationContext
                 {
-                    ReturnUrl = "http://your-app-url.com/payment-success",
-                    CancelUrl = "http://your-app-url.com/payment-cancel"
+                    ReturnUrl = $"http://localhost:8080/payment-success?paymentId={paymentId}",
+                    CancelUrl = "http://localhost:8080/payment-cancel"
                 }
             });
 

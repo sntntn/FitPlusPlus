@@ -6,6 +6,7 @@ const CLIENT = "http://localhost:8100";
 const LOGIN_URL = "http://localhost:4000/api/v1/authentication/Login";
 const REGISTER_URL = "http://localhost:4000/api/v1/authentication/Register";
 const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
+const PAYMENT = "http://localhost:8003/api/v1/Payment/"
 
 export default {
     methods: {
@@ -37,6 +38,16 @@ export default {
           };
 
           return axios.post(REGISTER_URL + role, data, { headers });
+        },
+
+        create_payment(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${PAYMENT}`, request);
+        },
+
+        capture_payment(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${PAYMENT}CapturePayment`, request);
         },
 
         add_client(request) {

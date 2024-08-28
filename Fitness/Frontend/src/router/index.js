@@ -51,6 +51,12 @@ const routes = [
         path: '/trainer/:id/schedule',
         name: 'Trainer Schedule',
         component: () => import('@/views/pages/TrainerSchedule.vue')
+      },
+
+      {
+        path: '/payment-success',
+        name: 'Payment Success',
+        component: () => import('@/views/pages/PaymentSuccess.vue')
       }
 
     ],
@@ -107,6 +113,7 @@ router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
+    
     return true;
   }
   else {
