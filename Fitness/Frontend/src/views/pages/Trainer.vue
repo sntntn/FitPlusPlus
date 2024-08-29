@@ -32,6 +32,7 @@
           <CTableHeaderCell class="test">Name</CTableHeaderCell>
           <CTableHeaderCell class="test">Duration</CTableHeaderCell>
           <CTableHeaderCell class="test">Difficulty</CTableHeaderCell>
+          <CTableHeaderCell class="test">Price(USD)</CTableHeaderCell>
           <CTableHeaderCell class="test">Actions</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
@@ -40,6 +41,7 @@
           <CTableDataCell class="test">{{ type.name }}</CTableDataCell>
           <CTableDataCell class="test">{{ type.duration }}</CTableDataCell>
           <CTableDataCell class="test">{{ type.difficulty }}</CTableDataCell>
+          <CTableDataCell class="test">{{ type.price }}</CTableDataCell>
           <CTableDataCell class="test action-column">
             <CButton color="light" class="px-3" style="margin: 0 10px;" v-on:click="toggleEditTrainingType(type)">
               <CIcon icon="cil-pencil" />
@@ -80,6 +82,10 @@
         <CFormLabel for="trainingTypeDuration" style="display: block;">Duration</CFormLabel>
         <CInputGroup style="width:70%; margin-bottom: 10px !important">
           <CFormInput id="trainingTypeDuration" placeholder="Please insert training type duration (HH:MM:SS)" v-model="trainingType.duration" />
+        </CInputGroup>
+        <CFormLabel for="trainingTypePrice" style="display: block;">Price</CFormLabel>
+        <CInputGroup style="width:70%; margin-bottom: 10px !important">
+          <CFormInput id="trainingTypePrice" placeholder="Please insert training type price (USD)" v-model="trainingType.price" />
         </CInputGroup>
         <CFormLabel for="trainingTypeDifficulty" style="display: block;">Difficulty</CFormLabel>
         <CInputGroup style="width:70%; margin-bottom: 10px !important">
@@ -128,6 +134,7 @@
           id: '',
           name: '',
           duration: '',
+          price: '',
           difficulty: 'Beginner'
         },
         editTrainingType: false,
@@ -135,6 +142,7 @@
           id: '',
           name: '',
           duration: '',
+          price: '',
           difficulty: ''
         },
         modalData: {

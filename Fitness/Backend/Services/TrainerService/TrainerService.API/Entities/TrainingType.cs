@@ -13,5 +13,7 @@ namespace TrainerService.API.Entities
         public TimeSpan Duration { get; set; }
         public string Difficulty { get; set; }
 
+        public decimal Price { get; set; }
+
     }
 }

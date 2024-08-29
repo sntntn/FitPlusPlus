@@ -57,6 +57,12 @@ const routes = [
         path: '/payment-success',
         name: 'Payment Success',
         component: () => import('@/views/pages/PaymentSuccess.vue')
+      },
+
+      {
+        path: '/payment-cancel',
+        name: 'Payment Cancel',
+        component: () => import('@/views/pages/PaymentCancel.vue')
       }
 
     ],
@@ -99,17 +105,17 @@ const router = createRouter({
   },
 })
 
-// router.beforeEach(async(to,from)=>{
-//   var token = sessionStorage.getItem('accessToken');
-//   if (to.path == '/') {
-//     router.push('/trainer');
-//     return false;
-//   }
-//   return true;
-// })
+ router.beforeEach(async(to,from)=>{
+   var token = sessionStorage.getItem('accessToken');
+    if (to.path == '/') {
+     router.push('/trainer');
+     return false;
+    }
+   return true;
+ })
 
 
-router.beforeEach(async (to, from) => {
+/*router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
@@ -121,6 +127,6 @@ router.beforeEach(async (to, from) => {
     return false;
   }
 
-})
+})*/
 
 export default router

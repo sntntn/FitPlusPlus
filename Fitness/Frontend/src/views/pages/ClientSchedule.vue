@@ -98,13 +98,7 @@
           if (this.enableBooking) {
             const trainerScheduleResponse = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.trainerId);
             this.trainerEvents = this.parseSchedule(trainerScheduleResponse.data.dailySchedules, "trainer", weekId);
-            console.log(this.trainerEvents);
-            console.log('iffff');
           }
-
-          console.log('aaaaaa');
-          console.log(this.trainerEvents);
-          console.log(this.clientEvents);
 
         } catch (error) {
           console.error('Error fetching schedules:', error);
@@ -218,7 +212,6 @@
         const dayIndex = daysOfWeek.indexOf(day);
         const date = new Date(startOfWeek);
         date.setDate(date.getDate() + dayIndex);
-        console.log(date);
         return date;
       },
       async cancelBooking(day, timeSlot) {
@@ -236,8 +229,6 @@
         const startMinute = event.trainingStartMinute;
         var duration = event.trainingDuration;
       
-        console.log(event);
-
         const bookingData = {
           clientId: this.$route.params.id,
           trainerName: event.trainerName,
@@ -265,20 +256,21 @@
 
       },
 
-      async initiatePayment(bookingData){
+      async initiatePayment(bookingData, price){
         try{
+
+          const trainerResponse = await dataServices.methods.get_trainer_by_id(bookingData.trainerId);
           const request = {
             id: "",
             userId: bookingData.clientId,
-            amount: 100,
+            amount: price,
             currency: "USD",
-            trainerPayPalEmail: "trener1@gmail.com"
+            trainerPayPalEmail: trainerResponse.data.contactEmail
           };
+
           const response = await dataServices.methods.create_payment(request);
           const paymentId = response.data.payment.id;
-          console.log("PaymentID:",paymentId);
 
-          console.log(response);
           const approvalUrl = response.data.paymentLink;
 
           window.location.href = approvalUrl;
@@ -318,6 +310,7 @@
         const { hours: durationHours, minutes: durationMinutes } = this.parseDuration(duration);
         const endHour = startHour + durationHours + Math.floor((startMinute + durationMinutes) / 60);
         const endMinute = (startMinute + durationMinutes) % 60;
+        const price = this.selectedType.split(' - (')[1].split(' ')[0];
 
         const newSlot = {
           weekId: this.getWeekId(this.currentDate),
@@ -347,13 +340,11 @@
         };
 
         sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
-        const payment_response = await this.initiatePayment(bookingData);
+        const payment_response = await this.initiatePayment(bookingData, price);
         
       }
     },
     mounted() {
-      
-      console.log('mounted');
       this.fetchEvents();
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
       const weekId = this.getWeekId(this.currentDate);
@@ -363,7 +354,7 @@
         dataServices.methods.get_trainer_by_id(trainerId)
           .then((response) => {
             this.trainerData.name = response.data.fullName;
-            this.trainerData.trainingTypes = response.data.trainingTypes.map(type => `${type.name} (${type.duration})`);
+            this.trainerData.trainingTypes = response.data.trainingTypes.map(type => `${type.name} (${type.duration}) - (${type.price} USD) `);
           });
       }
     }
