@@ -105,7 +105,7 @@ const router = createRouter({
   },
 })
 
- router.beforeEach(async(to,from)=>{
+/* router.beforeEach(async(to,from)=>{
    var token = sessionStorage.getItem('accessToken');
     if (to.path == '/') {
      router.push('/trainer');
@@ -113,9 +113,9 @@ const router = createRouter({
     }
    return true;
  })
+*/
 
-
-/*router.beforeEach(async (to, from) => {
+router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
@@ -127,6 +127,6 @@ const router = createRouter({
     return false;
   }
 
-})*/
+})
 
 export default router
