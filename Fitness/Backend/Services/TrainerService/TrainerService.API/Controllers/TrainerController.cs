@@ -118,6 +118,17 @@ namespace TrainerService.API.Controllers
             return Ok(trainers);
         }
 
+        //[Authorize(Roles = "Admin, Client, Trainer")]
+        [Route("[action]/{trainerId}/{trainingType}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
+        public async Task<ActionResult<decimal>> GetPrice(string trainerId, string trainingType)
+        {
+            var price = await _repository.GetPrice(trainerId,trainingType);
+
+            return Ok(price);
+        }
+
         //[Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status201Created)]

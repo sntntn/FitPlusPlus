@@ -11,6 +11,8 @@ namespace TrainerService.API.Repositories
         Task<IEnumerable<Trainer>> GetTrainersByTrainingType(string trainingTypeName);
 
         Task<Trainer> GetTrainerByEmail(string email);
+        Task<decimal> GetPrice(string trainerId, string trainingType);
+
 
         Task CreateTrainer(Trainer trainer);
 

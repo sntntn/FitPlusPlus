@@ -44,6 +44,7 @@
         </tr>
       </tbody>
     </table>
+    <GenericModal :modalData="modalData" />
   </div>
 </template>
 
@@ -51,8 +52,12 @@
 
 <script>
   import dataServices from '../../services/data_services';
+  import GenericModal from '@/components/GenericModal.vue';
 
   export default {
+    components: {
+      GenericModal
+    },
     data() {
       return {
         currentDate: new Date(),
@@ -64,6 +69,13 @@
         trainerData: {
           trainingTypes: [],
           name: "",
+        },
+        modalData: {
+          isVisible: false,
+          title: "Confirm delete",
+          body: "Are you sure that you want to cancel this training? Your payment will not be refunded.",
+          resolve: null,
+          reject: null
         }
       };
     },
@@ -88,6 +100,13 @@
       },
     },
     methods: {
+      openModal() {
+        return new Promise((resolve, reject) => {
+          this.modalData.isVisible = true;
+          this.modalData.resolve = resolve;
+          this.modalData.reject = reject;
+        });
+      },
       async fetchEvents() {
         try {
           const weekId = this.getWeekId(this.currentDate);
@@ -286,7 +305,14 @@
 
       async bookTraining(day, timeSlot) {
         if (!this.enableBooking) {
-          this.cancelBooking(day, timeSlot);
+          this.openModal().then((result) => {
+            if(result) {
+              this.cancelBooking(day, timeSlot);
+            }
+            this.modalData.isVisible = false;
+            this.modalData.resolve = null;
+            this.modalData.reject = null;
+          });
           return;
         }
 

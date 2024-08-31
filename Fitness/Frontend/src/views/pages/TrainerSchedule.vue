@@ -66,7 +66,6 @@
           const weekId = this.getWeekId(this.currentDate);
           const response = await dataServices.methods.get_trainer_week_schedule_by_id(weekId, this.$route.params.id);
           const data = response.data;
-          console.log(data)
 
           if (data.dailySchedules) {
             const events = [];
@@ -77,7 +76,6 @@
                   const startSlot = this.timeToSlot(slot.startHour, slot.startMinute);
                   const endSlot = this.timeToSlot(slot.endHour, slot.endMinute);
 
-            // Fetch client details for each slot
                   const clientResponse = await dataServices.methods.get_client_by_id(slot.clientId);
                   const client = clientResponse.data;
                   const clientName = `${client.name} ${client.surname}`;
@@ -153,6 +151,33 @@
         date.setDate(date.getDate() + dayIndex);
         return date;
       },
+      async initiatePayment(bookingData, price){
+        try{
+
+          const clientResponse = await dataServices.methods.get_client_by_id(bookingData.clientId);
+          const request = {
+            id: "",
+            userId: bookingData.trainerId,
+            amount: price,
+            currency: "USD",
+            trainerPayPalEmail: clientResponse.data.email
+          };
+
+          const response = await dataServices.methods.create_payment(request);
+          const paymentId = response.data.payment.id;
+
+          const approvalUrl = response.data.paymentLink;
+
+          window.location.href = approvalUrl;
+          return true;
+        } catch(error){
+
+          console.error('Error initiating payment:',error);
+          alert('Failed to initiate payment');
+          return false;
+        }
+
+      },
       async cancelBooking(day, timeSlot) {
         const eventDate = this.getDateFromDay(day);
         if (eventDate < new Date()) {
@@ -181,18 +206,9 @@
           startMinute: startMinute,
         };
 
-        try {
-          const response = await dataServices.methods.cancelBooking(bookingData);
-          if (response.status === 200) {
-            this.fetchEvents();
-          } else {
-            alert('Unable to cancel training!')
-          }
-        } catch (error) {
-          console.error('Error during booking:', error);
-          alert('Failed to cancel the training.');
-        }
-
+        const price = await dataServices.methods.get_price(bookingData.trainerId, bookingData.trainingType);
+        sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+        const payment_response = await this.initiatePayment(bookingData, price.data);
       },
     },
     

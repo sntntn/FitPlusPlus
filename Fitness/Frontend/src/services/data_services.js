@@ -130,6 +130,11 @@ export default {
           return axios.delete(`${TRAINERS}/api/v1/Trainer/${tra_id}`);
         },
 
+        get_price(tra_id, trainingType) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAINERS}/api/v1/Trainer/GetPrice/${tra_id}/${trainingType}`);
+        },
+
         booking(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.put(`${CLIENT}/api/v1/Client/BookTraining`, request);

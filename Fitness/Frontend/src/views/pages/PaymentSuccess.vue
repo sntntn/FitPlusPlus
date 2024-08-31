@@ -28,16 +28,29 @@
           await dataServices.methods.capture_payment(request);
 
           const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
-          try {
-            console.log(bookingData);
-            const response = await dataServices.methods.booking(bookingData);
-          } catch (error) {
-            console.error('Error during booking:', error);
-            alert('Failed to book the training.');
+          
+          if (bookingData.isBooking) {
+            try {
+              const response = await dataServices.methods.booking(bookingData);
+            } catch (error) {
+              console.error('Error during booking:', error);
+              alert('Failed to book the training.');
+            }
+            setTimeout(() => {
+              this.$router.push(`/client/${bookingData.clientId}/schedule/${bookingData.trainerId}`);
+            }, 2000);
           }
-          setTimeout(() => {
-            this.$router.push(`/client/${bookingData.clientId}/schedule/${bookingData.trainerId}`);
-          }, 2000);
+          else {
+            try {
+              const response = await dataServices.methods.cancelBooking(bookingData);
+            } catch (error) {
+              console.error('Error during cancel booking:', error);
+              alert('Failed to cancel the training.');
+            }
+            setTimeout(() => {
+              this.$router.push(`/trainer/${bookingData.trainerId}/schedule`);
+            }, 2000);
+          }
 
         } catch (error) {
           console.error('Error capturing payment:', error);

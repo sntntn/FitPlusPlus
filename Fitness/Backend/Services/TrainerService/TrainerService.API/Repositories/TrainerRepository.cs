@@ -35,6 +35,25 @@ namespace TrainerService.API.Repositories
             return await _context.Trainers.Find(p => p.TrainingTypes.Any(pp => pp.Name == trainingTypeName)).ToListAsync();
         }
 
+        public async Task<decimal> GetPrice(string trainerId, string trainingType)
+        {
+            var trainer = await GetTrainer(trainerId);
+
+            if (trainer == null)
+            {
+                throw new Exception("Trainer not found");
+            }
+
+            var training = trainer.TrainingTypes.FirstOrDefault(t => t.Name == trainingType);
+
+            if (training == null)
+            {
+                throw new Exception("Training type not found");
+            }
+
+            return training.Price;
+        }
+
 
         public async Task CreateTrainer(Trainer trainer)
         {
