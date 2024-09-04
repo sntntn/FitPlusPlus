@@ -79,7 +79,7 @@ export default {
 
           if(role == 'Admin') {
             console.log('Rola Admin');
-            this.$router.push('/administrator');
+            this.$router.push('/administrator/trainers');
             loader.hide();
             return;
           }

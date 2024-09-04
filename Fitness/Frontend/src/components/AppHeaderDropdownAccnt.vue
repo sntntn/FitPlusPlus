@@ -10,7 +10,8 @@
 </template>
 
 <script>
-import avatar from '@/assets/images/avatars/9.jpg'
+import avatar from '@/assets/images/avatars/9.jpg';
+import dataServices from '@/services/data_services';
 export default {
   name: 'AppHeaderDropdownAccnt',
   setup() {
@@ -21,8 +22,16 @@ export default {
   },
   methods: {
     logout: function() {
-      sessionStorage.setItem("accessToken", null);
-      this.$router.push('/login');
+      const username = sessionStorage.getItem('username');
+      const refreshToken = sessionStorage.getItem('refreshToken');
+      var request = {
+        UserName: username,
+        RefreshToken: refreshToken
+      };
+      dataServices.methods.logout(request)
+        .then((response) => {
+            this.$router.push('/login');
+        })
     }
   }
 }

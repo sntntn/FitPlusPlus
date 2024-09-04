@@ -10,16 +10,28 @@ const routes = [
     component: DefaultLayout,
     children: [
       {
-        path: '/administrator',
-        name: 'Administrators',
-        component: () => import('@/views/pages/Administrator.vue'),
+        path: '/administrator/trainers',
+        name: 'TrainersList',
+        component: () => import('@/views/pages/AdministratorTrainers.vue'),
       },
 
       {
-        path: '/administrator/:id',
-        name: 'Administrator Operations',
+        path: '/administrator/trainers/:id',
+        name: 'Administrator Operations - Trainers',
         component: () =>
-          import(/* webpackChunkName: "dashboard" */ '@/views/pages/AdministratorCRUD.vue')
+          import(/* webpackChunkName: "dashboard" */ '@/views/pages/AdministratorTrainersCRUD.vue')
+      },
+
+      {
+        path: '/administrator/clients',
+        name: 'ClientsList',
+        component: () => import('@/views/pages/AdministratorClients.vue')
+      },
+
+      {
+        path: '/administrator/clients/:id',
+        name: 'Administrator Operations - Clients',
+        component: () => import('@/views/pages/AdministratorClientsCRUD.vue')
       },
 
       {

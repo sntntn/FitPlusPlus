@@ -8,7 +8,7 @@ import {
   CNavGroup,
   CNavTitle,
 } from '@coreui/vue'
-import { generateTrainerNav, generateClientNav } from '@/_nav.js'
+import { generateTrainerNav, generateClientNav, generateAdministratorNav } from '@/_nav.js'
 
 const normalizePath = (path) =>
   decodeURI(path)
@@ -67,6 +67,8 @@ const AppSidebarNav = defineComponent({
         nav.value = generateTrainerNav(props.id)
       } else if (props.type === 'client') {
         nav.value = generateClientNav(props.id)
+      } else {
+        nav.value = generateAdministratorNav()
       }
     }
 

@@ -108,5 +108,18 @@ namespace IdentityServer.Controllers
             return Accepted();
         }
 
+        [HttpDelete("{email}", Name = "RemoveUser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> RemoveUser(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Forbid();
+
+            var result = await _userManager.DeleteAsync(user);
+            return Ok(result);
+        }
+
     }
 }

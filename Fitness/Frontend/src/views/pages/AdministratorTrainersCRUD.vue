@@ -101,7 +101,7 @@ export default {
           let loader = this.$loading.show();
           dataServices.methods.add_trainer(request).then(() => {
               loader.hide();
-              this.$router.push('/administrator');
+              this.$router.push('/administrator/trainers');
           });
         },
         uptTrainer() {
@@ -119,7 +119,7 @@ export default {
             let loader = this.$loading.show();
             dataServices.methods.upt_trainer(id, trainer).then(() => {
               loader.hide();
-              this.$router.push('/administrator');
+              this.$router.push('/administrator/trainers');
             });
           });
         },
@@ -136,7 +136,7 @@ export default {
           });
         },
         cancel() {
-          this.$router.push('/administrator');
+          this.$router.push('/administrator/trainers');
         }
     },
     mounted() {

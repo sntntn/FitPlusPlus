@@ -32,3 +32,20 @@ export function generateClientNav(id) {
     }
   ];
 }
+
+export function generateAdministratorNav() {
+  return [
+    {
+      component: 'CNavItem',
+      name: 'Trainers',
+      to: `/administrator/trainers`,
+      icon: 'cil-user'
+    },
+    {
+      component: 'CNavItem',
+      name: 'Clients',
+      to: `/administrator/clients`,
+      icon: 'cil-user'
+    }
+  ]
+}

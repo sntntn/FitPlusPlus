@@ -86,7 +86,7 @@ export default {
       this.isBioExpanded[index] = !this.isBioExpanded[index];
     },
     addTrainer() {
-      this.$router.push('/administrator/0');
+      this.$router.push('/administrator/trainers/0');
     },
     removeTrainer(id) {
       let loader = this.$loading.show();
@@ -96,12 +96,17 @@ export default {
       });
     },
     updateTrainer(id) {
-      this.$router.push('/administrator/' + id);
+      this.$router.push('/administrator/trainers/' + id);
     },
     onDelete(id) {
       this.openModal().then((result) => {
         if(result) {
-          this.removeTrainer(id);
+          dataServices.methods.get_trainer_by_id(id).then((response) => {
+            var trainer = response.data;
+            dataServices.methods.unregister_user(trainer.contactEmail).then((response) => {
+              this.removeTrainer(id);
+            })
+          });
         }
         this.modalData.isVisible = false;
         this.modalData.resolve = null;

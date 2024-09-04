@@ -3,8 +3,7 @@ import axios from "axios";
 const TRAINERS = "http://localhost:8000";
 const REVIEW = "http://localhost:8001";
 const CLIENT = "http://localhost:8100";
-const LOGIN_URL = "http://localhost:4000/api/v1/authentication/Login";
-const REGISTER_URL = "http://localhost:4000/api/v1/authentication/Register";
+const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
 const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
 const PAYMENT = "http://localhost:8003/api/v1/Payment/"
 
@@ -20,7 +19,7 @@ export default {
             'Content-Type': 'application/json'
           };
 
-          return axios.post(LOGIN_URL, data, { headers });                  
+          return axios.post(AUTH_URL + 'Login', data, { headers });                  
         },
 
         register(firstname, lastname, username, password, email, phonenumber, role) {
@@ -37,7 +36,12 @@ export default {
             'Content-Type': 'application/json'
           };
 
-          return axios.post(REGISTER_URL + role, data, { headers });
+          return axios.post(AUTH_URL + 'Register' + role, data, { headers });
+        },
+
+        logout(request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(AUTH_URL + 'Logout', request);
         },
 
         create_payment(request) {
@@ -53,6 +57,11 @@ export default {
         add_client(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.post(`${CLIENT}/api/v1/Client`, request);
+        },
+
+        unregister_user(email) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.delete(`${AUTH_URL}${email}`);
         },
 
         parse_access_token(access_token) {
@@ -100,6 +109,11 @@ export default {
           return axios.get(`${TRAINERS}/api/v1/Trainer`);
         },
 
+        get_clients() {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${CLIENT}/api/v1/Client`);
+        },
+
         add_trainer(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.post(`${TRAINERS}/api/v1/Trainer`, request);
@@ -108,6 +122,11 @@ export default {
         upt_trainer(tra_id, request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.put(`${TRAINERS}/api/v1/Trainer`, request);
+        },
+
+        upt_client(cl_id, request) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.put(`${CLIENT}/api/v1/Client`, request);
         },
 
         get_trainer_by_id(tra_id) {
@@ -128,6 +147,11 @@ export default {
         remove_trainer(tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.delete(`${TRAINERS}/api/v1/Trainer/${tra_id}`);
+        },
+
+        remove_client(cl_id) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.delete(`${CLIENT}/api/v1/Client/${cl_id}`);
         },
 
         get_price(tra_id, trainingType) {
