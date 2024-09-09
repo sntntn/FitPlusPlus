@@ -131,7 +131,7 @@
         this.isUpdateMode = false;
         this.updateReview = { id: '', trainerId: '', clientId: '', comment: '', rating: 0 };
       },
-      deletceReview(id) {
+      deleteReview(id) {
         dataServices.methods.delete_review(id).then(() => {
           this.fetchReviews();
           this.$emit('review-deleted');
