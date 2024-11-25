@@ -2,7 +2,7 @@ services:
   trainerdb:
     image: mongo
   mssql:
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
 
   clientdb:
     image: mongo

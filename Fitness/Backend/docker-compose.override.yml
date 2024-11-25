@@ -45,9 +45,10 @@ services:
       - ACCEPT_EULA=Y 
     restart: always
     ports:
-      - "1433:1433"
+      - 1433:1433
     volumes:
-      - mssql_data:/var/opt/mssql/data 
+      - ~/docker/sql/mssql/:/var/opt/mssql/
+      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
 
   trainerservice.api:
     container_name: trainerservice.api
