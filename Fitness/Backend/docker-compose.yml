@@ -2,7 +2,7 @@ services:
   trainerdb:
     image: mongo
   mssql:
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
 
   clientdb:
     image: mongo
@@ -15,6 +15,10 @@ services:
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
+  eureka-server:
+    image: springcloud/eureka
+  
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:

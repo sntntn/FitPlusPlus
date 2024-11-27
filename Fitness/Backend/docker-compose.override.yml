@@ -38,17 +38,27 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+  
   mssql:
     container_name: mssql
     environment:
       - SA_PASSWORD=MATF12345678rs2
-      - ACCEPT_EULA=Y 
+      - ACCEPT_EULA=Y
     restart: always
     ports:
-      - "1433:1433"
+      - 1433:1433
     volumes:
-      - mssql_data:/var/opt/mssql/data 
-
+      - ~/docker/sql/mssql/:/var/opt/mssql/
+      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
+  
+  eureka-server:
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+      
   trainerservice.api:
     container_name: trainerservice.api
     environment:

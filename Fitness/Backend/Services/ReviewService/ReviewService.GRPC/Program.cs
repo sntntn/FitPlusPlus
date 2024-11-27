@@ -2,6 +2,7 @@ using ReviewService.Common.DTOs;
 using ReviewService.Common.Extentions;
 using ReviewService.GRPC.Protos;
 using ReviewService.GRPC.Services;
+using Steeltoe.Discovery.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddAutoMapper(configuration =>
 {
     configuration.CreateMap<ReviewDTO, GetReviewsResponse.Types.ReviewReply>().ReverseMap();
 });
+
+builder.Services.AddDiscoveryClient(builder.Configuration);
 
 var app = builder.Build();
 

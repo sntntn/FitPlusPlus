@@ -2,6 +2,7 @@ using PaymentService.API.Data;
 using PaymentService.API.Repositories;
 using PaymentService.API.Services;
 using PayPalCheckoutSdk.Core;
+using Steeltoe.Discovery.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDiscoveryClient(builder.Configuration);
 
 var app = builder.Build();
 
