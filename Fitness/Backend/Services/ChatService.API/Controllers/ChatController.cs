@@ -17,16 +17,18 @@ public class ChatController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllMessages()
     {
-        var messages = await _chatService.GetAllMessagesAsync();
+        //var messages = await _chatService.GetAllMessagesAsync();
+        var messages = "Hello World";
         return Ok(messages);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetMessageById(int id)
     {
-        var message = await _chatService.GetMessageByIdAsync(id);
-        if (message == null)
-            return NotFound();
+        //var message = await _chatService.GetMessageByIdAsync(id);
+        var message = new List<string> { "Hello world" } ;
+        //if (message == null)
+        //    return NotFound();
         return Ok(message);
     }
 
