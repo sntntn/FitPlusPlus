@@ -1,6 +1,6 @@
-using ChatService.API.Data;
-using ChatService.API.Services;
-using Microsoft.EntityFrameworkCore;
+using ChatService.API.Models;
+using ChatService.API.Repositories;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,12 +9,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register DbContext
-builder.Services.AddDbContext<ChatDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ChatServiceConnection")));
+// Configure MongoDB settings
+builder.Services.Configure<MongoDBSettings>(
+    builder.Configuration.GetSection("MongoDB"));
 
-// Register ChatService
-builder.Services.AddScoped<IChatService, ChatService.API.Services.ChatService>();
+// Register MongoDB client
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+    new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString")));
+
+// Register ChatRepository
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
 var app = builder.Build();
 

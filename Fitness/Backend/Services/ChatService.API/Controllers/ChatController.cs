@@ -1,4 +1,5 @@
-using ChatService.API.Services;
+using ChatService.API.Models;
+using ChatService.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatService.API.Controllers;
@@ -7,35 +8,42 @@ namespace ChatService.API.Controllers;
 [Route("api/[controller]")]
 public class ChatController : ControllerBase
 {
-    private readonly IChatService _chatService;
+    private readonly IChatRepository _chatRepository;
 
-    public ChatController(IChatService chatService)
+    public ChatController(IChatRepository chatRepository)
     {
-        _chatService = chatService;
+        _chatRepository = chatRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllMessages()
     {
-        //var messages = await _chatService.GetAllMessagesAsync();
+        //var messages = await _chatRepository.GetAllMessagesAsync();
         var messages = "Hello World";
         return Ok(messages);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetMessageById(int id)
+    public async Task<IActionResult> GetMessageById(string id)
     {
-        //var message = await _chatService.GetMessageByIdAsync(id);
-        var message = new List<string> { "Hello world" } ;
-        //if (message == null)
-        //    return NotFound();
+        //var message = await _chatRepository.GetMessageByIdAsync(id);
+        var message = "Hello World";
+        if (message == null)
+            return NotFound();
         return Ok(message);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateMessage([FromBody] string content)
     {
-        var message = await _chatService.CreateMessageAsync(content);
-        return CreatedAtAction(nameof(GetMessageById), new { id = message.Id }, message);
+        var newMessage = new Message
+        {
+            Content = content,
+            Timestamp = DateTime.UtcNow
+        };
+
+        await _chatRepository.CreateMessageAsync(newMessage);
+
+        return CreatedAtAction(nameof(GetMessageById), new { id = newMessage.Id.ToString() }, newMessage);
     }
 }
