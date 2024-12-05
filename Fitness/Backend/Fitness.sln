@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService.API", "Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsulConfig.Settings", "Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj", "{E8032951-A2BF-4DA6-B433-C3004A2D1021}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "videoTrainingService.API", "Services\videoTrainingService\videoTrainingService.API\videoTrainingService.API.csproj", "{5A3A398E-4133-43EF-A92C-338E8E13715C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
