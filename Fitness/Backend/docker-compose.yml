@@ -16,8 +16,8 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     
-  eureka-server:
-    image: springcloud/eureka
+  consul:
+    image: consul:1.15.4
   
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
@@ -61,5 +61,6 @@ volumes:
   clientmongo_data:
   paymentmongo_data:
   mssql_data:
+  consul_data:
 
 

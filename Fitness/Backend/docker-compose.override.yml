@@ -51,13 +51,13 @@ services:
       - ~/docker/sql/mssql/:/var/opt/mssql/
       - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
   
-  eureka-server:
-    container_name: eureka
+  consul:
+    container_name: consul
     ports:
-      - "8761:8761"
-    environment:
-      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
-      - EUREKA_CLIENT_FETCH_REGISTRY=false
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+    volumes:
+        - ~/docker/consul/data:/consul/data
       
   trainerservice.api:
     container_name: trainerservice.api
@@ -69,6 +69,7 @@ services:
     depends_on:
       - trainerdb
       - rabbitmq
+      - consul
     ports:
       - "8000:8080"
 
@@ -81,6 +82,7 @@ services:
     depends_on:
       - clientdb
       - rabbitmq 
+      - consul
     ports:
       - "8100:8080"
 
@@ -101,6 +103,7 @@ services:
       - "DatabaseSettings:ConnectionString=mongodb://reviewdb:27017"
     depends_on:
       - reviewdb
+      - consul
     ports:
       - "8001:8080"
 
@@ -112,6 +115,7 @@ services:
       - "DatabaseSettings:ConnectionString=mongodb://reviewdb:27017"
     depends_on:
       - reviewdb
+      - consul
     ports:
       - "8002:8080"
 
@@ -124,6 +128,7 @@ services:
       - PAYPAL_CLIENT_SECRET="PayPalSettings:ClientSecret"
     depends_on:
       - paymentdb
+      - consul
     ports:
       - "8003:8080"
 

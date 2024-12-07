@@ -6,15 +6,15 @@ using EventBus.Messages.Constants;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 // using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using Consul;
+using ConsulConfig.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var consulConfig = builder.Configuration.GetSection("Consul").Get<ConsulConfig.Settings.ConsulConfig>()!;
+var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
 
 builder.Services.AddScoped<IContext, Context>();
 builder.Services.AddScoped<IRepository, Repository>();
@@ -101,11 +101,11 @@ app.Lifetime.ApplicationStarted.Register(() =>
         Address = consulConfig.Address,
         Port = consulConfig.ServicePort
     };
-
+    
     consulClient.Agent.ServiceRegister(registration).Wait();
 });
 
-app.Lifetime.ApplicationStopping.Register(() =>
+app.Lifetime.ApplicationStopping.Register(async () =>
 {
     var consulClient = app.Services.GetRequiredService<IConsulClient>();
     consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
