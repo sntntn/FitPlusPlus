@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Messages", "Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.API", "Services\PaymentService\PaymentService.API\PaymentService.API.csproj", "{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagerService.Common", "Services\ManagerService\ManagerService.Common\ManagerService.Common.csproj", "{BE29AD33-2345-4E9E-B130-970EBA5C3B4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagerService.API", "Services\ManagerService\ManagerService.API\ManagerService.API.csproj", "{3CBF26A6-6133-460B-8204-BA573211FB77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,14 @@ Global
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE29AD33-2345-4E9E-B130-970EBA5C3B4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE29AD33-2345-4E9E-B130-970EBA5C3B4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE29AD33-2345-4E9E-B130-970EBA5C3B4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE29AD33-2345-4E9E-B130-970EBA5C3B4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CBF26A6-6133-460B-8204-BA573211FB77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CBF26A6-6133-460B-8204-BA573211FB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CBF26A6-6133-460B-8204-BA573211FB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CBF26A6-6133-460B-8204-BA573211FB77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

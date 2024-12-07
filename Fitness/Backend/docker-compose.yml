@@ -12,6 +12,9 @@ services:
 
   paymentdb:
     image: mongo
+    
+  managerdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -50,6 +53,12 @@ services:
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+      
+  managerservice.api:
+    image: ${DOCKER_REGISTRY-}managerserviceapi
+    build:
+      context: .
+      dockerfile: Services/ManagerService/ManagerService.API/Dockerfile
 
 volumes:
   trainermongo_data:
@@ -57,5 +66,6 @@ volumes:
   clientmongo_data:
   paymentmongo_data:
   mssql_data:
+  managermongo_data:
 
 

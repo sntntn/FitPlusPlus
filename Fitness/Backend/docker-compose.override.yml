@@ -32,6 +32,14 @@ services:
     volumes:
       - paymentmongo_data:/data/db
   
+  managerdb:
+    container_name: managerdb
+    restart: always
+    ports:
+      - 27021:27017
+    volumes:
+      - managermongo_data:/data/db
+  
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -117,3 +125,12 @@ services:
     ports:
       - "8003:8080"
 
+  managerservice.api:
+    container_name: managerservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://managerdb:27017"
+    depends_on:
+      - managerdb
+    ports:
+      - "8004:8080"
