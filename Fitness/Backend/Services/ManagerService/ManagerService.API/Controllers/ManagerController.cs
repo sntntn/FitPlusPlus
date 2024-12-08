@@ -35,7 +35,7 @@ namespace ManagerService.API.Controllers
         {
             await _managerRepository.CreateTrainerAsync(trainer);
             
-            return CreatedAtRoute("CreateTrainer", new { id = trainer.Id }, trainer);
+            return CreatedAtRoute("GetTrainer", new { id = trainer.Id }, trainer);
         }
 
         [HttpDelete("[action]/{id}", Name = "DeleteTrainer")]
@@ -73,7 +73,7 @@ namespace ManagerService.API.Controllers
         {
             await _managerRepository.CreateManagerAsync(manager);
             
-            return CreatedAtRoute("CreateManager", new { id = manager.Id }, manager);
+            return CreatedAtRoute("GetManager", new { id = manager.Id }, manager);
         }
 
         [HttpDelete("[action]/{id}", Name = "DeleteManager")]
@@ -113,7 +113,7 @@ namespace ManagerService.API.Controllers
         {
             await _managerRepository.CreateFinanceAsync(finance);
             
-            return CreatedAtRoute("CreateFinance", new { id = finance.Id }, finance);
+            return CreatedAtRoute("GetFinance", new { id = finance.Id }, finance);
         }
 
         [HttpDelete("[action]/{id}", Name = "DeleteFinance")]
