@@ -1,0 +1,41 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/client/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ClientService.API",
+      "UpstreamPathTemplate": "/client/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/trainer/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "TrainerService.API",
+      "UpstreamPathTemplate": "/trainer/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/payment/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "PaymentService.API",
+      "UpstreamPathTemplate": "/payment/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/review/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ReviewService.API",
+      "UpstreamPathTemplate": "/review/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    }
+  ],
+  "GlobalConfiguration": {
+    "UseServiceDiscovery": true,
+    "ServiceDiscoveryProvider": {
+      "Type": "Consul",
+      "Host": "consul",
+      "Port": 8500,
+      "UseServiceAddress": true
+    }
+  }
+}

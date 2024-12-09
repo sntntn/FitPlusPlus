@@ -18,6 +18,12 @@ services:
     
   consul:
     image: consul:1.15.4
+    
+  gatewayservice.api:
+    image: ${DOCKER_REGIRSTRY-}gatewayserviceapi
+    build:
+      context: .
+      dockerfile: Services/GatewayService/GatewayService.API/Dockerfile
   
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi

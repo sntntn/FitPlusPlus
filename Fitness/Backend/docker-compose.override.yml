@@ -132,3 +132,11 @@ services:
     ports:
       - "8003:8080"
 
+  gatewayservice.api:
+      container_name: gatewayservice.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+      depends_on:
+        - consul
+      ports:
+        - "8005:8080"

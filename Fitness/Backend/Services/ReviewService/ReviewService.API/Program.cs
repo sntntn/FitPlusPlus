@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddSingleton(consulConfig);
 builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new ConsulClient(config =>
 {
-    config.Address = new Uri("http://consul:8500");
+    config.Address = new Uri(consulConfig.Address);
 }));
 
 builder.Services.AddControllers();
@@ -62,7 +62,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
     {
         ID = consulConfig.ServiceId,
         Name = consulConfig.ServiceName,
-        Address = consulConfig.Address,
+        Address = consulConfig.ServiceAddress,
         Port = consulConfig.ServicePort
     };
 
