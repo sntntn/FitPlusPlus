@@ -11,6 +11,9 @@ services:
   paymentdb:
     image: mongo
     
+  analyticsdb:
+    image: mongo
+    
   notificationdb:
     image: mongo
     
@@ -120,6 +123,12 @@ services:
       - paymentdb
       - consul
 
+  analyticsservice.api:
+    image: ${DOCKER_REGISTRY-}analyticsserviceapi
+    build:
+      context: .
+      dockerfile: Services/AnalyticsService/AnalyticsService.API/Dockerfile
+      
   notificationservice.api:
     image: ${DOCKER_REGISTRY-}notificationserviceapi
     build:
@@ -154,6 +163,7 @@ volumes:
   clientmongo_data:
   reviewmongo_data:
   paymentmongo_data:
+  analyticsmongo_data:
   notificationmongo_data:
   chatmongo_data:
   reservationmongo_data:
