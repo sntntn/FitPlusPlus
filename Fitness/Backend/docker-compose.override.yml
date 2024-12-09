@@ -31,6 +31,14 @@ services:
       - 27020:27017
     volumes:
       - paymentmongo_data:/data/db
+      
+  analyticsdb:
+    container_name: analyticsdb
+    restart: always
+    ports:
+      - 27022:27017
+    volumes:
+      - analyticsmongo_data:/data/db
   
   rabbitmq:
     container_name: rabbitmq
@@ -117,3 +125,12 @@ services:
     ports:
       - "8003:8080"
 
+  analyticsservice.api:
+    container_name: analyticsservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://analyticsdb:27017"
+    depends_on:
+      - analyticsdb
+    ports:
+      - "8005:8080"
