@@ -25,6 +25,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Messages", "Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.API", "Services\PaymentService\PaymentService.API\PaymentService.API.csproj", "{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.Common", "Services\AnalyticsService\AnalyticsService.Common\AnalyticsService.Common.csproj", "{64737429-3650-42B7-A1ED-AB7573B51278}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.API", "Services\AnalyticsService\AnalyticsService.API\AnalyticsService.API.csproj", "{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.GRPC", "Services\AnalyticsService\AnalyticsService.GRPC\AnalyticsService.GRPC.csproj", "{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationService.API", "Services\ReservationService\ReservationService.API\ReservationService.API.csproj", "{F3C942A5-0892-4451-9092-900F63365EC1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.API", "Services\NotificationService\NotificationService.API\NotificationService.API.csproj", "{42D48CA2-5675-47F2-BAE7-91E595258CBA}"
@@ -121,6 +127,18 @@ Global
 		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64737429-3650-42B7-A1ED-AB7573B51278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64737429-3650-42B7-A1ED-AB7573B51278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64737429-3650-42B7-A1ED-AB7573B51278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64737429-3650-42B7-A1ED-AB7573B51278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
