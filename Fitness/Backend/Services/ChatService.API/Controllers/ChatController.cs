@@ -1,6 +1,7 @@
 using ChatService.API.Models;
 using ChatService.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace ChatService.API.Controllers;
 
@@ -15,26 +16,9 @@ public class ChatController : ControllerBase
         _chatRepository = chatRepository;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllMessages()
-    {
-        //var messages = await _chatRepository.GetAllMessagesAsync();
-        var messages = "Hello World";
-        return Ok(messages);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetMessageById(string id)
-    {
-        //var message = await _chatRepository.GetMessageByIdAsync(id);
-        var message = "Hello World";
-        if (message == null)
-            return NotFound();
-        return Ok(message);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateMessage([FromBody] string content)
+    // dodavanje poruke u odredjenu chat sesiju
+    [HttpPost("{sessionId}/messages")]
+    public async Task<IActionResult> AddMessageToSession(string sessionId, [FromBody] string content)
     {
         var newMessage = new Message
         {
@@ -42,8 +26,54 @@ public class ChatController : ControllerBase
             Timestamp = DateTime.UtcNow
         };
 
-        await _chatRepository.CreateMessageAsync(newMessage);
+        await _chatRepository.AddMessageToChatSessionAsync(sessionId, newMessage);
+        return CreatedAtAction(nameof(GetMessagesFromSession), new { sessionId }, newMessage);
+    }
 
-        return CreatedAtAction(nameof(GetMessageById), new { id = newMessage.Id.ToString() }, newMessage);
+    // dohvatanje svih poruka iz odredjene chat sesije
+    [HttpGet("{sessionId}/messages")]
+    public async Task<IActionResult> GetMessagesFromSession(string sessionId)
+    {
+        //var messages = await _chatRepository.GetMessagesFromChatSessionAsync(sessionId);
+        //HARDKODIRANO
+        var messages = new List<Message>()
+        {
+            new Message() {Id = ObjectId.GenerateNewId(), Content = "Hello World", Timestamp = DateTime.UtcNow},
+            new Message() {Id = ObjectId.GenerateNewId(), Content = "Hello World", Timestamp = DateTime.UtcNow}
+        };
+        
+        if (messages == null || !messages.Any())
+        {
+            return NotFound();
+        }
+
+        return Ok(messages);
+    }
+
+    [HttpPost("sessions")]
+    public async Task<IActionResult> CreateChatSession([FromBody] ChatSession session)
+    {
+        await _chatRepository.CreateChatSessionAsync(session);
+        return CreatedAtAction(nameof(GetChatSession), new { trainerId = session.TrainerId, clientId = session.ClientId }, session);
+    }
+
+    [HttpGet("sessions")]
+    public async Task<IActionResult> GetChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
+    {
+        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
+
+        if (session == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(session);
+    }
+
+    [HttpPost("sessions/{sessionId}/unlock")]
+    public async Task<IActionResult> UnlockChatSession(string sessionId)
+    {
+        await _chatRepository.UnlockChatSessionAsync(sessionId);
+        return NoContent();
     }
 }
