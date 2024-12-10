@@ -7,7 +7,7 @@ namespace ChatService.API.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)] // prikazuje `Id` kao string u JSON-u, ali ga MongoDB cuva kao ObjectId
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
         public string Content { get; set; }
 
         //[BsonElement("timestamp")] // ako hocu da mi se drugacije zove u bazi 
