@@ -12,6 +12,14 @@ services:
 
   paymentdb:
     image: mongo
+    
+  chatdb:
+    image: mongo
+    container_name: chatdb
+    volumes:
+      - chatmongo_data:/data/db
+    ports:
+      - "27022:27017"
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -51,11 +59,22 @@ services:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
 
+  chatservice.api:
+    image: ${DOCKER_REGISTRY-}chatserviceapi
+    build:
+      context: .
+      dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+    ports:
+      - "5007:5000"
+
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  chatmongo_data:
   mssql_data:
 
 

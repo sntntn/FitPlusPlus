@@ -82,7 +82,7 @@ public class ChatController : ControllerBase
     }
 
     // privremena metoda za testiranje
-/*    [HttpGet("test-mongo-connection")]
+    [HttpGet("test-mongo-connection")]
     public IActionResult TestMongoConnection()
     {
         try
@@ -95,6 +95,6 @@ public class ChatController : ControllerBase
             return StatusCode(500, new { Message = "MongoDB connection failed", Error = ex.Message });
         }
     }
-*/
+
     
 }
