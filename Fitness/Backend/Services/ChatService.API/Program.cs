@@ -1,5 +1,6 @@
 using ChatService.API.Models;
 using ChatService.API.Repositories;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +16,10 @@ builder.Services.Configure<MongoDBSettings>(
 
 // Register MongoDB client
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
-    new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString")));
-
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<MongoDBSettings>>().Value;
+    return new MongoClient(settings.ConnectionString);
+});
 // Register ChatRepository
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
 

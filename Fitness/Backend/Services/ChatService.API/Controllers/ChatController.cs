@@ -2,6 +2,7 @@ using ChatService.API.Models;
 using ChatService.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace ChatService.API.Controllers;
 
@@ -10,11 +11,14 @@ namespace ChatService.API.Controllers;
 public class ChatController : ControllerBase
 {
     private readonly IChatRepository _chatRepository;
+    private readonly IMongoClient _mongoClient;
 
-    public ChatController(IChatRepository chatRepository)
+    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient)
     {
         _chatRepository = chatRepository;
+        _mongoClient = mongoClient;
     }
+
 
     // dodavanje poruke u odredjenu chat sesiju
     [HttpPost("{sessionId}/messages")]
@@ -76,4 +80,21 @@ public class ChatController : ControllerBase
         await _chatRepository.UnlockChatSessionAsync(sessionId);
         return NoContent();
     }
+
+    // privremena metoda za testiranje
+/*    [HttpGet("test-mongo-connection")]
+    public IActionResult TestMongoConnection()
+    {
+        try
+        {
+            var databases = _mongoClient.ListDatabaseNames().ToList();
+            return Ok(new { Message = "MongoDB connection successful", Databases = databases });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = "MongoDB connection failed", Error = ex.Message });
+        }
+    }
+*/
+    
 }
