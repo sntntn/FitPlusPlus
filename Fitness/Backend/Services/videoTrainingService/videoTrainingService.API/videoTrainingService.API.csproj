@@ -11,4 +11,10 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="MongoDB.Driver">
+        <HintPath>..\..\..\..\..\..\..\.nuget\packages\mongodb.driver\2.28.0\lib\netstandard2.1\MongoDB.Driver.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
