@@ -32,6 +32,14 @@ services:
     volumes:
       - paymentmongo_data:/data/db
   
+  chatdb:
+    container_name: chatdb
+    restart: always
+    ports:
+      - 27022:27017
+    volumes:
+      - chatmongo_data:/data/db
+  
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -117,3 +125,14 @@ services:
     ports:
       - "8003:8080"
 
+  chatservice.api:
+    container_name: chatService.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://chatdb:27017"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    depends_on:
+      - chatdb
+      - rabbitmq
+    ports:
+      - 5007:5000

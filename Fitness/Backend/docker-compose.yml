@@ -15,14 +15,10 @@ services:
     
   chatdb:
     image: mongo
-    container_name: chatdb
-    volumes:
-      - chatmongo_data:/data/db
-    ports:
-      - "27022:27017"
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -64,10 +60,6 @@ services:
     build:
       context: .
       dockerfile: Services/ChatService.API/Dockerfile
-    depends_on:
-      - chatdb
-    ports:
-      - "5007:5000"
 
 volumes:
   trainermongo_data:
