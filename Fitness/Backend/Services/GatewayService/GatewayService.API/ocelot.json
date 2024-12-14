@@ -8,24 +8,38 @@
       "UpstreamHttpMethod": ["GET", "POST", "PUT"]
     },
     {
-      "DownstreamPathTemplate": "/api/{version}/trainer/{everything}",
+      "DownstreamPathTemplate": "/api/v1/trainer/{everything}",
       "DownstreamScheme": "http",
       "ServiceName": "TrainerService.API",
       "UpstreamPathTemplate": "/trainer/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT"]
     },
     {
-      "DownstreamPathTemplate": "/api/{version}/payment/{everything}",
+      "DownstreamPathTemplate": "/api/v1/payment/{everything}",
       "DownstreamScheme": "http",
       "ServiceName": "PaymentService.API",
       "UpstreamPathTemplate": "/payment/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT"]
     },
     {
-      "DownstreamPathTemplate": "/api/{version}/review/{everything}",
+      "DownstreamPathTemplate": "/api/v1/review/{everything}",
       "DownstreamScheme": "http",
       "ServiceName": "ReviewService.API",
       "UpstreamPathTemplate": "/review/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/authentication/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "IdentityServer",
+      "UpstreamPathTemplate": "/authentication/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/user/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "IdentityServer",
+      "UpstreamPathTemplate": "/user/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT"]
     }
   ],

@@ -3,7 +3,7 @@ services:
     container_name: trainerdb
     restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - trainermongo_data:/data/db
 
@@ -12,15 +12,15 @@ services:
     container_name: clientdb
     restart: always
     ports:
-    - 27019:27017
+      - "27019:27017"
     volumes: 
-    - clientmongo_data:/data/db
+      - clientmongo_data:/data/db
 
   reviewdb:
     container_name: reviewdb
     restart: always
     ports:
-      - 27018:27017
+      - "27018:27017"
     volumes:
       - reviewmongo_data:/data/db
  
@@ -28,7 +28,7 @@ services:
     container_name: paymentdb
     restart: always
     ports:
-      - 27020:27017
+      - "27020:27017"
     volumes:
       - paymentmongo_data:/data/db
   
@@ -36,8 +36,8 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
   
   mssql:
     container_name: mssql
@@ -46,7 +46,7 @@ services:
       - ACCEPT_EULA=Y
     restart: always
     ports:
-      - 1433:1433
+      - "1433:1433"
     volumes:
       - ~/docker/sql/mssql/:/var/opt/mssql/
       - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
@@ -57,7 +57,7 @@ services:
       - "8500:8500"
     command: "agent -dev -client=0.0.0.0"
     volumes:
-        - ~/docker/consul/data:/consul/data
+      - ~/docker/consul/data:/consul/data
       
   trainerservice.api:
     container_name: trainerservice.api
@@ -92,6 +92,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:IdentityConnectionString=Server=mssql;Database=IdentityDb;User Id=sa;Password=MATF12345678rs2;TrustServerCertificate=True;Encrypt=False;"
     depends_on:
+      - consul
       - mssql
     ports:
       - "4000:8080"
@@ -133,10 +134,10 @@ services:
       - "8003:8080"
 
   gatewayservice.api:
-      container_name: gatewayservice.api
-      environment:
-        - ASPNETCORE_ENVIRONMENT=Development
-      depends_on:
-        - consul
-      ports:
-        - "8005:8080"
+    container_name: gatewayservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - consul
+    ports:
+      - "8005:8080"
