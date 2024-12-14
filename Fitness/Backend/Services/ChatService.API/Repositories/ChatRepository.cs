@@ -61,6 +61,16 @@ namespace ChatService.API.Repositories
             await _chatSessions.InsertOneAsync(session);
         }
 
+        public async Task<bool> DeleteChatSessionAsync(string trainerId, string clientId)
+        {
+            var filter = Builders<ChatSession>.Filter.Eq(s => s.TrainerId, trainerId) &
+                         Builders<ChatSession>.Filter.Eq(s => s.ClientId, clientId);
+
+            var result = await _chatSessions.DeleteOneAsync(filter);
+
+            return result.DeletedCount > 0;
+        }
+
         public async Task UnlockChatSessionAsync(string sessionId)
         {
             var filter = Builders<ChatSession>.Filter.Eq(s => s.Id, new ObjectId(sessionId));

@@ -78,6 +78,19 @@ public class ChatController : ControllerBase
         return Ok(session);
     }
 
+    [HttpDelete("sessions")]
+    public async Task<IActionResult> DeleteChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
+    {
+        var success = await _chatRepository.DeleteChatSessionAsync(trainerId, clientId);
+
+        if (success)
+        {
+            return Ok(new { Message = "Session deleted successfully." });
+        }
+
+        return NotFound(new { Message = "Session not found or already deleted." });
+    }
+    
     [HttpPost("sessions/{sessionId}/unlock")]
     public async Task<IActionResult> UnlockChatSession(string sessionId)
     {
