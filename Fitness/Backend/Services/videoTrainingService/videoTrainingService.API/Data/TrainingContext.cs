@@ -1,21 +1,22 @@
 using MongoDB.Driver;
 using videoTrainingService.API.Entities;
 
-namespace videoTrainingService.API.Data;
-
-public class TrainingContext : ITrainingContext
+namespace videoTrainingService.API.Data
 {
-    public TrainingContext(IConfiguration configuration)
+    public class TrainingContext : ITrainingContext
     {
-        var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-        var database = client.GetDatabase("TrainingDB");
+        public TrainingContext(IConfiguration configuration)
+        {
+            var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
+            var database = client.GetDatabase("TrainingDB");
 
-        Exercise = database.GetCollection<Exercise>("Exercise");
-        Training = database.GetCollection<Training>("Training");
-        TrainingExercise = database.GetCollection<TrainingExercise>("TrainingExercise");
+            Exercises = database.GetCollection<Exercise>("Exercises");
+            Trainings = database.GetCollection<Training>("Trainings");
+            TrainingExercises = database.GetCollection<TrainingExercise>("TrainingExercises");
+        }
+
+        public IMongoCollection<Exercise> Exercises { get; }
+        public IMongoCollection<Training> Trainings { get; }
+        public IMongoCollection<TrainingExercise> TrainingExercises { get; }
     }
-
-    public IMongoCollection<Exercise> Exercise { get; }
-    public IMongoCollection<Training> Training { get; }
-    public IMongoCollection<TrainingExercise> TrainingExercise { get; }
 }
