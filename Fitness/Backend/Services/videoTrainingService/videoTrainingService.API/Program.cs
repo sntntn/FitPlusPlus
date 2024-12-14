@@ -1,10 +1,12 @@
 using videoTrainingService.API.Data;
+using videoTrainingService.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddScoped<ITrainingContext, TrainingContext>();
+builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
  
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
