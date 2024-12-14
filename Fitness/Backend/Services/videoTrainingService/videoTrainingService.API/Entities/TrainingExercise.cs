@@ -1,10 +1,17 @@
-namespace videoTrainingService.API.Entities;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
-public class TrainingExercise
+namespace videoTrainingService.API.Entities
 {
-    public string TrainingId { get; set; }
-    public string ExerciseId { get; set; }
-    public int ExerciseReps { get; set; }
-    public int Set { get; set; }
-    public int SetReps { get; set; }
+    public class TrainingExercise
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string TrainingId { get; set; }
+
+        public string ExerciseId { get; set; }
+        public int ExerciseReps { get; set; }
+        public int Set { get; set; }
+        public int SetReps { get; set; }
+    }
 }
