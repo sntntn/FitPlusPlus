@@ -42,14 +42,5 @@
       "UpstreamPathTemplate": "/user/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT"]
     }
-  ],
-  "GlobalConfiguration": {
-    "UseServiceDiscovery": true,
-    "ServiceDiscoveryProvider": {
-      "Type": "Consul",
-      "Host": "consul",
-      "Port": 8500,
-      "UseServiceAddress": true
-    }
-  }
+  ]
 }
