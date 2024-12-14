@@ -44,6 +44,20 @@ namespace ChatService.API.Repositories
 
         public async Task CreateChatSessionAsync(ChatSession session)
         {
+            if (session.Id != ObjectId.Empty)
+            {
+                throw new InvalidOperationException("ID should not be provided. It will be automatically generated.");
+            }
+            
+            var existingSession = await _chatSessions
+                .Find(s => s.TrainerId == session.TrainerId && s.ClientId == session.ClientId)
+                .FirstOrDefaultAsync();
+
+            if (existingSession != null)
+            {
+                throw new InvalidOperationException("Unable to create. A session between this trainer and client already exists.");
+            }
+            
             await _chatSessions.InsertOneAsync(session);
         }
 

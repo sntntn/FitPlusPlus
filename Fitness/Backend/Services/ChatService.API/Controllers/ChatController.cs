@@ -57,6 +57,10 @@ public class ChatController : ControllerBase
     [HttpPost("sessions")]
     public async Task<IActionResult> CreateChatSession([FromBody] ChatSession session)
     {
+        if (session.Id != ObjectId.Empty)
+        {
+            return BadRequest(new { Message = "ID should not be provided. It will be automatically generated." });
+        }
         await _chatRepository.CreateChatSessionAsync(session);
         return CreatedAtAction(nameof(GetChatSession), new { trainerId = session.TrainerId, clientId = session.ClientId }, session);
     }
