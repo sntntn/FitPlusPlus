@@ -1,13 +1,12 @@
 using MongoDB.Driver;
 using videoTrainingService.API.Entities;
 
-namespace videoTrainingService.API.Data;
-
-public interface ITrainingContext
+namespace videoTrainingService.API.Data
 {
-    IMongoCollection<Exercise> Exercise { get; }
-    
-    IMongoCollection<Training> Training { get; }
-    
-    IMongoCollection<TrainingExercise> TrainingExercise { get; }
+    public interface ITrainingContext
+    {
+        IMongoCollection<Exercise> Exercises { get; }
+        IMongoCollection<Training> Trainings { get; }
+        IMongoCollection<TrainingExercise> TrainingExercises { get; }
+    }
 }
