@@ -18,9 +18,9 @@ namespace videoTrainingService.API.Repositories
             return await _context.Exercises.Find(p => p.TrainerId == trainerId).ToListAsync();
         }
 
-        public async Task<Exercise> GetExercise(string name, string trainerId)
+        public async Task<Exercise> GetExercise(string id)
         {
-            return await _context.Exercises.Find(p => p.TrainerId == trainerId && p.Name == name).FirstOrDefaultAsync();
+            return await _context.Exercises.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task CreateExercise(Exercise exercise)
@@ -77,6 +77,11 @@ namespace videoTrainingService.API.Repositories
             return await _context.TrainingExercises.Find(p => p.TrainingId == trainingId).ToListAsync();
         }
 
+        public async Task<TrainingExercise> GetTrainingExercise(string id)
+        {
+            return await _context.TrainingExercises.Find(p => p.Id == id).FirstOrDefaultAsync();
+        }
+
         public async Task CreateTrainingExercise(TrainingExercise trainingExercise)
         {
             await _context.TrainingExercises.InsertOneAsync(trainingExercise);
@@ -89,9 +94,9 @@ namespace videoTrainingService.API.Repositories
             return res.IsAcknowledged && res.ModifiedCount > 0;
         }
 
-        public async Task<bool> DeleteTrainingExercise(string trainingId, string id)
+        public async Task<bool> DeleteTrainingExercise(string id)
         {
-            var res = await _context.TrainingExercises.DeleteOneAsync(p => p.TrainingId == trainingId && p.ExerciseId == id);
+            var res = await _context.TrainingExercises.DeleteOneAsync(p => p.Id == id);
             return res.IsAcknowledged && res.DeletedCount > 0;
         }
     }
