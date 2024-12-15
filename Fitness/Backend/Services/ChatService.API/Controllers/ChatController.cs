@@ -19,40 +19,56 @@ public class ChatController : ControllerBase
         _mongoClient = mongoClient;
     }
 
-
-    // dodavanje poruke u odredjenu chat sesiju
-    [HttpPost("{sessionId}/messages")]
-    public async Task<IActionResult> AddMessageToSession(string sessionId, [FromBody] string content)
+    
+    [HttpPost("sessions/messages")]
+    public async Task<IActionResult> AddMessageToSession([FromQuery] string trainerId, [FromQuery] string clientId, [FromBody] string content, [FromQuery] string senderType)
     {
+        if (senderType != "Trainer" && senderType != "Client")
+        {
+            return BadRequest(new { Message = "Invalid sender type. Must be either 'Trainer' or 'Client'." });
+        }
+        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
+
+        if (session == null)
+        {
+            return NotFound(new { Message = "Chat session not found for the specified trainer and client." });
+        }
+
         var newMessage = new Message
         {
             Content = content,
-            Timestamp = DateTime.UtcNow
+            Timestamp = DateTime.UtcNow,
+            SenderType = senderType
         };
 
-        await _chatRepository.AddMessageToChatSessionAsync(sessionId, newMessage);
-        return CreatedAtAction(nameof(GetMessagesFromSession), new { sessionId }, newMessage);
+        await _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage);
+
+        return CreatedAtAction(nameof(GetMessagesFromSession), new { trainerId, clientId }, newMessage);
     }
 
-    // dohvatanje svih poruka iz odredjene chat sesije
-    [HttpGet("{sessionId}/messages")]
-    public async Task<IActionResult> GetMessagesFromSession(string sessionId)
+    
+
+    
+    [HttpGet("sessions/messages")]
+    public async Task<IActionResult> GetMessagesFromSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-        //var messages = await _chatRepository.GetMessagesFromChatSessionAsync(sessionId);
-        //HARDKODIRANO
-        var messages = new List<Message>()
+        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
+    
+        if (session == null)
         {
-            new Message() {Id = ObjectId.GenerateNewId(), Content = "Hello World", Timestamp = DateTime.UtcNow},
-            new Message() {Id = ObjectId.GenerateNewId(), Content = "Hello World", Timestamp = DateTime.UtcNow}
-        };
-        
+            return NotFound(new { Message = "Chat session not found for the specified trainer and client." });
+        }
+    
+        var messages = session.Messages;
+    
         if (messages == null || !messages.Any())
         {
-            return NotFound();
+            return NotFound(new { Message = "No messages found in the chat session." });
         }
-
+    
         return Ok(messages);
     }
+
 
     [HttpPost("sessions")]
     public async Task<IActionResult> CreateChatSession([FromBody] ChatSession session)

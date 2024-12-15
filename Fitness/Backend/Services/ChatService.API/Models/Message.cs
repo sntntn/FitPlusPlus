@@ -12,5 +12,7 @@ namespace ChatService.API.Models
 
         //[BsonElement("timestamp")] // ako hocu da mi se drugacije zove u bazi 
         public DateTime Timestamp { get; set; }
+
+        public string SenderType { get; set; } = string.Empty;
     }
 }

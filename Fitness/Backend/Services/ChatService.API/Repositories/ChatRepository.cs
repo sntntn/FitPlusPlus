@@ -7,34 +7,14 @@ namespace ChatService.API.Repositories
 {
     public class ChatRepository : IChatRepository
     {
-        private readonly IMongoCollection<Message> _messages;
         private readonly IMongoCollection<ChatSession> _chatSessions;
 
         public ChatRepository(IMongoClient mongoClient, IOptions<MongoDBSettings> settings)
         {
             var database = mongoClient.GetDatabase(settings.Value.DatabaseName);
-            _messages = database.GetCollection<Message>("Messages");
             _chatSessions = database.GetCollection<ChatSession>("ChatSessions");
         }
-
-        // Implementacija metoda za poruke
-        public async Task<IEnumerable<Message>> GetAllMessagesAsync()
-        {
-            return await _messages.Find(Builders<Message>.Filter.Empty).ToListAsync();
-        }
-
-        public async Task<Message?> GetMessageByIdAsync(string id)
-        {
-            return await _messages.Find(message => message.Id == ObjectId.Parse(id)).FirstOrDefaultAsync();
-        }
-
-
-        public async Task CreateMessageAsync(Message message)
-        {
-            await _messages.InsertOneAsync(message);
-        }
-
-        // Implementacija metoda za sesije
+        
         public async Task<ChatSession?> GetChatSessionAsync(string trainerId, string clientId)
         {
             return await _chatSessions
