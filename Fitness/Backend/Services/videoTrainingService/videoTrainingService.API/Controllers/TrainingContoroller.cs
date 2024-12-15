@@ -27,7 +27,7 @@ namespace videoTrainingService.API.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Exercise>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Exercise), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Exercise>> GetExercise(string id)
         {
@@ -41,7 +41,7 @@ namespace videoTrainingService.API.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        [ProducesResponseType(typeof(IEnumerable<Exercise>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Exercise), StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateExercise(Exercise exercise)
         {
             await _repository.CreateExercise(exercise);
@@ -87,7 +87,7 @@ namespace videoTrainingService.API.Controllers
         
         [Route("[action]")]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Training), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Training>> GetTraining(string id)
         {
@@ -101,7 +101,7 @@ namespace videoTrainingService.API.Controllers
         
         [Route("[action]")]
         [HttpPost]
-        [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Training), StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateTraining(Training training)
         {
             await _repository.CreateTraining(training);
@@ -137,7 +137,7 @@ namespace videoTrainingService.API.Controllers
         
         [Route("[action]")]
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TrainingExercise>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TrainingExercise>> GetTrainingExercise(string id)
         {
@@ -151,7 +151,7 @@ namespace videoTrainingService.API.Controllers
         
         [Route("[action]")]
         [HttpPost]
-        [ProducesResponseType(typeof(IEnumerable<TrainingExercise>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateTrainingExercise(TrainingExercise trainingExercise)
         {
             await _repository.CreateTrainingExercise(trainingExercise);
