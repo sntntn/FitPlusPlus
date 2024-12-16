@@ -1,8 +1,9 @@
 services:
-  trainerdb:
-    image: mongo
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
+  
+  trainerdb:
+    image: mongo
 
   clientdb:
     image: mongo
@@ -12,9 +13,13 @@ services:
 
   paymentdb:
     image: mongo
+    
+  notificationdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -51,11 +56,18 @@ services:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
 
+  notificationservice.api:
+    image: ${DOCKER_REGISTRY-}notificationserviceapi
+    build:
+      context: .
+      dockerfile: Services/NotifactionService/NotificationService.API/Dockerfile
+      
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  notificationmongo_data:
   mssql_data:
 
 

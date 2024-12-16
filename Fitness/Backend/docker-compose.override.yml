@@ -7,7 +7,6 @@ services:
     volumes:
       - trainermongo_data:/data/db
 
-
   clientdb:
     container_name: clientdb
     restart: always
@@ -32,12 +31,21 @@ services:
     volumes:
       - paymentmongo_data:/data/db
   
+  notificationdb:
+    container_name: notificationdb
+    restart: always
+    ports:
+      - "27021:27017"
+    volumes:
+      - notificationmongo_data:/data/db
+  
   rabbitmq:
     container_name: rabbitmq
     restart: always
     ports:
       - 5672:5672
       - 15672:15672
+
   mssql:
     container_name: mssql
     environment:
@@ -116,4 +124,16 @@ services:
       - paymentdb
     ports:
       - "8003:8080"
-
+        
+  notificationservice.api:
+    container_name: notificationservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://notificationdb:27017"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    depends_on:
+      - notificationdb
+      - rabbitmq
+    ports:
+      - "8004:8080"
+  
