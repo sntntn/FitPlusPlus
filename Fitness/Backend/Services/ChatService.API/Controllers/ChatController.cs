@@ -86,7 +86,7 @@ public class ChatController : ControllerBase
         }
 
         session.IsUnlocked = true;
-        session.ExpirationDate = DateTime.UtcNow.AddHours(30);
+        session.ExpirationDate = DateTime.UtcNow.AddDays(30);
         try
         {
             await _chatRepository.CreateChatSessionAsync(session);
@@ -132,9 +132,7 @@ public class ChatController : ControllerBase
         {
             return NotFound(new { Message = "Chat session not found." });
         }
-     
         
-
         return NoContent();
     }
 
