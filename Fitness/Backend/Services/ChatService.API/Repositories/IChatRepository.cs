@@ -10,7 +10,7 @@ namespace ChatService.API.Repositories
         Task CreateChatSessionAsync(ChatSession session);
         Task<bool> DeleteChatSessionAsync(string trainerId, string clientId);
 
-        Task UnlockChatSessionAsync(string sessionId);
+        Task<bool> UnlockChatSessionAsync(string sessionId);
         Task AddMessageToChatSessionAsync(string sessionId, Message message);
         Task<IEnumerable<Message>> GetMessagesFromChatSessionAsync(string sessionId);
     }

@@ -51,11 +51,16 @@ namespace ChatService.API.Repositories
             return result.DeletedCount > 0;
         }
 
-        public async Task UnlockChatSessionAsync(string sessionId)
+        public async Task<bool> UnlockChatSessionAsync(string sessionId)
         {
             var filter = Builders<ChatSession>.Filter.Eq(s => s.Id, new ObjectId(sessionId));
-            var update = Builders<ChatSession>.Update.Set(s => s.IsUnlocked, true);
-            await _chatSessions.UpdateOneAsync(filter, update);
+            var update = Builders<ChatSession>.Update
+                .Set(s => s.IsUnlocked, true)
+                .Set(s => s.ExpirationDate, DateTime.UtcNow.AddDays(30));
+            
+            var result = await _chatSessions.UpdateOneAsync(filter, update);
+            
+            return result.ModifiedCount > 0;
         }
 
         public async Task AddMessageToChatSessionAsync(string sessionId, Message message)

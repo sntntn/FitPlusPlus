@@ -6,6 +6,8 @@ using MongoDB.Driver;
 
 namespace ChatService.API.Controllers;
 
+//TO DO AUTHORIZATION AND AUTHENTICATION
+
 [ApiController]
 [Route("api/[controller]")]
 public class ChatController : ControllerBase
@@ -32,6 +34,11 @@ public class ChatController : ControllerBase
         if (session == null)
         {
             return NotFound(new { Message = "Chat session not found for the specified trainer and client." });
+        }
+
+        if (session.ExpirationDate.HasValue && session.ExpirationDate.Value < DateTime.UtcNow)
+        {
+            return BadRequest(new { Message = "Chat session has expired. Please pay if you want to send a message again." });
         }
 
         var newMessage = new Message
@@ -77,7 +84,17 @@ public class ChatController : ControllerBase
         {
             return BadRequest(new { Message = "ID should not be provided. It will be automatically generated." });
         }
-        await _chatRepository.CreateChatSessionAsync(session);
+
+        session.IsUnlocked = true;
+        session.ExpirationDate = DateTime.UtcNow.AddHours(30);
+        try
+        {
+            await _chatRepository.CreateChatSessionAsync(session);
+        }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(new { Message = e.Message });
+        }
         return CreatedAtAction(nameof(GetChatSession), new { trainerId = session.TrainerId, clientId = session.ClientId }, session);
     }
 
@@ -110,7 +127,14 @@ public class ChatController : ControllerBase
     [HttpPost("sessions/{sessionId}/unlock")]
     public async Task<IActionResult> UnlockChatSession(string sessionId)
     {
-        await _chatRepository.UnlockChatSessionAsync(sessionId);
+        var success = await _chatRepository.UnlockChatSessionAsync(sessionId);
+        if (!success)
+        {
+            return NotFound(new { Message = "Chat session not found." });
+        }
+     
+        
+
         return NoContent();
     }
 

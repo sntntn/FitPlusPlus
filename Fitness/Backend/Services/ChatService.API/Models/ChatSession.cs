@@ -12,4 +12,6 @@ public class ChatSession
     public string ClientId { get; set; }
     public bool IsUnlocked { get; set; } =  false;
     public List<Message> Messages { get; set; } =  new List<Message>();
+    
+    public DateTime? ExpirationDate { get; set; }
 }
