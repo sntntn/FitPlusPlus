@@ -15,6 +15,11 @@ public class AnalyticsRepository : IAnalyticsRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
+    public async Task CreateTraining(Training training)
+    {
+        await _context.Trainings.InsertOneAsync(training);
+    }
+
     public async Task<double> GetAverageRating(string trainerId)
     {
         var trainings = await _context.Trainings.Find(t => t.TrainerId == trainerId).ToListAsync();
