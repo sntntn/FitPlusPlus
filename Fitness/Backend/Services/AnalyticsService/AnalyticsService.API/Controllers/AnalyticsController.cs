@@ -1,3 +1,4 @@
+using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,14 @@ public class AnalyticsController : ControllerBase
     public AnalyticsController(IAnalyticsRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+    
+    [HttpPost("[action]")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult> CreateTraining([FromQuery] Training training)
+    {
+        await _repository.CreateTraining(training);
+        return Created();
     }
 
     [HttpGet("[action]")]
