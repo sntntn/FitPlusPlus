@@ -1,56 +1,31 @@
 services:
+  trainerdb:
+    image: mongo
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
 
-  trainerdb:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - trainermongo_data:/data/db
-        
   clientdb:
     image: mongo
-    ports:
-      - "27018:27017"
-    volumes:
-      - clientmongo_data:/data/db
 
   reviewdb:
     image: mongo
-    ports:
-      - "27019:27017"
-    volumes:
-      - reviewmongo_data:/data/db
 
   paymentdb:
     image: mongo
-    ports:
-      - "27020:27017"
-    volumes:
-      - paymentmongo_data:/data/db
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    ports:
-      - "15672:15672"   # port za aplikaciju (Producer/Consumer komunikacija)
-      - "5672:5672"     # port za RabbitMQ Management Plugin
-    
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
       context: .
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
-    depends_on:
-      - trainerdb
   
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
     build:
       context: .
       dockerfile: Services/ClientService/ClientService.API/Dockerfile
-    depends_on:
-      - clientdb
 
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
@@ -63,24 +38,18 @@ services:
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
-    depends_on:
-      - reviewdb
 
   reviewservice.grpc:
     image: ${DOCKER_REGISTRY-}reviewservicegrpc
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
-    depends_on:
-      - reviewdb
 
   paymentservice.api:
     image: ${DOCKER_REGISTRY-}paymentserviceapi
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
-    depends_on:
-      - paymentdb
 
 volumes:
   trainermongo_data:
