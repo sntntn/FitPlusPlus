@@ -75,7 +75,19 @@ const routes = [
         path: '/payment-cancel',
         name: 'Payment Cancel',
         component: () => import('@/views/pages/PaymentCancel.vue')
-      }
+      },
+
+      {
+        path: '/trainer/:id/chat',
+        name: 'Trainer Chat',
+        component: () => import('@/views/pages/TrainerChat.vue')
+      },
+
+      // {
+      //   path: '/client/:id/chat',
+      //   name: 'ClientChat',
+      //   component: () => import('@/views/pages/ClientChat.vue'),
+      // },
 
     ],
   },
