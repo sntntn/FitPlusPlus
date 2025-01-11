@@ -24,36 +24,50 @@ services:
     build:
       context: .
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
+    depends_on:
+      - trainerdb
+      - rabbitmq
   
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
     build:
       context: .
       dockerfile: Services/ClientService/ClientService.API/Dockerfile
-
+    depends_on:
+      - clientdb
+      - rabbitmq
+  
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
     build:
       context: .
       dockerfile: Security/IdentityServer/Dockerfile
+    depends_on:
+      - mssql
 
   reviewservice.api:
     image: ${DOCKER_REGISTRY-}reviewserviceapi
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
+    depends_on:
+      - reviewdb
 
   reviewservice.grpc:
     image: ${DOCKER_REGISTRY-}reviewservicegrpc
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
+    depends_on:
+      - reviewdb
 
   paymentservice.api:
     image: ${DOCKER_REGISTRY-}paymentserviceapi
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+    depends_on:
+      - paymentdb
 
   chatservice.api:
     image: ${DOCKER_REGISTRY-}chatserviceapi
