@@ -1,8 +1,13 @@
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
+using EventBus.Messages.Constants;
+using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using NotificationService.API.Entities;
+using NotificationService.API.EventBusConsumers;
 
 /*
  * TODO LIST
@@ -28,15 +33,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(configuration =>
+{
+    configuration.CreateMap<NotificationEvent.NotificationType, Notification.NotificationType>().ReverseMap();
+    configuration.CreateMap<NotificationEvent, Notification>().ReverseMap();
+});
 
 // EventBus 
 builder.Services.AddMassTransit(config =>
 {
+    config.AddConsumer<NotificationConsumer>();
     config.UsingRabbitMq((ctx, cfg) =>
     {
-        // TODO(configure consumers)
         cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+        cfg.ReceiveEndpoint(EventBusConstants.NotificationQueue, c =>
+        {
+            c.ConfigureConsumer<NotificationConsumer>(ctx);
+        });
     });
 });
 
