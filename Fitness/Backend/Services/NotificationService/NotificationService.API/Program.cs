@@ -6,20 +6,15 @@ using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using NotificationService.API.Data;
 using NotificationService.API.Entities;
 using NotificationService.API.EventBusConsumers;
-
-/*
- * TODO LIST
- *
- * TODO: Potential Email/Push notif.
- * TODO: Model the EventBus message
- * TODO: Model the entities for notifications
- * TODO: Implement Context, Repository, Mapper
- * TODO: Implement Controller (API calls)
- */
+using NotificationService.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IContext, Context>();
+builder.Services.AddScoped<IRepository, Repository>();
 
 // Add services to the container.
 builder.Services.AddCors(options =>
