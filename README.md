@@ -22,7 +22,7 @@ Mikroservisi od kojih se sastoji ova aplikacija su:
 Da biste pokrenuli *backend* aplikacije pozicionirajte se u terminal u folder ``Fitness/Backend`` unutar projekta. Zatim pokrenite sledeću komandu:
 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.development.yml up -d --build
 ```
 
 Zatim kada je *backend* pokrenut premestite se u folder ``Fitness/Frontend`` u projektu, i pokrenite sledeće komande:
