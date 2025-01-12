@@ -36,6 +36,12 @@ export function generateClientNav(id) {
       to: `/client/${id}/schedule`,
       icon: 'cil-calendar'
     },
+    {
+      component: 'CNavItem',
+      name: 'Chat',
+      to: `/client/${id}/chat`,
+      icon: 'cil-speech'
+    },
   ];
 }
 
