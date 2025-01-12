@@ -63,11 +63,6 @@ const AppSidebarNav = defineComponent({
     const route = useRoute()
     const nav = ref([])
     const updateNav = () => {
-      console.log("updateNav called");
-      console.log('props.type:', props.type);
-      console.trace();
-      debugger;
-
       if (props.type === 'trainer') {
         nav.value = generateTrainerNav(props.id)
       } else if (props.type === 'client') {

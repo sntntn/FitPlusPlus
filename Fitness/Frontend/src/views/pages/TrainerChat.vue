@@ -84,6 +84,9 @@ export default {
       }
     },
   },
+  mounted() {
+      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+  }
 };
 </script>
 
