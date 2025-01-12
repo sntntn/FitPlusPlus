@@ -74,6 +74,9 @@ services:
     build:
       context: .
       dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+      - rabbitmq
 
 volumes:
   trainermongo_data:
