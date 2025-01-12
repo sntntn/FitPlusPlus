@@ -15,7 +15,7 @@
       </ul>
     </aside>
 
-    <main class="chat-main">
+    <main class="chat-main" v-if="selectedClient">
       <h3>Chat with {{ selectedClient.name }}</h3>
       <div class="chat-messages">
         <div
@@ -66,7 +66,6 @@ export default {
     };
   },
   created() {
-    // Hardkodirano -> na biranje prvog klijenta odmah prilikom kreiranju komponente
     this.selectedClient = this.clients[0];
   },
   methods: {
@@ -85,8 +84,8 @@ export default {
     },
   },
   mounted() {
-      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
-  }
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+  },
 };
 </script>
 
@@ -130,17 +129,25 @@ export default {
   border: 1px solid #ccc;
   padding: 1rem;
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 .message {
   margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  max-width: 60%;
+  word-wrap: break-word;
 }
 .message.trainer {
   text-align: right;
-  color: #4caf50;
+  background-color: #d1f7d6;
+  align-self: flex-end;
 }
 .message.client {
   text-align: left;
-  color: #2196f3;
+  background-color: #f1f1f1;
+  align-self: flex-start;
 }
 .message-input {
   display: flex;
