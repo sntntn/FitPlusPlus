@@ -20,4 +20,6 @@ public class Training
     public TrainingStatus Status { get; set; }
     
     public int Rating { get; set; }
+    
+    public string Comment { get; set; }
 }
