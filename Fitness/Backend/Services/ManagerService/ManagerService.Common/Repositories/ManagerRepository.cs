@@ -57,7 +57,7 @@ public class ManagerRepository : IManagerRepository
         return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
     }
 
-    public async Task<Trainer> GetTrainerAsync(string id)
+   /* public async Task<Trainer> GetTrainerAsync(string id)
     {
         return await _context.Trainers.Find(t => t.Id == id).FirstOrDefaultAsync();
     }
@@ -77,5 +77,5 @@ public class ManagerRepository : IManagerRepository
     {
         var deleteResult = await _context.Trainers.DeleteOneAsync(t => t.Id == id);
         return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
-    }
+    }*/
 }

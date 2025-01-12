@@ -14,10 +14,10 @@ public class ManagerContext : IManagerContext
 
         Managers = database.GetCollection<Manager>("Managers");
         Finances = database.GetCollection<Finance>("Finances");
-        Trainers = database.GetCollection<Trainer>("Trainers");
+       // Trainers = database.GetCollection<Trainer>("Trainers");
     }
     
     public IMongoCollection<Manager> Managers { get; }
-    public IMongoCollection<Trainer> Trainers { get; }
+    //public IMongoCollection<Trainer> Trainers { get; }
     public IMongoCollection<Finance> Finances { get; }
 }

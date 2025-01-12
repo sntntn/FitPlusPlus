@@ -14,8 +14,9 @@ namespace ManagerService.API.Controllers
         {
             _managerRepository = managerRepository ?? throw new ArgumentNullException(nameof(managerRepository));
         }
-
+        /*
         [HttpGet("[action]/{id}", Name = "GetTrainer")]
+        [ActionName("Trainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Trainer>> GetTrainer(string id)
@@ -30,6 +31,7 @@ namespace ManagerService.API.Controllers
         }
 
         [HttpPost("[action]")]
+        [ActionName("Trainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status201Created)]
         public async Task<ActionResult<Trainer>> CreateTrainer([FromBody] Trainer trainer)
         {
@@ -39,6 +41,7 @@ namespace ManagerService.API.Controllers
         }
 
         [HttpDelete("[action]/{id}", Name = "DeleteTrainer")]
+        [ActionName("Trainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteTrainer(string id)
         {
@@ -47,13 +50,15 @@ namespace ManagerService.API.Controllers
         }
         
         [HttpPut("[action]")]
+        [ActionName("Trainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateTrainer([FromBody] Trainer trainer)
         {
             return Ok(await _managerRepository.UpdateTrainerAsync(trainer));
         }
-        /*------------------------------------------------------------------------------------*/
+        ------------------------------------------------------------------------------------*/
         [HttpGet("[action]/{id}", Name = "GetManager")]
+        [ActionName("Manager")]
         [ProducesResponseType(typeof(Manager), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Manager), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Manager>> GetManager(string id)
@@ -68,6 +73,7 @@ namespace ManagerService.API.Controllers
         }
 
         [HttpPost("[action]")]
+        [ActionName("Manager")]
         [ProducesResponseType(typeof(Manager), StatusCodes.Status201Created)]
         public async Task<ActionResult<Manager>> CreateManager([FromBody] Manager manager)
         {
@@ -77,6 +83,7 @@ namespace ManagerService.API.Controllers
         }
 
         [HttpDelete("[action]/{id}", Name = "DeleteManager")]
+        [ActionName("Manager")]
         [ProducesResponseType(typeof(Manager), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteManager(string id)
         {
@@ -85,6 +92,7 @@ namespace ManagerService.API.Controllers
         }
         
         [HttpPut("[action]")]
+        [ActionName("Manager")]
         [ProducesResponseType(typeof(Manager), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateManager([FromBody] Manager manager)
         {
@@ -94,6 +102,7 @@ namespace ManagerService.API.Controllers
         /*----------------------------------------------------------------------------------------*/
         
         [HttpGet("[action]/{id}", Name = "GetFinance")]
+        [ActionName("Finance")]
         [ProducesResponseType(typeof(Finance), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Finance), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Finance>> GetFinance(string id)
@@ -108,6 +117,7 @@ namespace ManagerService.API.Controllers
         }
 
         [HttpPost("[action]")]
+        [ActionName("Finance")]
         [ProducesResponseType(typeof(Finance), StatusCodes.Status201Created)]
         public async Task<ActionResult<Manager>> CreateFinance([FromBody] Finance finance)
         {
@@ -117,6 +127,7 @@ namespace ManagerService.API.Controllers
         }
 
         [HttpDelete("[action]/{id}", Name = "DeleteFinance")]
+        [ActionName("Finance")]    
         [ProducesResponseType(typeof(Finance), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteFinance(string id)
         {
@@ -125,6 +136,7 @@ namespace ManagerService.API.Controllers
         }
         
         [HttpPut("[action]")]
+        [ActionName("Finance")]
         [ProducesResponseType(typeof(Finance), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateFinance([FromBody] Finance finance)
         {

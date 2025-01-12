@@ -14,10 +14,10 @@ public interface IManagerRepository
     Task<bool> UpdateFinanceAsync(Finance finance);
     Task<bool> DeleteFinanceAsync(string id);
     
-    Task<Trainer> GetTrainerAsync(string id);
+   /* Task<Trainer> GetTrainerAsync(string id);
     Task CreateTrainerAsync(Trainer trainer);
     Task<bool> UpdateTrainerAsync(Trainer trainer);
-    Task<bool> DeleteTrainerAsync(string id);
+    Task<bool> DeleteTrainerAsync(string id);*/
 
 
 }
