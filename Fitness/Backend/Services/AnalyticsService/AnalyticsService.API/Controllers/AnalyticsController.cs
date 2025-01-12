@@ -15,7 +15,7 @@ public class AnalyticsController : ControllerBase
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
     
-    [HttpPost("[action]")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult> CreateTraining([FromQuery] Training training)
     {
@@ -26,14 +26,14 @@ public class AnalyticsController : ControllerBase
     [HttpGet("[action]")]
     [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(double), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<double>> GetAverageRating([FromQuery] string trainerId)
+    public async Task<ActionResult<double>> GetTrainerAverageTrainingRating([FromQuery] string trainerId)
     {
-        var rating = await _repository.GetAverageRating(trainerId);
+        var rating = await _repository.GetTrainerAverageTrainingRating(trainerId);
         return rating != 0.0 ? Ok(rating) : NotFound();
     }
 
     [HttpGet("[action]")]
-    [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     public async Task<ActionResult<int>> GetTrainerNumOfTrainings([FromQuery] string trainerId)
     {
         var numOfTrainings = await _repository.GetTrainerNumOfTrainings(trainerId);
@@ -41,10 +41,34 @@ public class AnalyticsController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     public async Task<ActionResult<int>> GetClientNumOfTrainingForClient([FromQuery] string clientId)
     {
-        var numOfTrainings = await _repository.GetClientNumOfTraining(clientId);
+        var numOfTrainings = await _repository.GetClientNumOfTrainings(clientId);
         return Ok(numOfTrainings);
+    }
+    
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    public async Task<ActionResult<int>> GetClientNumOfHeldTrainings([FromQuery] string clientId)
+    {
+        var numOfHeldTrainings = await _repository.GetClientNumOfHeldTrainings(clientId);
+        return Ok(numOfHeldTrainings);
+    }
+
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    public async Task<ActionResult<int>> GetClientNumOfCancelledTrainings([FromQuery] string clientId)
+    {
+        var numOfCancelledTrainings = await _repository.GetClientNumOfCancelledTrainings(clientId);
+        return Ok(numOfCancelledTrainings);
+    }
+
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<string>>> GetTrainerClientIds([FromQuery] string trainerId)
+    {
+        var clientIds = await _repository.GetTrainerClientIds(trainerId);
+        return Ok(clientIds);
     }
 }
