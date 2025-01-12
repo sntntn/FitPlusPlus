@@ -20,7 +20,7 @@ public class AnalyticsRepository : IAnalyticsRepository
         await _context.Trainings.InsertOneAsync(training);
     }
 
-    public async Task<double> GetAverageRating(string trainerId)
+    public async Task<double> GetTrainerAverageTrainingRating(string trainerId)
     {
         var trainings = await _context.Trainings.Find(t => t.TrainerId == trainerId).ToListAsync();
         return trainings.Count > 0 ? trainings.Average(t => t.Rating) : 0;
@@ -35,12 +35,34 @@ public class AnalyticsRepository : IAnalyticsRepository
        return Convert.ToInt32(numOfElements);
     }
 
-    public async Task<int> GetClientNumOfTraining(string clientId)
+    public async Task<int> GetClientNumOfTrainings(string clientId)
     {
         long numOfElements = await _context.Trainings
             .Find(t => t.ClientId == clientId && t.Status == TrainingStatus.HELD)
             .CountDocumentsAsync();
         
         return Convert.ToInt32(numOfElements);
+    }
+    
+    public async Task<int> GetClientNumOfHeldTrainings(string clientId)
+    {
+        long numOfElements = await _context.Trainings
+            .Find(t => t.Status == TrainingStatus.HELD)
+            .CountDocumentsAsync();
+        return Convert.ToInt32(numOfElements);
+    }
+    
+    public async Task<int> GetClientNumOfCancelledTrainings(string clientId)
+    {
+        long numOfElements = await _context.Trainings
+            .Find(t => t.Status == TrainingStatus.CANCELLED)
+            .CountDocumentsAsync();
+        return Convert.ToInt32(numOfElements);
+    }
+
+    public async Task<IEnumerable<string>> GetTrainerClientIds(string trainerId)
+    {
+        var trainings = await _context.Trainings.FindAsync(t => t.TrainerId == trainerId);
+        return trainings.ToList().Select(t => t.ClientId).AsEnumerable();
     }
 }

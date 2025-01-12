@@ -5,7 +5,10 @@ namespace AnalyticsService.Common.Repositories;
 public interface IAnalyticsRepository
 {
     Task CreateTraining(Training training);
-    Task<double> GetAverageRating(string trainerId);
+    Task<double> GetTrainerAverageTrainingRating(string trainerId);
     Task<int> GetTrainerNumOfTrainings(string trainerId);
-    Task<int> GetClientNumOfTraining(string clientId);
+    Task<int> GetClientNumOfTrainings(string clientId);
+    Task<int> GetClientNumOfHeldTrainings(string clientId);
+    Task<int> GetClientNumOfCancelledTrainings(string clientId);
+    Task<IEnumerable<string>> GetTrainerClientIds(string trainerId);
 }

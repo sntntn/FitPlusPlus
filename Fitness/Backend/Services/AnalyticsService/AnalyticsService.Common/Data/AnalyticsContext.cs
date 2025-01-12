@@ -30,6 +30,17 @@ public class AnalyticsContext : IAnalyticsContext
                     Status = TrainingStatus.HELD
                 }
             );
+            trainings.InsertOneAsync(
+                new Training()
+                {
+                    ClientId = "5F6D3326597F61D77AD99969",
+                    TrainerId = "1234567890abcdef12345678",
+                    TrainingDate = new DateTime(2021, 01, 01),
+                    Rating = 7,
+                    Status = TrainingStatus.CANCELLED,
+                    Comment = "Unpleasant experience"
+                }
+            );
         }
     }
 }
