@@ -15,6 +15,22 @@ namespace ChatService.API.Repositories
             _chatSessions = database.GetCollection<ChatSession>("ChatSessions");
         }
         
+        public async Task<IEnumerable<object>> GetBasicInfoForTrainerSessionsAsync(string trainerId)
+        {
+            var filter = Builders<ChatSession>.Filter.Eq(s => s.TrainerId, trainerId);
+
+            // Projekcija tkd izdvajamo samo potrebna polja
+            var projection = Builders<ChatSession>.Projection.Expression(s => new
+            {
+                TrainerId = s.TrainerId,
+                ClientId = s.ClientId,
+                IsUnlocked = s.IsUnlocked,
+                ExpirationDate = s.ExpirationDate
+            });
+
+            return await _chatSessions.Find(filter).Project(projection).ToListAsync();
+        }
+
         public async Task<ChatSession?> GetChatSessionAsync(string trainerId, string clientId)
         {
             return await _chatSessions

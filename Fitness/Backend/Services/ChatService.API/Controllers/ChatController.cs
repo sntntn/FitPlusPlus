@@ -20,6 +20,18 @@ public class ChatController : ControllerBase
         _chatRepository = chatRepository;
         _mongoClient = mongoClient;
     }
+    [HttpGet("sessions/trainer/{trainerId}/basic-info")]
+    public async Task<IActionResult> GetBasicInfoForTrainerSessions(string trainerId)
+    {
+        var basicInfo = await _chatRepository.GetBasicInfoForTrainerSessionsAsync(trainerId);
+
+        if (basicInfo == null || !basicInfo.Any())
+        {
+            return NotFound(new { Message = "No chat sessions found for the specified trainer." });
+        }
+
+        return Ok(basicInfo);
+    }
 
     
     [HttpPost("sessions/messages")]
