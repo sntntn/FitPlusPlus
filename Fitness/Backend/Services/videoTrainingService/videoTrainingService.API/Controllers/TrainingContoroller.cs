@@ -15,18 +15,16 @@ namespace videoTrainingService.API.Controllers
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
-
-        [Route("[action]")]
-        [HttpGet]
+        
+        [HttpGet("exercises/{trainerId}")]
         [ProducesResponseType(typeof(IEnumerable<Exercise>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Exercise>>> GetExercises(string trainerId)
         {
             var exercises = await _repository.GetExercises(trainerId);
             return Ok(exercises);
         }
-
-        [Route("[action]")]
-        [HttpGet]
+        
+        [HttpGet("exercise/{id}")]
         [ProducesResponseType(typeof(Exercise), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Exercise>> GetExercise(string id)
@@ -39,36 +37,31 @@ namespace videoTrainingService.API.Controllers
             return Ok(exercise);
         }
 
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPost("exercise")]
         [ProducesResponseType(typeof(Exercise), StatusCodes.Status201Created)]
-        public async Task<ActionResult> CreateExercise(Exercise exercise)
+        public async Task<ActionResult> CreateExercise([FromBody] Exercise exercise)
         {
             await _repository.CreateExercise(exercise);
             return CreatedAtRoute("GetExercise", new { id = exercise.Id} , exercise);
         }
 
-        [Route("[action]")]
-        [HttpPut]
+        [HttpPut("exercise")]
         [ProducesResponseType(typeof(Exercise), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateExercise(Exercise exercise)
+        public async Task<IActionResult> UpdateExercise([FromBody] Exercise exercise)
         {
             var result = await _repository.UpdateExercise(exercise);
             return Ok(result);
         }
         
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("exercise/{id}")]
         [ProducesResponseType(typeof(Exercise), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteExercise(string id)
         {
             var result = await _repository.DeleteExercise(id);
             return Ok(result);
         }
-
         
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet("training/trainingClient/{clientId}")]
         [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Training>>> GetTrainingsForClient(string clientId)
         {
@@ -76,8 +69,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainings);
         }
         
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet("training/trainingTrainer/{trainerId}")]
         [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Training>>> GetTrainingsForTrainer(string trainerId)
         {
@@ -85,8 +77,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainings);
         }
         
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet("training/{id}")]
         [ProducesResponseType(typeof(Training), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Training>> GetTraining(string id)
@@ -99,26 +90,23 @@ namespace videoTrainingService.API.Controllers
             return Ok(training);
         }
         
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPost("training")]
         [ProducesResponseType(typeof(Training), StatusCodes.Status201Created)]
-        public async Task<ActionResult> CreateTraining(Training training)
+        public async Task<ActionResult> CreateTraining([FromBody] Training training)
         {
             await _repository.CreateTraining(training);
             return CreatedAtRoute("GetTraining", new { id = training.TrainingId} , training);
         }
 
-        [Route("[action]")]
-        [HttpPut]
+        [HttpPut("training")]
         [ProducesResponseType(typeof(Training), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateTraining(Training training)
+        public async Task<IActionResult> UpdateTraining([FromBody] Training training)
         {
             var result = await _repository.UpdateTraining(training);
             return Ok(result);
         }
         
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("training/{id}")]
         [ProducesResponseType(typeof(Training), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteTraining(string id)
         {
@@ -126,8 +114,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(result);
         }
 
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet("trainingExercises/{trainingId}")]
         [ProducesResponseType(typeof(IEnumerable<TrainingExercise>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TrainingExercise>>> GetTrainingExercises(string trainingId)
         {
@@ -135,8 +122,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainingExercises);
         }
         
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet("trainingExercise/{id}")]
         [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TrainingExercise>> GetTrainingExercise(string id)
@@ -149,26 +135,23 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainingExercise);
         }
         
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPost("trainingExercise")]
         [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status201Created)]
-        public async Task<ActionResult> CreateTrainingExercise(TrainingExercise trainingExercise)
+        public async Task<ActionResult> CreateTrainingExercise([FromBody] TrainingExercise trainingExercise)
         {
             await _repository.CreateTrainingExercise(trainingExercise);
             return CreatedAtRoute("GetTrainingExercise", new { id = trainingExercise.Id} , trainingExercise);
         }
-
-        [Route("[action]")]
-        [HttpPut]
+        
+        [HttpPut("trainingExercise")]
         [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateTrainingExercise(TrainingExercise trainingExercises)
+        public async Task<IActionResult> UpdateTrainingExercise([FromBody] TrainingExercise trainingExercises)
         {
             var result = await _repository.UpdateTrainingExercise(trainingExercises);
             return Ok(result);
         }
         
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("trainingExercise/{id}")]
         [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteTrainingExercise(string id)
         {
