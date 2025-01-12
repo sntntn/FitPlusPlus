@@ -83,11 +83,11 @@ const routes = [
         component: () => import('@/views/pages/TrainerChat.vue')
       },
 
-      // {
-      //   path: '/client/:id/chat',
-      //   name: 'ClientChat',
-      //   component: () => import('@/views/pages/ClientChat.vue'),
-      // },
+      {
+        path: '/client/:id/chat',
+        name: 'Client Chat',
+        component: () => import('@/views/pages/ClientChat.vue'),
+      },
 
     ],
   },
