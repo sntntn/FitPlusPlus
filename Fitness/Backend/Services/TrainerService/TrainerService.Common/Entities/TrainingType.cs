@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using System;
 
-namespace TrainerService.API.Entities
+namespace TrainerService.Common.Entities
 {
     public class TrainingType
     {

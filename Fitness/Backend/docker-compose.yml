@@ -26,6 +26,12 @@ services:
       context: .
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
   
+  trainerservice.grpc:
+    image: ${DOCKER_REGISTRY-}trainerservicegrpc
+    build:
+      context: .
+      dockerfile: Services/TrainerService/TrainerService.GRPC/Dockerfile
+  
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
     build:

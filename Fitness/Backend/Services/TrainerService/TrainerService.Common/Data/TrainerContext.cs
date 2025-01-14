@@ -1,7 +1,8 @@
-﻿using MongoDB.Driver;
-using TrainerService.API.Entities;
+﻿using Microsoft.Extensions.Configuration;
+using MongoDB.Driver;
+using TrainerService.Common.Entities;
 
-namespace TrainerService.API.Data
+namespace TrainerService.Common.Data
 {
     public class TrainerContext : ITrainerContext
     {

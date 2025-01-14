@@ -10,7 +10,7 @@ public class ClientServiceGrpc : ClientProtoService.ClientProtoServiceBase
 {
     private readonly IRepository _repository;
     private readonly IMapper _mapper;
-
+    
     public ClientServiceGrpc(IRepository repository, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));

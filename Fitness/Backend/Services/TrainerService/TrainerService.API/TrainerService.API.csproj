@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
+    <ProjectReference Include="..\TrainerService.Common\TrainerService.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.Common", "Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.GRPC", "Services\ClientService\ClientService.GRPC\ClientService.GRPC.csproj", "{06072C23-37C4-4AD9-A8FC-864A83E91720}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainerService.Common", "Services\TrainerService\TrainerService.Common\TrainerService.Common.csproj", "{4D2F9ADF-65DB-41C3-9050-D5475D1BEFE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainerService.GRPC", "Services\TrainerService\TrainerService.GRPC\TrainerService.GRPC.csproj", "{8A41AB5B-51F7-4F30-9B49-19BF8E09FC5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +89,14 @@ Global
 		{06072C23-37C4-4AD9-A8FC-864A83E91720}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06072C23-37C4-4AD9-A8FC-864A83E91720}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06072C23-37C4-4AD9-A8FC-864A83E91720}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D2F9ADF-65DB-41C3-9050-D5475D1BEFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D2F9ADF-65DB-41C3-9050-D5475D1BEFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D2F9ADF-65DB-41C3-9050-D5475D1BEFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D2F9ADF-65DB-41C3-9050-D5475D1BEFE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A41AB5B-51F7-4F30-9B49-19BF8E09FC5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A41AB5B-51F7-4F30-9B49-19BF8E09FC5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A41AB5B-51F7-4F30-9B49-19BF8E09FC5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A41AB5B-51F7-4F30-9B49-19BF8E09FC5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

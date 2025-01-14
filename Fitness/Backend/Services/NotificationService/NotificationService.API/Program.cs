@@ -14,6 +14,7 @@ using NotificationService.API.Entities;
 using NotificationService.API.EventBusConsumers;
 using NotificationService.API.GrpcServices;
 using NotificationService.API.Repositories;
+using TrainerService.GRPC.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,10 @@ builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.AddGrpcClient<ClientProtoService.ClientProtoServiceClient>(
     options => options.Address = new Uri(builder.Configuration["GrpcSettings:ClientUrl"]!));
+builder.Services.AddGrpcClient<TrainerProtoService.TrainerProtoServiceClient>(
+    options => options.Address = new Uri(builder.Configuration["GrpcSettings:TrainerUrl"]!));
 builder.Services.AddScoped<ClientGrpcService>();
+builder.Services.AddScoped<TrainerGrpcService>();
 
 var emailSettings = builder.Configuration.GetSection("EmailSettings")!;
 
@@ -56,7 +60,8 @@ builder.Services.AddAutoMapper(configuration =>
 {
     configuration.CreateMap<NotificationEvent.NotificationType, Notification.NotificationType>().ReverseMap();
     configuration.CreateMap<NotificationEvent, Notification>().ReverseMap();
-    configuration.CreateMap<GetClientsResponse.Types.ClientReply, Client>();
+    configuration.CreateMap<GetClientsResponse.Types.ClientReply, Client>().ReverseMap();
+    configuration.CreateMap<GetTrainersResponse.Types.TrainerReply, Trainer>().ReverseMap();
 });
 
 // EventBus 

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace TrainerService.API.Entities
+namespace TrainerService.Common.Entities
 {
     public class TrainerSchedule
     {

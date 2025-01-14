@@ -69,6 +69,16 @@ services:
       - rabbitmq
     ports:
       - "8000:8080"
+  
+  trainerservice.grpc:
+    container_name: trainerservice.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
+    depends_on:
+      - trainerdb
+    ports:
+      - "8102:8080"
 
   clientservice.api:
     container_name: clientservice.api
@@ -146,7 +156,8 @@ services:
       - "EmailSettings:SmtpPort=587"
       - "EmailSettings:Username=fitplusplus.rs2@gmail.com"
       - "EmailSettings:EnableSsl=true"
-      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8101"
+      - "GrpcSettings:ClientUrl=http://host.docker.internal:8101"
+      - "GrpcSettings:TrainerUrl=http://host.docker.internal:8102"
     depends_on:
       - notificationdb
       - rabbitmq

@@ -14,6 +14,7 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
     private readonly ClientGrpcService _clientGrpcService;
+    private readonly TrainerGrpcService _trainerGrpcService;
 
     public NotificationConsumer(IRepository repository, IMapper mapper, IEmailService emailService, ClientGrpcService clientGrpcService)
     {
@@ -32,6 +33,10 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
         {
             var clients = await _clientGrpcService.GetClients(notification.UserIdToUserType.Keys);
             var clientsList = _mapper.Map<IEnumerable<Client>>(clients.Clients);
+
+            var trainers = await _trainerGrpcService.GetTrainers(notification.UserIdToUserType.Keys);
+            var trainersList = _mapper.Map<IEnumerable<Trainer>>(trainers.Trainers);
+            
             var subject = "[FitPlusPlus Gym] " + notification.Title;
             var body = "You have a new notification from your FitPlusPlus Gym Account:\n\n" + notification.Content +
                           "\n\nTime: " + notification.CreationDate;
@@ -45,7 +50,14 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
                 );
             }
             
-            // TODO("Same for trainer")
+            foreach (var trainer in trainersList)
+            {
+                await _emailService.SendEmailAsync(
+                    to: trainer.Email,
+                    subject: subject,
+                    body: body
+                );
+            }
         }
 
         if (notification.Push)

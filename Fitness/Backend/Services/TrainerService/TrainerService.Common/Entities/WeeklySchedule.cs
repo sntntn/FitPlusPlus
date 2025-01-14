@@ -1,4 +1,4 @@
-﻿namespace TrainerService.API.Entities
+﻿namespace TrainerService.Common.Entities
 {
     public class WeeklySchedule
     {

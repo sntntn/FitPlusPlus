@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
-using TrainerService.API.Entities;
+using TrainerService.Common.Entities;
 
-namespace TrainerService.API.Data
+namespace TrainerService.Common.Data
 {
     public interface ITrainerContext
     {

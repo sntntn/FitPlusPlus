@@ -1,10 +1,8 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-using System.Net.Http.Headers;
-using TrainerService.API.Data;
-using TrainerService.API.Entities;
+﻿using MongoDB.Driver;
+using TrainerService.Common.Data;
+using TrainerService.Common.Entities;
 
-namespace TrainerService.API.Repositories
+namespace TrainerService.Common.Repositories
 {
     public class TrainerRepository : ITrainerRepository
     {
@@ -18,6 +16,11 @@ namespace TrainerService.API.Repositories
         public async Task<IEnumerable<Trainer>> GetTrainers()
         {
             return await _context.Trainers.Find(p => true).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Trainer>> GetTrainersByIds(IEnumerable<string> ids)
+        {
+            return await _context.Trainers.Find(p => ids.Contains(p.Id)).ToListAsync();
         }
 
         public async Task<Trainer> GetTrainer(string id)
