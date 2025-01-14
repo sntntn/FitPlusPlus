@@ -1,8 +1,8 @@
-﻿using ClientService.API.Entities;
+﻿using ClientService.Common.Entities;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
-namespace ClientService.API.Data
+namespace ClientService.Common.Data
 {
     public class Context:IContext
     {

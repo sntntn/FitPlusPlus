@@ -6,12 +6,9 @@ service ReviewProtoService {
     rpc GetReviews (GetReviewsRequest) returns (GetReviewsResponse);
 }
 
-
 message GetReviewsRequest {
     string trainerId = 1;
 }
-
-
 
 message GetReviewsResponse {
     message ReviewReply {

@@ -1,9 +1,9 @@
 ﻿using Amazon.Runtime.Internal;
-using ClientService.API.Data;
-using ClientService.API.Entities;
+using ClientService.Common.Data;
+using ClientService.Common.Entities;
 using MongoDB.Driver;
 
-namespace ClientService.API.Repositories
+namespace ClientService.Common.Repositories
 {
     public class Repository : IRepository
     {
@@ -17,6 +17,12 @@ namespace ClientService.API.Repositories
         {
             return await _context.Clients.Find(p => true).ToListAsync();
         }
+
+        public async Task<IEnumerable<Client>> GetClientsByIds(IEnumerable<string> ids)
+        {
+            return await _context.Clients.Find(p => ids.Contains(p.Id)).ToListAsync();
+        }
+
         public async Task<Client> GetClientById(string id)
         {
             return await _context.Clients.Find(p => p.Id == id).FirstOrDefaultAsync();

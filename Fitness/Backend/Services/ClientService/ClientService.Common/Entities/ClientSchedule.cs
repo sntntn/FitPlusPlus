@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
 
-namespace ClientService.API.Entities
+namespace ClientService.Common.Entities
 {
     public class ClientSchedule
     {

@@ -1,11 +1,15 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace NotificationService.API.Entities;
 
 public class Notification
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public Guid Id { get; set; }
-    private DateTime CreationDate { get; set; }
-    public string UserType { get; set; }
-    public string UserId { get; set; }
+    public DateTime CreationDate { get; set; }
+    public IDictionary<string, string> UserIdToUserType;
     public string Title { get; set; }
     public string Content { get; set; }
     public NotificationType Type { get; set; }

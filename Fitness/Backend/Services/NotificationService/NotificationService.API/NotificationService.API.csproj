@@ -9,6 +9,10 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="DotNetEnv" Version="3.1.1" />
+        <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
         <PackageReference Include="MassTransit" Version="8.2.4" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.4" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
@@ -25,6 +29,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Protobuf Include="..\..\ClientService\ClientService.GRPC\Protos\client.proto" GrpcServices="Client">
+            <Link>Protos\client.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
 </Project>

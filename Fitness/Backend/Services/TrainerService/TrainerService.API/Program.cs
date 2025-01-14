@@ -19,7 +19,7 @@ builder.Services.AddScoped<ITrainerContext, TrainerContext>();
 builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
 
 builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
-    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
+    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]!));
 builder.Services.AddScoped<ReviewGrpcService>();
 
 builder.Services.AddAutoMapper(configuration =>

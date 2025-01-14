@@ -2,8 +2,7 @@ namespace EventBus.Messages.Events;
 
 public class NotificationEvent : IntegrationBaseEvent
 {
-    public string UserType { get; set; }
-    public string UserId { get; set; }
+    public IDictionary<string, string> UserIdToUserType;
     public string Title { get; set; }
     public string Content { get; set; }
     public NotificationType Type { get; set; }

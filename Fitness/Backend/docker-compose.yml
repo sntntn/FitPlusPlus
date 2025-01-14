@@ -31,6 +31,12 @@ services:
     build:
       context: .
       dockerfile: Services/ClientService/ClientService.API/Dockerfile
+      
+  clientservice.grpc:
+    image: ${DOCKER_REGISTRY-}clientservicegrpc
+    build:
+      context: .
+      dockerfile: Services/ClientService/ClientService.GRPC/Dockerfile
 
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver

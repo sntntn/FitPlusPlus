@@ -1,4 +1,4 @@
-﻿namespace ClientService.API.Entities
+﻿namespace ClientService.Common.Entities
 {
     public class BookTrainingInformation
     {

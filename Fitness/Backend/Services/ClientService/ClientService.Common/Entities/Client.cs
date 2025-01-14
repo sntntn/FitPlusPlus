@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace ClientService.API.Entities
+namespace ClientService.Common.Entities
 {
     public class Client
     {

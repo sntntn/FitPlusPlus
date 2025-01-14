@@ -18,14 +18,14 @@ public class Repository : IRepository
         return await _context.Notifications.Find(n => true).ToListAsync();
     }
 
-    public async Task<IEnumerable<Notification>> GetNotificationsByUserTypeAndUserId(string UserType, string UserId)
+    public async Task<IEnumerable<Notification>> GetNotificationsByUserId(string userId)
     {
-        return await _context.Notifications.Find(p => p.UserType == UserType && p.UserType == UserId).ToListAsync();
+        return await _context.Notifications.Find(n => n.UserIdToUserType.ContainsKey(userId)).ToListAsync();
     }
 
     public async Task<Notification> GetNotificationById(Guid id)
     {
-        return await _context.Notifications.Find(p => p.Id == id).FirstOrDefaultAsync();
+        return await _context.Notifications.Find(n => n.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task CreateNotification(Notification notification)
@@ -45,9 +45,9 @@ public class Repository : IRepository
         return result.IsAcknowledged && result.DeletedCount > 0;
     }
 
-    public async Task<bool> DeleteNotificationsByUserTypeAndUserId(string UserType, string UserId)
+    public async Task<bool> DeleteNotificationsByUserId(string userId)
     {
-        var result = await _context.Notifications.DeleteManyAsync(n => n.UserType == UserType && n.UserId == UserType);
+        var result = await _context.Notifications.DeleteManyAsync(n => n.UserIdToUserType.ContainsKey(userId));
         return result.IsAcknowledged && result.DeletedCount > 0;
     }
 

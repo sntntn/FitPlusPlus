@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace ClientService.API.Entities
+namespace ClientService.Common.Entities
 {
     public class ScheduleItem
     {

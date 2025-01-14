@@ -1,7 +1,7 @@
-﻿using ClientService.API.Entities;
+﻿using ClientService.Common.Entities;
 using MongoDB.Driver;
 
-namespace ClientService.API.Data
+namespace ClientService.Common.Data
 {
     public interface IContext
     {

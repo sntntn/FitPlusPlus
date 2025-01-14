@@ -7,13 +7,13 @@ using static ReviewService.GRPC.Protos.GetReviewsResponse.Types;
 namespace ReviewService.GRPC.Services
 
 {
-    public class ReviewServicegrpc : ReviewProtoService.ReviewProtoServiceBase
+    public class ReviewServiceGrpc : ReviewProtoService.ReviewProtoServiceBase
     {
         private readonly IReviewRepository _repository;
         private readonly IMapper _mapper;
 
 
-        public ReviewServicegrpc(IReviewRepository repository, IMapper mapper)
+        public ReviewServiceGrpc(IReviewRepository repository, IMapper mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -23,9 +23,8 @@ namespace ReviewService.GRPC.Services
         {
             var reviews = await _repository.GetReviews(request.TrainerId);
             var reviewList = new GetReviewsResponse();
-            reviewList.Reviews.AddRange(_mapper.Map<IEnumerable<GetReviewsResponse.Types.ReviewReply>>(reviews));
+            reviewList.Reviews.AddRange(_mapper.Map<IEnumerable<ReviewReply>>(reviews));
             return reviewList;
-
         }
     }
 }

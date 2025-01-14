@@ -81,6 +81,16 @@ services:
       - rabbitmq 
     ports:
       - "8100:8080"
+        
+  clientservice.grpc:
+    container_name: clientservice.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
+    depends_on:
+      - reviewdb
+    ports:
+      - "8101:8080"
 
   identityserver:
     container_name: identityserver
@@ -131,6 +141,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://notificationdb:27017"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "EmailSettings:FromEmail=fitplusplus.rs2@gmail.com"
+      - "EmailSettings:SmtpHost=smtp.gmail.com"
+      - "EmailSettings:SmtpPort=587"
+      - "EmailSettings:Username=fitplusplus.rs2@gmail.com"
+      - "EmailSettings:EnableSsl=true"
+      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8101"
     depends_on:
       - notificationdb
       - rabbitmq

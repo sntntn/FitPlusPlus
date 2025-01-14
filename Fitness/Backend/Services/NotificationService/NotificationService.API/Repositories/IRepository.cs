@@ -6,7 +6,7 @@ public interface IRepository
 {
     Task<IEnumerable<Notification>> GetNotifications();
 
-    Task<IEnumerable<Notification>> GetNotificationsByUserTypeAndUserId(string UserType, string UserId);
+    Task<IEnumerable<Notification>> GetNotificationsByUserId(string userId);
 
     Task<Notification> GetNotificationById(Guid id);
 
@@ -16,7 +16,7 @@ public interface IRepository
 
     Task<bool> DeleteNotification(Guid id);
 
-    Task<bool> DeleteNotificationsByUserTypeAndUserId(string UserType, string UserId);
+    Task<bool> DeleteNotificationsByUserId(string userId);
 
     Task DeleteAllNotifications();
 }

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
+    <ProjectReference Include="..\ClientService.Common\ClientService.Common.csproj" />
   </ItemGroup>
 
 </Project>

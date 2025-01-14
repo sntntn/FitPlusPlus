@@ -3,17 +3,12 @@ using ReviewService.Common.Data;
 using ReviewService.Common.DTOs;
 using ReviewService.Common.Entities;
 using ReviewService.Common.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ReviewService.Common.Extentions
+namespace ReviewService.Common.Extensions
 {
-    public static class ReviewCommonExtentions
+    public static class ReviewCommonExtensions
     {
-        public static void AddReviewCommonExtentions(this IServiceCollection services)
+        public static void AddReviewCommonExtensions(this IServiceCollection services)
         {
             services.AddScoped<IReviewContext, ReviewContext>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -23,7 +18,6 @@ namespace ReviewService.Common.Extentions
                 configuration.CreateMap<ReviewDTO, Review>().ReverseMap();
                 configuration.CreateMap<CreateReviewDTO, Review>().ReverseMap();
                 configuration.CreateMap<UpdateReviewDTO, Review>().ReverseMap();
-
             });
         }
     }

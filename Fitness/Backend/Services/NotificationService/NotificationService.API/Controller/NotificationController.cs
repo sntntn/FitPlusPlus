@@ -31,11 +31,11 @@ public class NotificationController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Trainer, Client")]
-    [HttpGet("{userType}/{userId}")]
+    [HttpGet("user/{userId}")]
     [ProducesResponseType(typeof(IEnumerable<Notification>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserTypeAndUserId(string userType, string userId)
+    public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserId(string userId)
     {
-        var notifications = await _repository.GetNotificationsByUserTypeAndUserId(userType, userId);
+        var notifications = await _repository.GetNotificationsByUserId(userId);
         return Ok(notifications);
     }
 
@@ -66,11 +66,11 @@ public class NotificationController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Trainer, Client")]
-    [HttpDelete("{userType}/{userId}")]
+    [HttpDelete("/user/{userId}")]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteNotificationsByUserTypeAndUserId(string userType, string userId)
+    public async Task<IActionResult> DeleteNotificationsByUserTypeAndUserId(string userId)
     {
-        return Ok( await _repository.DeleteNotificationsByUserTypeAndUserId(userType, userId));
+        return Ok( await _repository.DeleteNotificationsByUserId(userId));
     }
 
     [Authorize(Roles = "Admin, Trainer, Client")]

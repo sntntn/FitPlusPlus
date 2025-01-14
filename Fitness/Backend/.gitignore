@@ -484,3 +484,6 @@ FodyWeavers.xsd
 
 # MacOS
 .DS_Store
+
+# .env
+**/.env

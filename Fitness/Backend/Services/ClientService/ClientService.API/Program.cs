@@ -1,7 +1,5 @@
 using Amazon.Runtime.Internal;
-using ClientService.API.Data;
 using ClientService.API.EventBusConsumers;
-using ClientService.API.Repositories;
 using EventBus.Messages.Constants;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,12 +8,13 @@ using Microsoft.IdentityModel.Tokens;
 // using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using ClientService.Common.Data;
+using ClientService.Common.Extensions;
+using ClientService.Common.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddScoped<IContext, Context>();
-builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddClientCommonExtensions();
 
 // Add services to the container.
 
