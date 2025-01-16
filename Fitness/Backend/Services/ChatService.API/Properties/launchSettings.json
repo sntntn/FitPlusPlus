@@ -11,13 +11,13 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5276",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5276"
     },
     "https": {
       "commandName": "Project",
@@ -36,6 +36,17 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "ChatService.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DatabaseSettings:ConnectionString": "mongodb://chatdb:27017",
+        "EventBusSettings:HostAddress": "amqp://guest:guest@rabbitmq:5672"
+      },
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }

@@ -115,7 +115,7 @@ services:
     container_name: chatService.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "DatabaseSettings:ConnectionString=mongodb://chatdb:27017"
+      - "MongoDB:ConnectionString=mongodb://chatdb:27017"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
-      - 5007:5000
+      - 8082:8080

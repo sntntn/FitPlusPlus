@@ -40,13 +40,17 @@
 </template>
 
 <script>
+import { getBasicInfoForTrainerSessions } from "../../services/ChatService";
+
 export default {
   data() {
     return {
       clients: [
         {
           id: 1,
-          name: "Client 1",
+          name: "Client 1",  
+          isUnlocked: true,
+          expirationDate: "2025-02-20T12:00:00",
           messages: [
             { id: 1, text: "Hello, Trainer!", sender: "client" },
             { id: 2, text: "Hi, how can I help you?", sender: "trainer" },
@@ -55,6 +59,8 @@ export default {
         {
           id: 2,
           name: "Client 2",
+          isUnlocked: false,  
+          expirationDate: "2025-01-30T10:00:00",
           messages: [
             { id: 3, text: "When is my next session?", sender: "client" },
             { id: 4, text: "It's on Monday at 10 AM.", sender: "trainer" },
@@ -67,6 +73,12 @@ export default {
   },
   created() {
     this.selectedClient = this.clients[0];
+  },
+  mounted() {
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+    this.trainerId = this.$route.params.id; // Ako trainerId dolazi iz rute
+    this.fetchTrainerSessionsBasicInfo();
+   
   },
   methods: {
     selectClient(client) {
@@ -82,9 +94,16 @@ export default {
         this.newMessage = "";
       }
     },
-  },
-  mounted() {
-    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+    async fetchTrainerSessionsBasicInfo() {
+        const trainerId = this.trainerId;
+
+        try {
+            const basicInfo = await getBasicInfoForTrainerSessions(trainerId);
+            console.log("Trainer Sessions Basic Info:", basicInfo);
+        } catch (error) {
+            console.error("Failed to fetch trainer sessions basic info:", error);
+        }
+    },
   },
 };
 </script>
