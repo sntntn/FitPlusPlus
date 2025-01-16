@@ -24,7 +24,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(exercises);
         }
         
-        [HttpGet("exercise/{id}")]
+        [HttpGet("exercise/{id}", Name = "GetExercise")]
         [ProducesResponseType(typeof(Exercise), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Exercise>> GetExercise(string id)
@@ -61,7 +61,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(result);
         }
         
-        [HttpGet("training/trainingClient/{clientId}")]
+        [HttpGet("training/trainingClient/{clientId}", Name = "GetTrainingsForClient")]
         [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Training>>> GetTrainingsForClient(string clientId)
         {
@@ -69,7 +69,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainings);
         }
         
-        [HttpGet("training/trainingTrainer/{trainerId}")]
+        [HttpGet("training/trainingTrainer/{trainerId}", Name = "GetTrainingsForTrainer")]
         [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Training>>> GetTrainingsForTrainer(string trainerId)
         {
@@ -77,7 +77,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainings);
         }
         
-        [HttpGet("training/{id}")]
+        [HttpGet("training/{id}", Name = "GetTraining")]
         [ProducesResponseType(typeof(Training), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Training>> GetTraining(string id)
@@ -114,7 +114,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("trainingExercises/{trainingId}")]
+        [HttpGet("trainingExercises/{trainingId}", Name = "GetTrainingExercises")]
         [ProducesResponseType(typeof(IEnumerable<TrainingExercise>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TrainingExercise>>> GetTrainingExercises(string trainingId)
         {
@@ -122,7 +122,7 @@ namespace videoTrainingService.API.Controllers
             return Ok(trainingExercises);
         }
         
-        [HttpGet("trainingExercise/{id}")]
+        [HttpGet("trainingExercise/{id}", Name = "GetTrainingExercise")]
         [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TrainingExercise>> GetTrainingExercise(string id)
