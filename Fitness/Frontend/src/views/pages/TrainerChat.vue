@@ -58,16 +58,6 @@ export default {
             { id: 2, text: "Hi, how can I help you?", sender: "trainer" },
           ],
         },
-        {
-          id: 2,
-          name: "Client 2",
-          isUnlocked: false,  
-          expirationDate: "2025-01-30T10:00:00",
-          messages: [
-            { id: 3, text: "When is my next session?", sender: "client" },
-            { id: 4, text: "It's on Monday at 10 AM.", sender: "trainer" },
-          ],
-        },
       ],
       selectedClient: null,
       newMessage: "",
@@ -75,6 +65,8 @@ export default {
   },
   created() {
     this.selectedClient = this.clients[0];
+    //this.$parent.$parent.$parent.setUserData(this.trainerId, "trainer");
+    //this.fetchTrainerSessionsBasicInfo();
   },
   mounted() {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
@@ -131,7 +123,16 @@ export default {
       try {
         const response = await getMessagesFromSession(trainerId, clientId);
         console.log(response);
-        this.selectedClient.messages = response;
+        const transformedMessages = response.map((msg) => ({
+          id: msg.id?.id || Date.now(), 
+          text: msg.content,
+          sender: msg.senderType.toLowerCase(), // "Trainer" u "trainer"
+        }));
+
+        console.log("Transformed Messages:", transformedMessages);
+        this.selectedClient.messages = transformedMessages;
+
+        
       } catch (error) {
         console.error("Failed to fetch messages:", error);
         this.selectedClient.messages = [];
