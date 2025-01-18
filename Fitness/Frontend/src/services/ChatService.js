@@ -11,3 +11,14 @@ export async function getBasicInfoForTrainerSessions(trainerId) {
         throw error; 
     }
 }
+
+export async function getMessagesFromSession(trainerId, clientId) {
+  try {
+    const response = await axios.get(`${BASE_URL}/sessions/messages?trainerId=${trainerId}&clientId=${clientId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    throw error;
+  }
+}
+

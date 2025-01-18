@@ -41,6 +41,8 @@
 
 <script>
 import { getBasicInfoForTrainerSessions } from "../../services/ChatService";
+import { getMessagesFromSession } from "../../services/ChatService";
+
 
 export default {
   data() {
@@ -83,6 +85,8 @@ export default {
   methods: {
     selectClient(client) {
       this.selectedClient = client;
+      console.log(client.id);
+      this.fetchMessages(client.id);
     },
     sendMessage() {
       if (this.newMessage.trim() !== "") {
@@ -99,10 +103,40 @@ export default {
 
         try {
             const basicInfo = await getBasicInfoForTrainerSessions(trainerId);
-            console.log("Trainer Sessions Basic Info:", basicInfo);
+            
+            basicInfo.forEach(session => {
+            console.log("TrainerId:", session.trainerId);
+            console.log("ClientId:", session.clientId);
+            console.log("Is Unlocked:", session.isUnlocked);
+            console.log("Expiration Date:", session.expirationDate);
+            console.log("--------------");
+
+            this.clients.push({
+            id: session.clientId,
+            name: session.clientId, // ClientId kao name
+            isUnlocked: session.isUnlocked,
+            expirationDate: session.expirationDate,
+            messages: [
+              { id: Date.now(), text: "Session started", sender: "trainer" }, // Primer poruke
+            ],
+          });
+        });
         } catch (error) {
             console.error("Failed to fetch trainer sessions basic info:", error);
         }
+    },
+    async fetchMessages(clientId) {
+      const trainerId = this.trainerId;
+      console.log(trainerId);
+      try {
+        const response = await getMessagesFromSession(trainerId, clientId);
+        console.log(response);
+        this.selectedClient.messages = response;
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+        this.selectedClient.messages = [];
+
+      }
     },
   },
 };
