@@ -7,7 +7,7 @@
         <li
           v-for="client in clients"
           :key="client.id"
-          :class="{ active: client.id === selectedClient.id }"
+          :class="{ active: client.id === selectedClient?.id }"
           @click="selectClient(client)"
         >
           <p>{{ client.name }}</p>
@@ -15,26 +15,45 @@
       </ul>
     </aside>
 
-    <main class="chat-main" v-if="selectedClient">
-      <h3>Chat with {{ selectedClient.name }}</h3>
-      <div class="chat-messages">
-        <div
-          v-for="message in selectedClient.messages"
-          :key="message.id"
-          :class="['message', message.sender === 'trainer' ? 'trainer' : 'client']"
-        >
-          <p>{{ message.text }}</p>
+    <main class="chat-main">
+      <template v-if="selectedClient">
+        <h3>Chat with {{ selectedClient.name }}</h3>
+        <div class="chat-messages">
+          <div
+            v-for="message in selectedClient.messages"
+            :key="message.id"
+            :class="['message', message.sender === 'trainer' ? 'trainer' : 'client']"
+          >
+            <p>{{ message.text }}</p>
+          </div>
         </div>
-      </div>
 
-      <div class="message-input">
-        <input
-          type="text"
-          v-model="newMessage"
-          placeholder="Type your message..."
-        />
-        <button @click="sendMessage">Send</button>
-      </div>
+        <div class="message-input">
+          <input
+            type="text"
+            v-model="newMessage"
+            placeholder="Type your message..."
+          />
+          <button @click="sendMessage">Send</button>
+        </div>
+      </template>
+      <template v-else>
+        <h3>Select a client to chat</h3>
+        <div class="chat-messages">
+          <!-- Prikazuje praznu oblast poruka dok klijent nije izabran -->
+        </div>
+
+        <div class="message-input">
+          <input
+            type="text"
+            v-model="newMessage"
+            placeholder="Type your message..."
+            :disabled="!selectedClient"
+          />
+          <button @click="sendMessage" :disabled="!selectedClient">Send</button> <!-- Onemogući dugme dok nije odabran klijent -->
+        </div>
+      </template>
+
     </main>
   </div>
 </template>
@@ -64,9 +83,7 @@ export default {
     };
   },
   created() {
-    this.selectedClient = this.clients[0];
-    //this.$parent.$parent.$parent.setUserData(this.trainerId, "trainer");
-    //this.fetchTrainerSessionsBasicInfo();
+    //this.selectedClient = this.clients[0];
   },
   mounted() {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
