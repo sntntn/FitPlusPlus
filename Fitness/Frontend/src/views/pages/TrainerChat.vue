@@ -41,6 +41,7 @@
         <h3>Select a client to chat</h3>
         <div class="chat-messages">
           <!-- Prikazuje praznu oblast poruka dok klijent nije izabran -->
+          <!-- TO DO dodati Loader-->>
         </div>
 
         <div class="message-input">
@@ -50,7 +51,7 @@
             placeholder="Type your message..."
             :disabled="!selectedClient"
           />
-          <button @click="sendMessage" :disabled="!selectedClient">Send</button> <!-- Onemogući dugme dok nije odabran klijent -->
+          <button @click="sendMessage" :disabled="!selectedClient">Send</button>
         </div>
       </template>
 
@@ -66,29 +67,17 @@ import { getMessagesFromSession } from "../../services/ChatService";
 export default {
   data() {
     return {
-      clients: [
-        {
-          id: 1,
-          name: "Client 1",  
-          isUnlocked: true,
-          expirationDate: "2025-02-20T12:00:00",
-          messages: [
-            { id: 1, text: "Hello, Trainer!", sender: "client" },
-            { id: 2, text: "Hi, how can I help you?", sender: "trainer" },
-          ],
-        },
-      ],
+      clients: [],
       selectedClient: null,
       newMessage: "",
     };
   },
   created() {
-    //this.selectedClient = this.clients[0];
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+    this.trainerId = this.$route.params.id;
+    this.fetchTrainerSessionsBasicInfo();
   },
   mounted() {
-    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
-    this.trainerId = this.$route.params.id; // Ako trainerId dolazi iz rute
-    this.fetchTrainerSessionsBasicInfo();
    
   },
   methods: {
