@@ -12,6 +12,16 @@ export async function getBasicInfoForTrainerSessions(trainerId) {
     }
 }
 
+export async function getBasicInfoForClientSessions(clientId) {
+  try {
+    const response = await axios.get(`${BASE_URL}/sessions/${clientId}/basic-info`);
+    return response.data;
+  } catch (error) {
+      console.error("Error fetching client sessions basic info:", error);
+      throw error; 
+  }
+}
+
 export async function getMessagesFromSession(trainerId, clientId) {
   try {
     const response = await axios.get(`${BASE_URL}/sessions/messages?trainerId=${trainerId}&clientId=${clientId}`);
