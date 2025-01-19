@@ -38,10 +38,11 @@
         </div>
       </template>
       <template v-else>
-        <h3>Select a client to chat</h3>
+        <h3 class="warning-text">No client selected</h3>
         <div class="chat-messages">
-          <!-- Prikazuje praznu oblast poruka dok klijent nije izabran -->
-          <!-- TO DO dodati Loader-->>
+          <!-- TO DO dodati Loader-->
+          <span class="warning-text1">Select a client from the chat list on the left</span>
+
         </div>
 
         <div class="message-input">
@@ -225,5 +226,15 @@ export default {
   color: white;
   border: none;
   cursor: pointer;
+}
+.warning-text {
+  color: rgb(163, 30, 30);
+  font-weight: bold;
+  text-align: center;
+}
+.warning-text1 {
+  color: rgb(163, 30, 30);
+  font-weight: normal;
+  text-align: center;
 }
 </style>
