@@ -66,24 +66,7 @@ import { getMessagesFromSession } from "../../services/ChatService";
 export default {
   data() {
     return {
-      trainers: [
-        {
-          id: 1,
-          name: "Trainer 1",
-          messages: [
-            { id: 1, text: "Hello, Client!", sender: "trainer" },
-            { id: 2, text: "Hi, Trainer!", sender: "client" },
-          ],
-        },
-        {
-          id: 2,
-          name: "Trainer 2",
-          messages: [
-            { id: 3, text: "How can I help you?", sender: "trainer" },
-            { id: 4, text: "I have a question about my program.", sender: "client" },
-          ],
-        },
-      ],
+      trainers: [],
       selectedTrainer: null,
       newMessage: "",
     };
@@ -99,6 +82,7 @@ export default {
     selectTrainer(trainer) {
       this.selectedTrainer = trainer;
       console.log(trainer.id);
+      this.fetchMessages(trainer.id);
 
     },
     sendMessage() {
@@ -136,6 +120,28 @@ export default {
         } catch (error) {
             console.error("Failed to fetch client sessions basic info:", error);
         }
+    },
+    async fetchMessages(trainerId) {
+      const clientId = this.clientId;
+      console.log(clientId);
+      try {
+        const response = await getMessagesFromSession(trainerId, clientId);
+        console.log(response);
+        const transformedMessages = response.map((msg) => ({
+          id: msg.id?.id || Date.now(), 
+          text: msg.content,
+          sender: msg.senderType.toLowerCase(), // "Client" u "client", "Trainer" u "trainer"
+        }));
+
+        console.log("Transformed Messages:", transformedMessages);
+        this.selectedTrainer.messages = transformedMessages;
+
+        
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+        this.selectedTrainer.messages = [];
+
+      }
     },
   }
 };
