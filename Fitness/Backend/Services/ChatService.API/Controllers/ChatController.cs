@@ -20,10 +20,10 @@ public class ChatController : ControllerBase
         _chatRepository = chatRepository;
         _mongoClient = mongoClient;
     }
-    [HttpGet("sessions/trainer/{trainerId}/basic-info")]
-    public async Task<IActionResult> GetBasicInfoForTrainerSessions(string trainerId)
+    [HttpGet("sessions/{userId}/basic-info")]
+    public async Task<IActionResult> GetBasicInfoForSessions(string userId)
     {
-        var basicInfo = await _chatRepository.GetBasicInfoForTrainerSessionsAsync(trainerId);
+        var basicInfo = await _chatRepository.GetBasicInfoForSessionsAsync(userId);
 
         if (basicInfo == null || !basicInfo.Any())
         {
