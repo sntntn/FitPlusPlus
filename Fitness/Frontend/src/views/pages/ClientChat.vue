@@ -7,7 +7,7 @@
         <li
           v-for="trainer in trainers"
           :key="trainer.id"
-          :class="{ active: trainer.id === selectedTrainer.id }"
+          :class="{ active: trainer.id === selectedTrainer?.id }"
           @click="selectTrainer(trainer)"
         >
           <p>{{ trainer.name }}</p>
@@ -15,26 +15,45 @@
       </ul>
     </aside>
 
-    <main class="chat-main" v-if="selectedTrainer">
-      <h3>Chat with {{ selectedTrainer.name }}</h3>
-      <div class="chat-messages">
-        <div
-          v-for="message in selectedTrainer.messages"
-          :key="message.id"
-          :class="['message', message.sender === 'trainer' ? 'trainer' : 'client']"
-        >
-          <p>{{ message.text }}</p>
+    <main class="chat-main">
+      <template v-if="selectedTrainer">
+        <h3>Chat with {{ selectedTrainer.name }}</h3>
+        <div class="chat-messages">
+          <div
+            v-for="message in selectedTrainer.messages"
+            :key="message.id"
+            :class="['message', message.sender === 'trainer' ? 'trainer' : 'client']"
+          >
+            <p>{{ message.text }}</p>
+          </div>
         </div>
-      </div>
 
-      <div class="message-input">
-        <input
-          type="text"
-          v-model="newMessage"
-          placeholder="Type your message..."
-        />
-        <button @click="sendMessage">Send</button>
-      </div>
+        <div class="message-input">
+          <input
+            type="text"
+            v-model="newMessage"
+            placeholder="Type your message..."
+          />
+          <button @click="sendMessage">Send</button>
+        </div>
+      </template>
+      <template v-else>
+        <h3 class="warning-text">No trainer selected</h3>
+        <div class="chat-messages">
+          <!-- TO DO dodati Loader-->
+          <span class="warning-text1">Select a trainer from the chat list on the left</span>
+        </div>
+        <div class="message-input">
+          <input
+            type="text"
+            v-model="newMessage"
+            placeholder="Type your message..."
+            :disabled="!selectedTrainer"
+          />
+          <button @click="sendMessage" :disabled="!selectedTrainer">Send</button>
+        </div>
+      </template>
+
     </main>
   </div>
 </template>
@@ -66,7 +85,7 @@ export default {
     };
   },
   created() {
-    this.selectedTrainer = this.trainers[0];
+    //this.selectedTrainer = this.trainers[0];
   },
   methods: {
     selectTrainer(trainer) {
@@ -167,5 +186,15 @@ export default {
   color: white;
   border: none;
   cursor: pointer;
+}
+.warning-text {
+  color: rgb(163, 30, 30);
+  font-weight: bold;
+  text-align: center;
+}
+.warning-text1 {
+  color: rgb(163, 30, 30);
+  font-weight: normal;
+  text-align: center;
 }
 </style>
