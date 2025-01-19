@@ -59,6 +59,10 @@
 </template>
 
 <script>
+import { getBasicInfoForClientSessions } from "../../services/ChatService";
+import { getMessagesFromSession } from "../../services/ChatService";
+
+
 export default {
   data() {
     return {
@@ -85,11 +89,17 @@ export default {
     };
   },
   created() {
-    //this.selectedTrainer = this.trainers[0];
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
+    this.clientId = this.$route.params.id;
+    this.fetchClientSessionsBasicInfo();
+  },
+  mounted() {
   },
   methods: {
     selectTrainer(trainer) {
       this.selectedTrainer = trainer;
+      console.log(trainer.id);
+
     },
     sendMessage() {
       if (this.newMessage.trim() !== "") {
@@ -101,9 +111,32 @@ export default {
         this.newMessage = "";
       }
     },
-  },
-  mounted() {
-      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
+    async fetchClientSessionsBasicInfo() {
+        const clientId = this.clientId;
+        try {
+            const basicInfo = await getBasicInfoForClientSessions(clientId);
+            
+            basicInfo.forEach(session => {
+            console.log("TrainerId:", session.trainerId);
+            console.log("ClientId:", session.clientId);
+            console.log("Is Unlocked:", session.isUnlocked);
+            console.log("Expiration Date:", session.expirationDate);
+            console.log("--------------");
+
+            this.trainers.push({
+            id: session.trainerId,
+            name: session.trainerId, // TrainerId kao name
+            isUnlocked: session.isUnlocked,
+            expirationDate: session.expirationDate,
+            messages: [
+              { id: Date.now(), text: "Session started", sender: "client" }, //Primer poruke
+            ],
+          });
+        });
+        } catch (error) {
+            console.error("Failed to fetch client sessions basic info:", error);
+        }
+    },
   }
 };
 </script>
