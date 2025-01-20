@@ -31,6 +31,14 @@ services:
       - 27020:27017
     volumes:
       - paymentmongo_data:/data/db
+        
+  videotrainingdb:
+    container_name: videotrainingdb
+    restart: always
+    ports:
+      - 27021:27017
+    volumes:
+      - videotrainingmongo_data:/data/db
   
   rabbitmq:
     container_name: rabbitmq
@@ -38,6 +46,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+      
   mssql:
     container_name: mssql
     environment:
@@ -103,3 +112,10 @@ services:
     ports:
       - "8003:8080"
 
+  videotrainingservice.api:
+    container_name: videotrainingservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSetting:ConnectionString=mongodb://videotrainingdb:27017"
+    ports:
+      - "8004:8080"

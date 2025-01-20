@@ -1,6 +1,8 @@
 services:
+  
   trainerdb:
     image: mongo
+    
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
 
@@ -13,8 +15,13 @@ services:
   paymentdb:
     image: mongo
   
+  videotrainingdb:
+    image: mongo
+  
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
+    
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -65,11 +72,20 @@ services:
     depends_on:
       - paymentdb
 
+  videotrainingservice.api:
+    image: ${DOCKER_REGISTRY-}videotrainingserviceapi
+    build:
+      context: .
+      dockerfile: Services/videoTrainingService/videoTrainingService.API/Dockerfile
+    depends_on:
+      - videotrainingdb
+      
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  videotrainingmongo_data:
   mssql_data:
 
 
