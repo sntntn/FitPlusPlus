@@ -1,4 +1,7 @@
+using AnalyticsService.API.GrpcServices;
+using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Extensions;
+using ReviewService.GRPC.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,16 @@ builder.Services.AddAnalyticsCommonExtensions();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
+    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
+builder.Services.AddScoped<ReviewGrpcService>();
+
+builder.Services.AddAutoMapper(configuration =>
+{
+    configuration.CreateMap<GetReviewsResponse, ReviewType>().ReverseMap();
+    configuration.CreateMap<GetReviewsResponse.Types.ReviewReply, ReviewType>().ReverseMap();
+});
 
 var app = builder.Build();
 

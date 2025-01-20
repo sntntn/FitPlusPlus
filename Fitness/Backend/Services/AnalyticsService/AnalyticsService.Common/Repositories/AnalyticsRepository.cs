@@ -23,7 +23,7 @@ public class AnalyticsRepository : IAnalyticsRepository
     public async Task<double> GetTrainerAverageTrainingRating(string trainerId)
     {
         var trainings = await _context.Trainings.Find(t => t.TrainerId == trainerId).ToListAsync();
-        return trainings.Count > 0 ? trainings.Average(t => t.Rating) : 0;
+        return trainings.Count > 0 ? trainings.Average(t => t.ClientRating) : 0;
     }
 
     public async Task<int> GetTrainerNumOfTrainings(string trainerId)

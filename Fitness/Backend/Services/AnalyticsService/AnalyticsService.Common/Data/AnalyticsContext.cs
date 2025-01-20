@@ -26,7 +26,7 @@ public class AnalyticsContext : IAnalyticsContext
                     ClientId = "1234567890abcdef12345678",
                     TrainerId = "1234567890abcdef12345678",
                     TrainingDate = new DateTime(2020, 01, 01),
-                    Rating = 5,
+                    TrainerRating = 5,
                     Status = TrainingStatus.HELD
                 }
             );
@@ -36,9 +36,9 @@ public class AnalyticsContext : IAnalyticsContext
                     ClientId = "5F6D3326597F61D77AD99969",
                     TrainerId = "1234567890abcdef12345678",
                     TrainingDate = new DateTime(2021, 01, 01),
-                    Rating = 7,
+                    ClientRating = 7,
                     Status = TrainingStatus.CANCELLED,
-                    Comment = "Unpleasant experience"
+                    ClientComment = "Unpleasant experience"
                 }
             );
         }

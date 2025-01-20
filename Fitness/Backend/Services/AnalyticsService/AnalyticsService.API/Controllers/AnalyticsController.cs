@@ -1,5 +1,7 @@
+using AnalyticsService.API.GrpcServices;
 using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnalyticsService.API.Controllers;
@@ -9,10 +11,14 @@ namespace AnalyticsService.API.Controllers;
 public class AnalyticsController : ControllerBase
 {
     private readonly IAnalyticsRepository _repository;
+    private readonly ReviewGrpcService _reviewGrpcService;
+    private readonly IMapper _mapper;
 
-    public AnalyticsController(IAnalyticsRepository repository)
+    public AnalyticsController(IAnalyticsRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _reviewGrpcService = reviewGrpcService ?? throw new ArgumentNullException(nameof(reviewGrpcService));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
     [HttpPost]
@@ -70,5 +76,14 @@ public class AnalyticsController : ControllerBase
     {
         var clientIds = await _repository.GetTrainerClientIds(trainerId);
         return Ok(clientIds);
+    }
+
+    [HttpGet("TrainerReviews")]
+    [ProducesResponseType(typeof(IEnumerable<ReviewType>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ReviewType>>> GetTrainerReviews([FromQuery] string trainerId)
+    {
+        var response = await _reviewGrpcService.GetReviews(trainerId);
+        var reviews = _mapper.Map<IEnumerable<ReviewType>>(response.Reviews);
+        return Ok(reviews);
     }
 }
