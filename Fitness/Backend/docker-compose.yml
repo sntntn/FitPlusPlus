@@ -20,6 +20,9 @@ services:
   reservationdb:
     image: mongo
   
+  videotrainingdb:
+    image: mongo
+  
   analyticsdb:
     image: mongo
   
@@ -151,6 +154,14 @@ services:
       - rabbitmq
       - consul
 
+  videotrainingservice.api:
+    image: ${DOCKER_REGISTRY-}videotrainingserviceapi
+    build:
+      context: .
+      dockerfile: Services/videoTrainingService/videoTrainingService.API/Dockerfile
+    depends_on:
+      - videotrainingdb
+      
 volumes:
   trainermongo_data:
   clientmongo_data:
@@ -160,6 +171,7 @@ volumes:
   notificationmongo_data:
   chatmongo_data:
   reservationmongo_data:
+  videotrainingmongo_data:
   mssql_data:
   mssql_volume:
   consul_data:

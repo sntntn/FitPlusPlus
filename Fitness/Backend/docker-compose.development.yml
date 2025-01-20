@@ -30,6 +30,14 @@ services:
       - "27020:27017"
     volumes:
       - paymentmongo_data:/data/db
+        
+  videotrainingdb:
+    container_name: videotrainingdb
+    restart: always
+    ports:
+      - 27021:27017
+    volumes:
+      - videotrainingmongo_data:/data/db
   
   notificationdb:
     container_name: notificationdb
@@ -103,7 +111,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
-      - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
+      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
     ports:
       - "8000:8080"
@@ -213,3 +221,11 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8103:8080"
+
+  videotrainingservice.api:
+    container_name: videotrainingservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSetting:ConnectionString=mongodb://videotrainingdb:27017"
+    ports:
+      - "8007:8080"
