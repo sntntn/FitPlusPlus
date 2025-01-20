@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
@@ -15,7 +17,13 @@
     <ItemGroup>
       <ProjectReference Include="..\AnalyticsService.Common\AnalyticsService.Common.csproj" />
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <Protobuf Include="..\..\ReviewService\ReviewService.GRPC\Protos\review.proto" GrpcServices="Client">
+            <Link>Protos\review.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+    
     <ItemGroup>
       <Content Include="..\..\..\.dockerignore">
         <Link>.dockerignore</Link>
