@@ -59,6 +59,14 @@ services:
     volumes:
       - ~/docker/consul/data:/consul/data
       
+  
+  gatewayservice.api:
+    container_name: gatewayservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8005:8080"    
+  
   trainerservice.api:
     container_name: trainerservice.api
     environment:
@@ -66,10 +74,6 @@ services:
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
       - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
-    depends_on:
-      - trainerdb
-      - rabbitmq
-      - consul
     ports:
       - "8000:8080"
 
@@ -79,10 +83,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"  
-    depends_on:
-      - clientdb
-      - rabbitmq 
-      - consul
     ports:
       - "8100:8080"
 
@@ -91,9 +91,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:IdentityConnectionString=Server=mssql;Database=IdentityDb;User Id=sa;Password=MATF12345678rs2;TrustServerCertificate=True;Encrypt=False;"
-    depends_on:
-      - consul
-      - mssql
     ports:
       - "4000:8080"
 
@@ -102,21 +99,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://reviewdb:27017"
-    depends_on:
-      - reviewdb
-      - consul
     ports:
       - "8001:8080"
-
 
   reviewservice.grpc:
     container_name: reviewservice.grpc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://reviewdb:27017"
-    depends_on:
-      - reviewdb
-      - consul
     ports:
       - "8002:8080"
 
@@ -127,17 +117,5 @@ services:
       - "DatabaseSettings:ConnectionString=mongodb://paymentdb:27017"
       - PAYPAL_CLIENT_ID="PayPalSettings:ClientId"
       - PAYPAL_CLIENT_SECRET="PayPalSettings:ClientSecret"
-    depends_on:
-      - paymentdb
-      - consul
     ports:
       - "8003:8080"
-
-  gatewayservice.api:
-    container_name: gatewayservice.api
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    depends_on:
-      - consul
-    ports:
-      - "8005:8080"
