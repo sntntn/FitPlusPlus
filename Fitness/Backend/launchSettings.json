@@ -8,7 +8,8 @@
         "clientservice.api": "StartDebugging",
         "reviewservice.api": "StartDebugging",
         "reviewservice.grpc": "StartDebugging",
-        "paymentservice.api": "StartDebugging"
+        "paymentservice.api": "StartDebugging",
+        "videotrainingservice.api": "StartDebugging"
       }
     }
   }
