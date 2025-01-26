@@ -128,6 +128,10 @@ services:
     build:
       context: .
       dockerfile: Services/AnalyticsService/AnalyticsService.API/Dockerfile
+    depends_on:
+      - analyticsdb
+      - reviewservice.grpc
+      - rabbitmq
       
   notificationservice.api:
     image: ${DOCKER_REGISTRY-}notificationserviceapi
