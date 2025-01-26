@@ -9,6 +9,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/AnalyticsService/AnalyticsService.API/AnalyticsService.API.csproj", "Services/AnalyticsService/AnalyticsService.API/"]
 COPY ["Services/AnalyticsService/AnalyticsService.Common/AnalyticsService.Common.csproj", "Services/AnalyticsService/AnalyticsService.Common/"]
+COPY ["Common/EventBus.Messages/EventBus.Messages.csproj", "Common/EventBus.Messages/"]
 RUN dotnet restore "Services/AnalyticsService/AnalyticsService.API/AnalyticsService.API.csproj"
 COPY . .
 WORKDIR "/src/Services/AnalyticsService/AnalyticsService.API"
