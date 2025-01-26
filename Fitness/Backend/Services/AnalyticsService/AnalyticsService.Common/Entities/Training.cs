@@ -4,7 +4,6 @@ using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace AnalyticsService.Common.Entities;
 
-// TODO: Separate trainer and client training review 
 public class Training
 {
     [BsonRepresentation(BsonType.ObjectId)]

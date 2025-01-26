@@ -73,6 +73,10 @@ services:
     build:
       context: .
       dockerfile: Services/AnalyticsService/AnalyticsService.API/Dockerfile
+    depends_on:
+      - analyticsdb
+      - reviewservice.grpc
+      - rabbitmq
       
 volumes:
   trainermongo_data:

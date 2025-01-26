@@ -1,6 +1,10 @@
+using System.Reflection;
+using AnalyticsService.API.EventBusConsumers;
 using AnalyticsService.API.GrpcServices;
 using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Extensions;
+using EventBus.Messages.Constants;
+using MassTransit;
 using ReviewService.GRPC.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,10 +21,21 @@ builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
     options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
 builder.Services.AddScoped<ReviewGrpcService>();
 
-builder.Services.AddAutoMapper(configuration =>
+//AutoMapper
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+//EventBus
+builder.Services.AddMassTransit(config =>
 {
-    configuration.CreateMap<GetReviewsResponse, ReviewType>().ReverseMap();
-    configuration.CreateMap<GetReviewsResponse.Types.ReviewReply, ReviewType>().ReverseMap();
+    config.AddConsumer<TrainingHeldConsumer>();
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+        cfg.ReceiveEndpoint(EventBusConstants.TrainingHeldQueue, c =>
+        {
+            c.ConfigureConsumer<TrainingHeldConsumer>(ctx);
+        });
+    });
 });
 
 var app = builder.Build();
