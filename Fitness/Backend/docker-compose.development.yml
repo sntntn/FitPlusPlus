@@ -95,7 +95,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
-      - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
+      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
     ports:
       - "8000:8080"
@@ -158,7 +158,7 @@ services:
       - ./Services/PaymentService/PaymentService.API/.env
     ports:
       - "8003:8080"
-        
+  
   notificationservice.api:
     container_name: notificationservice.api
     environment:
@@ -176,6 +176,16 @@ services:
       - ./Services/NotificationService/NotificationService.API/.env
     ports:
       - "8004:8080"
+    
+  analyticsservice.api:
+    container_name: analyticsservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://analyticsdb:27017"
+      - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    ports:
+      - "8005:8080"
   
   chatservice.api:
     container_name: chatService.api
