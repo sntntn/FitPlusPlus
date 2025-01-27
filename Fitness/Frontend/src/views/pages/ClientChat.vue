@@ -12,6 +12,9 @@
         >
           <p>{{ trainer.name }}</p>
         </li>
+        <li v-if="trainers.length === 0">
+          <p class="warning-text1">No available trainer</p>
+        </li>
       </ul>
     </aside>
 

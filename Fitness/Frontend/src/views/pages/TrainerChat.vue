@@ -13,7 +13,7 @@
           <p>{{ client.name }}</p>
         </li>
         <li v-if="clients.length === 0">
-          <p class="warning-text1">No available clients</p>  <!-- Poruka kada nema klijenata -->
+          <p class="warning-text1">No available clients</p>
         </li>
       </ul>
     </aside>
