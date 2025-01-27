@@ -37,7 +37,7 @@ public class ChatController : ControllerBase
     [HttpPost("sessions/messages")]
     public async Task<IActionResult> AddMessageToSession([FromQuery] string trainerId, [FromQuery] string clientId, [FromBody] string content, [FromQuery] string senderType)
     {
-        if (senderType != "Trainer" && senderType != "Client")
+        if (senderType != "trainer" && senderType != "client")
         {
             return BadRequest(new { Message = "Invalid sender type. Must be either 'Trainer' or 'Client'." });
         }

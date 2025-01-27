@@ -66,6 +66,7 @@
 <script>
 import { getBasicInfoForTrainerSessions } from "../../services/ChatService";
 import { getMessagesFromSession } from "../../services/ChatService";
+import { sendMessageToSession } from "../../services/ChatService";
 
 
 export default {
@@ -90,14 +91,28 @@ export default {
       console.log(client.id);
       this.fetchMessages(client.id);
     },
-    sendMessage() {
+    async sendMessage() {
       if (this.newMessage.trim() !== "") {
-        this.selectedClient.messages.push({
-          id: Date.now(),
-          text: this.newMessage,
-          sender: "trainer",
-        });
-        this.newMessage = "";
+        try{
+          const response = await sendMessageToSession(
+            this.trainerId,
+            this.selectedClient.id,
+            this.newMessage,
+            "trainer"
+          );
+  
+  
+          this.selectedClient.messages.push({
+            id: Date.now(),
+            text: this.newMessage,
+            sender: "trainer",
+          });
+          this.newMessage = "";
+          }
+          catch (error) {
+          console.error("Error sending message:", error);
+          alert("Failed to send message. Please try again.");
+        }
       }
     },
     async fetchTrainerSessionsBasicInfo() {

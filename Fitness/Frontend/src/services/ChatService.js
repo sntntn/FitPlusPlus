@@ -32,3 +32,26 @@ export async function getMessagesFromSession(trainerId, clientId) {
   }
 }
 
+export async function sendMessageToSession(trainerId, clientId, content, senderType) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/sessions/messages`,
+      content,
+      {
+        params: {
+          trainerId,
+          clientId,
+          senderType,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
+}
+
