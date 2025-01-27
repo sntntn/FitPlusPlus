@@ -1,3 +1,4 @@
+using ChatService.API.Data;
 using MongoDB.Driver;
 using ChatService.API.Models;
 using Microsoft.Extensions.Options;
@@ -9,10 +10,9 @@ namespace ChatService.API.Repositories
     {
         private readonly IMongoCollection<ChatSession> _chatSessions;
 
-        public ChatRepository(IMongoClient mongoClient, IOptions<MongoDBSettings> settings)
+        public ChatRepository(IContext context)
         {
-            var database = mongoClient.GetDatabase(settings.Value.DatabaseName);
-            _chatSessions = database.GetCollection<ChatSession>("ChatSessions");
+            _chatSessions = context.ChatSessions;
         }
         
         public async Task<IEnumerable<object>> GetBasicInfoForSessionsAsync(string userId)

@@ -1,3 +1,4 @@
+using ChatService.API.Data;
 using ChatService.API.Models;
 using ChatService.API.Repositories;
 using Microsoft.Extensions.Options;
@@ -20,8 +21,14 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     var settings = serviceProvider.GetRequiredService<IOptions<MongoDBSettings>>().Value;
     return new MongoClient(settings.ConnectionString);
 });
+
+// Register Data
+builder.Services.AddScoped<IContext, Context>();
+
 // Register ChatRepository
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
+
+
 
 builder.Services.AddCors(options =>
 {
