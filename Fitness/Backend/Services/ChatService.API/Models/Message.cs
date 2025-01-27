@@ -6,13 +6,10 @@ namespace ChatService.API.Models
     public class Message
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)] // prikazuje `Id` kao string u JSON-u, ali ga MongoDB cuva kao ObjectId
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public string Content { get; set; }
-
-        //[BsonElement("timestamp")] // ako hocu da mi se drugacije zove u bazi 
-        public DateTime Timestamp { get; set; }
-
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public string SenderType { get; set; } = string.Empty;
     }
 }

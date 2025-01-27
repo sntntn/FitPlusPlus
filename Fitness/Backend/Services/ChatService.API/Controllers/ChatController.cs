@@ -90,24 +90,18 @@ public class ChatController : ControllerBase
 
 
     [HttpPost("sessions")]
-    public async Task<IActionResult> CreateChatSession([FromBody] ChatSession session)
+    public async Task<IActionResult> CreateChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-        if (session.Id != ObjectId.Empty)
-        {
-            return BadRequest(new { Message = "ID should not be provided. It will be automatically generated." });
-        }
 
-        session.IsUnlocked = true;
-        session.ExpirationDate = DateTime.UtcNow.AddDays(30);
         try
         {
-            await _chatRepository.CreateChatSessionAsync(session);
+            await _chatRepository.CreateChatSessionAsync(trainerId,clientId);
+            return Ok(new { Message = "Session created successfully." });
         }
         catch (InvalidOperationException e)
         {
             return BadRequest(new { Message = e.Message });
         }
-        return CreatedAtAction(nameof(GetChatSession), new { trainerId = session.TrainerId, clientId = session.ClientId }, session);
     }
 
     [HttpGet("sessions")]
