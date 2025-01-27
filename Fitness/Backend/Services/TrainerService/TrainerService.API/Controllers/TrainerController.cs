@@ -11,7 +11,7 @@ using TrainerService.API.Repositories;
 
 namespace TrainerService.API.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class TrainerController : ControllerBase
@@ -32,7 +32,7 @@ namespace TrainerService.API.Controllers
 
 
 
-        [Authorize(Roles = "Admin, Client")]
+        // [Authorize(Roles = "Admin, Client")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainers()
@@ -47,7 +47,7 @@ namespace TrainerService.API.Controllers
             return Ok(trainers);
         }
 
-        [Authorize(Roles = "Admin, Client, Trainer")]
+        // [Authorize(Roles = "Admin, Client, Trainer")]
         [HttpGet("{id}", Name = "GetTrainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status404NotFound)]
@@ -66,7 +66,7 @@ namespace TrainerService.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, Client, Trainer")]
+        // [Authorize(Roles = "Admin, Client, Trainer")]
         [HttpGet("[action]/{email}", Name = "GetTrainerByEmail")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status404NotFound)]
@@ -85,7 +85,7 @@ namespace TrainerService.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin, Client")]
+        // [Authorize(Roles = "Admin, Client")]
         [Route("[action]/{minRating}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
@@ -102,7 +102,7 @@ namespace TrainerService.API.Controllers
             return Ok(filteredTrainers);
         }
 
-        [Authorize(Roles = "Admin, Client")]
+        // [Authorize(Roles = "Admin, Client")]
         [Route("[action]/{trainingType}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
@@ -118,7 +118,7 @@ namespace TrainerService.API.Controllers
             return Ok(trainers);
         }
 
-        [Authorize(Roles = "Admin, Client, Trainer")]
+        // [Authorize(Roles = "Admin, Client, Trainer")]
         [Route("[action]/{trainerId}/{trainingType}")]
         [HttpGet]
         [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
@@ -129,7 +129,7 @@ namespace TrainerService.API.Controllers
             return Ok(price);
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status201Created)]
         public async Task<ActionResult<Trainer>> CreateTrainer([FromBody] Trainer trainer)
@@ -149,7 +149,7 @@ namespace TrainerService.API.Controllers
             return CreatedAtRoute("GetTrainer", new { id = trainer.Id }, trainer);
         }
 
-        [Authorize(Roles = "Admin, Trainer")]
+        // [Authorize(Roles = "Admin, Trainer")]
         [HttpPut]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateTrainer([FromBody] Trainer trainer)
@@ -165,7 +165,7 @@ namespace TrainerService.API.Controllers
             return Ok(await _repository.UpdateTrainer(trainer));
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("{id}", Name = "DeleteTrainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteTrainer(string id)
@@ -173,7 +173,7 @@ namespace TrainerService.API.Controllers
             return Ok(await _repository.DeleteTrainer(id));
         }
 
-        [Authorize(Roles = "Trainer, Client")]
+        // [Authorize(Roles = "Trainer, Client")]
         [Route("[action]/{id}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TrainerSchedule>), StatusCodes.Status200OK)]
@@ -188,7 +188,7 @@ namespace TrainerService.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Trainer, Client")]
+        // [Authorize(Roles = "Trainer, Client")]
         [Route("[action]/{trainerId}/{weekId}")]
         [HttpGet]
         [ProducesResponseType(typeof(WeeklySchedule), StatusCodes.Status200OK)]
@@ -203,7 +203,7 @@ namespace TrainerService.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Trainer")]
+        // [Authorize(Roles = "Trainer")]
         [Route("[action]")]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
