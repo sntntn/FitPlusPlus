@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const BASE_URL = "http://localhost:8082/api/Chat";
+const CLIENT = "http://localhost:8100/api/v1/Client";
 
 export async function getBasicInfoForTrainerSessions(trainerId) {
     try {
@@ -55,3 +56,12 @@ export async function sendMessageToSession(trainerId, clientId, content, senderT
   }
 }
 
+export async function getClientById(clientId) {
+  try {
+    const response = await axios.get(`${CLIENT}/${clientId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching client info based on id:", error);
+    throw error;
+  }
+}

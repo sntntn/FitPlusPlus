@@ -64,10 +64,12 @@
 </template>
 
 <script>
-import { getBasicInfoForTrainerSessions } from "../../services/ChatService";
-import { getMessagesFromSession } from "../../services/ChatService";
-import { sendMessageToSession } from "../../services/ChatService";
-
+import { 
+  getBasicInfoForTrainerSessions,
+  getMessagesFromSession,
+  sendMessageToSession,
+  getClientById
+} from "../../services/ChatService";
 
 export default {
   data() {
@@ -120,28 +122,34 @@ export default {
 
         try {
             const basicInfo = await getBasicInfoForTrainerSessions(trainerId);
-            
-            basicInfo.forEach(session => {
-            console.log("TrainerId:", session.trainerId);
-            console.log("ClientId:", session.clientId);
-            console.log("Is Unlocked:", session.isUnlocked);
-            console.log("Expiration Date:", session.expirationDate);
-            console.log("--------------");
 
-            this.clients.push({
-            id: session.clientId,
-            name: session.clientId, // ClientId kao name
-            isUnlocked: session.isUnlocked,
-            expirationDate: session.expirationDate,
-            messages: [
-              { id: Date.now(), text: "Session started", sender: "trainer" }, // Primer poruke
-            ],
-          });
-        });
+            for (const session of basicInfo) {
+                console.log("--------------");
+                console.log("TrainerId:", session.trainerId);
+                console.log("ClientId:", session.clientId);
+                console.log("Is Unlocked:", session.isUnlocked);
+                console.log("Expiration Date:", session.expirationDate);
+
+                try {
+                    const clientInfo = await getClientById(session.clientId);
+                    console.log("Client Name:", clientInfo.name, clientInfo.surname);
+
+                    this.clients.push({
+                        id: session.clientId,
+                        name: `${clientInfo.name} ${clientInfo.surname}`,
+                        isUnlocked: session.isUnlocked,
+                        expirationDate: session.expirationDate,
+                        messages: [],
+                    });
+                } catch (clientError) {
+                    console.error(`Failed to fetch client info for ClientId: ${session.clientId}`, clientError);
+                }
+            }
         } catch (error) {
             console.error("Failed to fetch trainer sessions basic info:", error);
         }
     },
+
     async fetchMessages(clientId) {
       const trainerId = this.trainerId;
       console.log(trainerId);
