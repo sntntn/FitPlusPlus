@@ -131,16 +131,17 @@ export default {
                 console.log("Expiration Date:", session.expirationDate);
 
                 try {
-                    const clientInfo = await getClientById(session.clientId);
-                    console.log("Client Name:", clientInfo.name, clientInfo.surname);
+                  const clientInfo = await getClientById(session.clientId);
+                  //console.log(clientInfo);
+                  console.log("Client Name:", clientInfo.name, clientInfo.surname);
 
-                    this.clients.push({
-                        id: session.clientId,
-                        name: `${clientInfo.name} ${clientInfo.surname}`,
-                        isUnlocked: session.isUnlocked,
-                        expirationDate: session.expirationDate,
-                        messages: [],
-                    });
+                  this.clients.push({
+                    id: session.clientId,
+                    name: `${clientInfo.name} ${clientInfo.surname}`,
+                    isUnlocked: session.isUnlocked,
+                    expirationDate: session.expirationDate,
+                    messages: [],
+                  });
                 } catch (clientError) {
                     console.error(`Failed to fetch client info for ClientId: ${session.clientId}`, clientError);
                 }

@@ -2,6 +2,8 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8082/api/Chat";
 const CLIENT = "http://localhost:8100/api/v1/Client";
+const TRAINER = "http://localhost:8000/api/v1/Trainer";
+
 
 export async function getBasicInfoForTrainerSessions(trainerId) {
     try {
@@ -62,6 +64,16 @@ export async function getClientById(clientId) {
     return response.data;
   } catch (error) {
     console.error("Error fetching client info based on id:", error);
+    throw error;
+  }
+}
+
+export async function getTrainerById(trainerId) {
+  try {
+    const response = await axios.get(`${TRAINER}/${trainerId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching trainer info based on id:", error);
     throw error;
   }
 }
