@@ -89,6 +89,12 @@ const routes = [
         component: () => import('@/views/pages/ClientChat.vue'),
       },
 
+      {
+        path: '/client/:id/pay-chat/:trainerId',
+        name: 'PayChat',
+        component: () => import('@/views/pages/PayChat.vue'),
+      },
+
     ],
   },
   {
