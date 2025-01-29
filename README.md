@@ -36,7 +36,6 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 
 1. **IdentityServer**
    - Manages user authentication and authorization.
-   - Implements OAuth2 and OpenID Connect protocols.
 
 2. **ClientService**
    - Handles client registration, profile management, and membership data.
@@ -91,9 +90,12 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 
 - **Frontend:** Vue.js
 - **Backend:** ASP.NET Core (C#)
-- **Database:** MongoDB
+- **Database:** MongoDB, Microsoft SQL Server
 - **Containerization:** Docker and Docker Compose
 - **Event Bus:** RabbitMQ for microservices communication
+- **Communication Protocols:** GRPC and REST API for microservices communication
+- **Payment Integration:** PayPal for chat session payments
+
 
 ---
 
