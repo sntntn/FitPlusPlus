@@ -10,8 +10,8 @@
           :class="{ active: trainer.id === selectedTrainer?.id }"
           @click="selectTrainer(trainer)"
         >
-          <p>{{ trainer.name }}</p>
-        </li>
+          <span v-if="!trainer.isUnlocked" class="locked-icon">{{ trainer.name }}🔒</span>  <!--TO DO class -->
+          <span v-if="trainer.isUnlocked" class="unlocked-icon">{{ trainer.name }}</span> <!--🔓-->        </li>
         <li v-if="trainers.length === 0">
           <p class="warning-text1">No available trainer</p>
         </li>
