@@ -129,15 +129,6 @@ const router = createRouter({
   },
 })
 
-/* router.beforeEach(async(to,from)=>{
-   var token = sessionStorage.getItem('accessToken');
-    if (to.path == '/') {
-     router.push('/trainer');
-     return false;
-    }
-   return true;
- })
-*/
 
 router.beforeEach(async (to, from) => {
 

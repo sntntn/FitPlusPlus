@@ -65,11 +65,11 @@ const AppSidebarNav = defineComponent({
     const updateNav = () => {
       if (props.type === 'trainer') {
         nav.value = generateTrainerNav(props.id)
-      } else if (props.type === 'client') {
-        nav.value = generateClientNav(props.id)
+      } else if (props.type === 'administrator') {
+        nav.value = generateAdministratorNav();
       } else {
-        nav.value = generateAdministratorNav()          //TO DO - promeniti redosled, da mi u slucaju else bloka bude generateClient
-      }                                                 //suvise je opasno da dobijemo kartice administratora u slucaju null vrednosti
+        nav.value = generateClientNav(props.id);
+      }
     }
 
     watch(() => [props.id, props.type], updateNav, { immediate: true })
