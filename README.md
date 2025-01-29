@@ -95,7 +95,7 @@ To start the updated application:
 2. Start all microservices from FitPlusPlus/Fitness/Backend:
 
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+   docker-compose -f docker-compose.yml -f docker-compose.development.yml up -d --build
    ```
 
 3. Start the frontend service from FitPlusPlus/Fitness/Frontend directory:
