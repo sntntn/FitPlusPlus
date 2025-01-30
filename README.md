@@ -94,7 +94,8 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 - **Containerization:** Docker and Docker Compose
 - **Event Bus:** RabbitMQ for microservices communication
 - **Communication Protocols:** GRPC and REST API for microservices communication
-- **Payment Integration:** PayPal for chat session payments
+- **Payment Integration:** PayPal for chat session payments and booking training
+- **CQRS:** Implemented for Command and Query separation in the chat service (planned)
 
 
 ---
