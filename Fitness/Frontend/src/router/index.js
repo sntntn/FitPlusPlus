@@ -59,12 +59,6 @@ const routes = [
       },
 
       {
-        path: '/trainer/:id/groupTrainings',
-        name: 'Trainer Group Trainings',
-        component: () => import('@/views/pages/TrainerGroupTrainings.vue')
-      },
-
-      {
         path: '/client/:id/individualTrainings',
         name: 'Client Individual Trainings',
         component: () => import('@/views/pages/ClientIndividualTrainings.vue')
@@ -99,6 +93,18 @@ const routes = [
         name: 'Client Chat',
         component: () => import('@/views/pages/ClientChat.vue'),
       },
+
+      {
+        path: '/client/:id/videotrainings',
+        name: 'Video Trainings',
+        component: () => import('@/views/pages/VideoTrainings.vue')
+      },
+
+      {
+        path: '/trainer/:id/videotrainings',
+        name: 'Video Trainings',
+        component: () => import('@/views/pages/VideoTrainings.vue')
+      }
 
       {
         path: '/client/:id/pay-chat/:trainerId',
@@ -160,7 +166,7 @@ router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
-    
+
     return true;
   }
   else {
