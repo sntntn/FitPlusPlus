@@ -25,6 +25,14 @@ export function generateTrainerNav(id) {
       to: `/trainer/${id}/chat`,
       icon: 'cil-speech',
     },
+
+    {
+      component: 'CNavItem',
+      name: 'Video trainings',
+      to: `/trainer/${id}/videotrainings`,
+      icon: 'cil-user'
+    },
+
     {
       component: 'CNavItem',
       name: 'Analytics',
@@ -59,6 +67,12 @@ export function generateClientNav(id) {
       name: 'Chat',
       to: `/client/${id}/chat`,
       icon: 'cil-speech'
+    },
+    {
+      component: 'CNavItem',
+      name: 'Video trainings',
+      to: `/client/${id}/videotrainings`,
+      icon: 'cil-user'
     },
     {
       component: 'CNavItem',
