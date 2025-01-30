@@ -75,6 +75,18 @@ const routes = [
         path: '/payment-cancel',
         name: 'Payment Cancel',
         component: () => import('@/views/pages/PaymentCancel.vue')
+      },
+
+      {
+        path: '/client/:id/videotrainings',
+        name: 'Video Trainings',
+        component: () => import('@/views/pages/VideoTrainings.vue')
+      },
+
+      {
+        path: '/trainer/:id/videotrainings',
+        name: 'Video Trainings',
+        component: () => import('@/views/pages/VideoTrainings.vue')
       }
 
     ],
@@ -131,7 +143,7 @@ router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
-    
+
     return true;
   }
   else {

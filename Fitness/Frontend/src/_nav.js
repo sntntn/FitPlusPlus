@@ -12,7 +12,15 @@ export function generateTrainerNav(id) {
       name: 'Schedule',
       to: `/trainer/${id}/schedule`,
       icon: 'cil-calendar'
+    },
+
+    {
+      component: 'CNavItem',
+      name: 'Video trainings',
+      to: `/trainer/${id}/videotrainings`,
+      icon: 'cil-user'
     }
+
   ];
 }
 
@@ -29,6 +37,12 @@ export function generateClientNav(id) {
       name: 'Schedule',
       to: `/client/${id}/schedule`,
       icon: 'cil-calendar'
+    },
+    {
+      component: 'CNavItem',
+      name: 'Video trainings',
+      to: `/client/${id}/videotrainings`,
+      icon: 'cil-user'
     }
   ];
 }
