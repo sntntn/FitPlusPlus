@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Mail;
-using System.Reflection;
 using System.Text;
 using ClientService.GRPC.Protos;
 using EventBus.Messages.Constants;

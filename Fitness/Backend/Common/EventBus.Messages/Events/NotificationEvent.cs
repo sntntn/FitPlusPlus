@@ -7,7 +7,6 @@ public class NotificationEvent : IntegrationBaseEvent
     public string Content { get; set; }
     public NotificationType Type { get; set; }
     public bool Email { get; set; }
-    public bool Push { get; set; }
 
     public enum NotificationType
     {

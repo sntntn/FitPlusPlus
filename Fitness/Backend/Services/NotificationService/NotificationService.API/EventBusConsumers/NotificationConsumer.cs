@@ -16,12 +16,13 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
     private readonly ClientGrpcService _clientGrpcService;
     private readonly TrainerGrpcService _trainerGrpcService;
 
-    public NotificationConsumer(IRepository repository, IMapper mapper, IEmailService emailService, ClientGrpcService clientGrpcService)
+    public NotificationConsumer(IRepository repository, IMapper mapper, IEmailService emailService, ClientGrpcService clientGrpcService, TrainerGrpcService trainerGrpcService)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         _clientGrpcService = clientGrpcService ?? throw new ArgumentNullException(nameof(clientGrpcService));
+        _trainerGrpcService = trainerGrpcService ?? throw new ArgumentNullException(nameof(trainerGrpcService));
     }
     
     public async Task Consume(ConsumeContext<NotificationEvent> context)
@@ -58,11 +59,6 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
                     body: body
                 );
             }
-        }
-
-        if (notification.Push)
-        {
-            // TODO("Send push notification");
         }
     }
 }
