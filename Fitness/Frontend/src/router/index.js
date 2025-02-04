@@ -82,13 +82,6 @@ const routes = [
         name: 'Video Trainings',
         component: () => import('@/views/pages/VideoTrainings.vue')
       },
-
-      {
-        path: '/trainer/:id/videotrainings',
-        name: 'Video Trainings',
-        component: () => import('@/views/pages/VideoTrainings.vue')
-      }
-
     ],
   },
   {

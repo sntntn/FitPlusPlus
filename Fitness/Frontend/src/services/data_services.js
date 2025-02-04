@@ -3,6 +3,7 @@ import axios from "axios";
 const TRAINERS = "http://localhost:8000";
 const REVIEW = "http://localhost:8001";
 const CLIENT = "http://localhost:8100";
+const TRAININGS = "http://localhost:8004";
 const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
 const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
 const PAYMENT = "http://localhost:8003/api/v1/Payment/"
@@ -14,12 +15,12 @@ export default {
             username: user,
             password: pw
           };
-    
+
           const headers = {
             'Content-Type': 'application/json'
           };
 
-          return axios.post(AUTH_URL + 'Login', data, { headers });                  
+          return axios.post(AUTH_URL + 'Login', data, { headers });
         },
 
         register(firstname, lastname, username, password, email, phonenumber, role) {
@@ -30,7 +31,7 @@ export default {
             password: password,
             email: email,
             phonenumber: phonenumber
-          }; 
+          };
 
           const headers = {
             'Content-Type': 'application/json'
@@ -207,5 +208,10 @@ export default {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.get(`${CLIENT}/api/v1/Client/GetTrainerIdsFromClientSchedule/${cli_id}`);
         },
+
+        get_trainings_for_client(cli_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/api/v1/Training/training/trainingClient/${cli_id}`);
+        }
     }
 }
