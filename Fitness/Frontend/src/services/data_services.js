@@ -9,6 +9,8 @@ const AUTH_URL = `${GATEWAY_URL}/authentication`;
 const MSSQL_USERS = `${GATEWAY_URL}/user`;
 const PAYMENT = `${GATEWAY_URL}/payment`;
 
+const TRAININGS = "http://localhost:8007";
+
 
 //const TRAINERS = "http://localhost:8000/api/v1/Trainer";
 //const REVIEW = "http://localhost:8001/api/v1/Review";
@@ -209,5 +211,10 @@ export default {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.post(`${REVIEW}/trainer/${request.trainerId}`, request);
         },
+
+        get_trainings_for_client(cli_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/api/v1/Training/training/trainingClient/${cli_id}`);
+        }
     }
 }
