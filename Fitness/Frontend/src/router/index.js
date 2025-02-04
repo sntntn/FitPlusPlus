@@ -104,7 +104,7 @@ const routes = [
         path: '/trainer/:id/videotrainings',
         name: 'Video Trainings',
         component: () => import('@/views/pages/VideoTrainings.vue')
-      }
+      },
 
       {
         path: '/client/:id/pay-chat/:trainerId',
