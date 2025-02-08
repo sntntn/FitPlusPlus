@@ -66,10 +66,11 @@ public class ChatController : ControllerBase
             SenderType = senderType
         };
 
-        await _webSocketHandler.BroadcastMessage(JsonSerializer.Serialize(newMessage));
+        await Task.WhenAll(
+            _webSocketHandler.BroadcastMessage(JsonSerializer.Serialize(newMessage)),
+            _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage)
+        );
         
-        await _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage);
-
         return CreatedAtAction(nameof(GetMessagesFromSession), new { trainerId, clientId }, newMessage);
     }
 
