@@ -23,9 +23,6 @@ services:
   reservationdb:
     image: mongo
   
-  reservationdb:
-    image: mongo
-  
   rabbitmq:
     image: rabbitmq:3-management-alpine
     
@@ -52,7 +49,6 @@ services:
       - trainerdb
       - rabbitmq
       - consul
-  
   
   trainerservice.grpc:
     image: ${DOCKER_REGISTRY-}trainerservicegrpc
@@ -169,6 +165,7 @@ volumes:
   paymentmongo_data:
   analyticsmongo_data:
   notificationmongo_data:
+  analyticsmongo_data:
   chatmongo_data:
   reservationmongo_data:
   mssql_data:
