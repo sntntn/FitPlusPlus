@@ -1,5 +1,7 @@
+using System.Text.Json;
 using ChatService.API.Models;
 using ChatService.API.Repositories;
+using ChatService.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -14,11 +16,15 @@ public class ChatController : ControllerBase
 {
     private readonly IChatRepository _chatRepository;
     private readonly IMongoClient _mongoClient;
+    private readonly WebSocketHandler _webSocketHandler;
 
-    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient)
+
+    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler)
     {
         _chatRepository = chatRepository;
         _mongoClient = mongoClient;
+        _webSocketHandler = webSocketHandler;
+
     }
     [HttpGet("sessions/{userId}/basic-info")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
@@ -60,6 +66,8 @@ public class ChatController : ControllerBase
             SenderType = senderType
         };
 
+        await _webSocketHandler.BroadcastMessage(JsonSerializer.Serialize(newMessage));
+        
         await _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage);
 
         return CreatedAtAction(nameof(GetMessagesFromSession), new { trainerId, clientId }, newMessage);
@@ -156,6 +164,22 @@ public class ChatController : ControllerBase
             return StatusCode(500, new { Message = "MongoDB connection failed", Error = ex.Message });
         }
     }
+    
+    [HttpGet("ws")]
+    public async Task GetWebSocket()
+    {
+        if (HttpContext.WebSockets.IsWebSocketRequest)
+        {
+            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            var webSocketHandler = HttpContext.RequestServices.GetRequiredService<WebSocketHandler>();
+            await webSocketHandler.HandleConnection(webSocket);
+        }
+        else
+        {
+            HttpContext.Response.StatusCode = 400;
+        }
+    }
+
 
     
 }

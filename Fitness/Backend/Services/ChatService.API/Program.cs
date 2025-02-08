@@ -1,6 +1,7 @@
 using ChatService.API.Data;
 using ChatService.API.Models;
 using ChatService.API.Repositories;
+using ChatService.API.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -41,7 +42,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-
+builder.Services.AddSingleton<WebSocketHandler>();
 
 var app = builder.Build();
 
@@ -51,6 +52,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseWebSockets();
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/ws" && context.WebSockets.IsWebSocketRequest)
+    {
+        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+        var webSocketHandler = app.Services.GetRequiredService<WebSocketHandler>();
+        await webSocketHandler.HandleConnection(webSocket);
+    }
+    else
+    {
+        await next();
+    }
+});
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
