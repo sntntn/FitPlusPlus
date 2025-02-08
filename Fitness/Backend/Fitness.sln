@@ -30,6 +30,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.API", "Services\AnalyticsService\AnalyticsService.API\AnalyticsService.API.csproj", "{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.GRPC", "Services\AnalyticsService\AnalyticsService.GRPC\AnalyticsService.GRPC.csproj", "{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.API", "Services\ChatService.API\ChatService.API.csproj", "{CE504321-77C1-4981-B815-489CA83FB163}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +74,7 @@ Global
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
 		{64737429-3650-42B7-A1ED-AB7573B51278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{64737429-3650-42B7-A1ED-AB7573B51278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64737429-3650-42B7-A1ED-AB7573B51278}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,6 +87,12 @@ Global
 		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+		{CE504321-77C1-4981-B815-489CA83FB163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE504321-77C1-4981-B815-489CA83FB163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE504321-77C1-4981-B815-489CA83FB163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE504321-77C1-4981-B815-489CA83FB163}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> Front
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

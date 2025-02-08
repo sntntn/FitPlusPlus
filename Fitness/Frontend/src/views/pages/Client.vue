@@ -52,6 +52,9 @@
               <CButton class="px-3 btn" color="light" @click="bookTraining(trainer.id)">
                 Book training
               </CButton>
+              <CButton class="px-3 btn" color="light" @click="payChat(trainer.id)">
+                Pay chat
+              </CButton>
             </div>
           </CTableDataCell>
         </CTableRow>
@@ -92,6 +95,9 @@ export default {
   methods: {
     bookTraining(trainerId) {
       this.$router.push(`/client/${this.$route.params.id}/schedule/${trainerId}`);
+    },
+    payChat(trainerId) {
+      this.$router.push(`/client/${this.$route.params.id}/pay-chat/${trainerId}`);
     },
     getTrainingTypes(trainingTypes) {
       return trainingTypes.map(type => type.name).join(', ');

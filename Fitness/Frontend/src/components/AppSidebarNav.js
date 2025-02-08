@@ -65,10 +65,10 @@ const AppSidebarNav = defineComponent({
     const updateNav = () => {
       if (props.type === 'trainer') {
         nav.value = generateTrainerNav(props.id)
-      } else if (props.type === 'client') {
-        nav.value = generateClientNav(props.id)
+      } else if (props.type === 'administrator') {
+        nav.value = generateAdministratorNav();
       } else {
-        nav.value = generateAdministratorNav()
+        nav.value = generateClientNav(props.id);
       }
     }
 

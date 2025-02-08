@@ -13,11 +13,16 @@ services:
   paymentdb:
     image: mongo
     
+<<<<<<< HEAD
   analyticsdb:
+=======
+  chatdb:
+>>>>>>> Front
     image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -78,12 +83,20 @@ services:
       - reviewservice.grpc
       - rabbitmq
       
+  chatservice.api:
+    image: ${DOCKER_REGISTRY-}chatserviceapi
+    build:
+      context: .
+      dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+      - rabbitmq
+
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
   analyticsmongo_data:
+  chatmongo_data:
   mssql_data:
-
-
