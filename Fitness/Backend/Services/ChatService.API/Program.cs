@@ -1,4 +1,5 @@
 using ChatService.API.Data;
+using ChatService.API.Middleware;
 using ChatService.API.Models;
 using ChatService.API.Repositories;
 using ChatService.API.Services;
@@ -41,6 +42,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<WebSocketHandler>();
+builder.Services.AddTransient<WebSocketMiddleware>();
+
 
 var app = builder.Build();
 
@@ -52,30 +55,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseWebSockets();
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/ws") && context.WebSockets.IsWebSocketRequest)
-    {
-        var trainerId = context.Request.Query["trainerId"];
-        var clientId = context.Request.Query["clientId"];
-
-        if (string.IsNullOrEmpty(trainerId) || string.IsNullOrEmpty(clientId))
-        {
-            context.Response.StatusCode = 400;
-            await context.Response.WriteAsync("Missing trainerId or clientId");
-            return;
-        }
-
-        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        var webSocketHandler = app.Services.GetRequiredService<WebSocketHandler>();
-
-        await webSocketHandler.HandleConnection(webSocket, trainerId, clientId);
-    }
-    else
-    {
-        await next();
-    }
-});
+app.UseMiddleware<WebSocketMiddleware>();
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
