@@ -190,7 +190,7 @@ export default {
 
     openWebSocket(clientId) {
       const trainerId = this.trainerId;
-      const wsUrl = `ws://localhost:5000/ws/chat?trainerId=${trainerId}&clientId=${clientId}`; // Prilagodi URL ako treba
+      const wsUrl = `ws://localhost:8082/ws/chat?trainerId=${trainerId}&clientId=${clientId}`;
 
       this.socket = new WebSocket(wsUrl);
 
@@ -202,7 +202,7 @@ export default {
         const messageData = JSON.parse(event.data);
         console.log("New message received:", messageData);
 
-        // Proveri da li je poruka za trenutno izabranog klijenta
+
         if (this.selectedClient && this.selectedClient.id === clientId) {
           this.selectedClient.messages.push({
             id: messageData.id || Date.now(),

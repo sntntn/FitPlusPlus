@@ -45,7 +45,7 @@ public class ChatController : ControllerBase
     {
         if (senderType != "trainer" && senderType != "client")
         {
-            return BadRequest(new { Message = "Invalid sender type. Must be either 'Trainer' or 'Client'." });
+            return BadRequest(new { Message = "Invalid sender type. Must be either 'trainer' or 'client'." });
         }
         var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
 
