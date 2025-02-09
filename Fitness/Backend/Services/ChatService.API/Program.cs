@@ -29,8 +29,6 @@ builder.Services.AddScoped<IContext, Context>();
 // Register ChatRepository
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
-
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -56,11 +54,22 @@ if (app.Environment.IsDevelopment())
 app.UseWebSockets();
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path == "/ws" && context.WebSockets.IsWebSocketRequest)
+    if (context.Request.Path.StartsWithSegments("/ws") && context.WebSockets.IsWebSocketRequest)
     {
+        var trainerId = context.Request.Query["trainerId"];
+        var clientId = context.Request.Query["clientId"];
+
+        if (string.IsNullOrEmpty(trainerId) || string.IsNullOrEmpty(clientId))
+        {
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsync("Missing trainerId or clientId");
+            return;
+        }
+
         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
         var webSocketHandler = app.Services.GetRequiredService<WebSocketHandler>();
-        await webSocketHandler.HandleConnection(webSocket);
+
+        await webSocketHandler.HandleConnection(webSocket, trainerId, clientId);
     }
     else
     {

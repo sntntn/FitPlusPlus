@@ -1,16 +1,22 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ChatService.API.Services;
 
 public class WebSocketHandler
 {
-    private static readonly ConcurrentBag<WebSocket> _sockets = new();
+    private static readonly ConcurrentDictionary<string, WebSocket> _sessions = new();
 
-    public async Task HandleConnection(WebSocket webSocket)
+    public async Task HandleConnection(WebSocket webSocket, string trainerId, string clientId)
     {
-        _sockets.Add(webSocket);
+        var sessionKey = GetSessionKey(trainerId, clientId);
+        
+        _sessions[sessionKey] = webSocket;
+
         var buffer = new byte[1024 * 4];
 
         try
@@ -22,11 +28,11 @@ public class WebSocketHandler
                 if (result.MessageType == WebSocketMessageType.Text)
                 {
                     var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                    await BroadcastMessage(message);
+                    await BroadcastMessage(sessionKey, message);
                 }
                 else if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    await CloseConnection(webSocket);
+                    await CloseConnection(webSocket, sessionKey);
                     break;
                 }
             }
@@ -37,40 +43,33 @@ public class WebSocketHandler
         }
         finally
         {
-            await CloseConnection(webSocket);
+            await CloseConnection(webSocket, sessionKey);
         }
     }
-
-    private async Task CloseConnection(WebSocket webSocket)
+    
+    private async Task CloseConnection(WebSocket webSocket, string sessionKey)
     {
         if (webSocket.State == WebSocketState.Open)
         {
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed", CancellationToken.None);
         }
-        _sockets.TryTake(out _);
+        _sessions.TryRemove(sessionKey, out _);
     }
 
-    public async Task BroadcastMessage(string message)
+    // zapravo ovaj broadcast salje samo odredjenoj sesiji
+    public async Task BroadcastMessage(string sessionKey, string message)
     {
         var buffer = Encoding.UTF8.GetBytes(message);
         var segment = new ArraySegment<byte>(buffer);
-        var closedSockets = new List<WebSocket>();
 
-        foreach (var socket in _sockets)
+        if (_sessions.TryGetValue(sessionKey, out var socket) && socket.State == WebSocketState.Open)
         {
-            if (socket.State == WebSocketState.Open)
-            {
-                await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-            }
-            else
-            {
-                closedSockets.Add(socket);
-            }
+            await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
         }
+    }
 
-        foreach (var socket in closedSockets)
-        {
-            _sockets.TryTake(out _);
-        }
+    private string GetSessionKey(string trainerId, string clientId)
+    {
+        return $"{trainerId}:{clientId}";
     }
 }

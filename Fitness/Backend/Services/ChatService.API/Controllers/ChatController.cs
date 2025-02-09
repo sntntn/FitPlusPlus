@@ -66,8 +66,10 @@ public class ChatController : ControllerBase
             SenderType = senderType
         };
 
+        var sessionKey = $"{trainerId}:{clientId}";
+        
         await Task.WhenAll(
-            _webSocketHandler.BroadcastMessage(JsonSerializer.Serialize(newMessage)),
+            _webSocketHandler.BroadcastMessage(sessionKey, JsonSerializer.Serialize(newMessage)),
             _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage)
         );
         
@@ -166,20 +168,20 @@ public class ChatController : ControllerBase
         }
     }
     
-    [HttpGet("ws")]
+    /*[HttpGet("ws")]
     public async Task GetWebSocket()
     {
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
             using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             var webSocketHandler = HttpContext.RequestServices.GetRequiredService<WebSocketHandler>();
-            await webSocketHandler.HandleConnection(webSocket);
+            await webSocketHandler.HandleConnection(webSocket, "trainerId", "clientId");  // Ovde prosledjujete konkretne vrednosti za ID-jeve
         }
         else
         {
             HttpContext.Response.StatusCode = 400;
         }
-    }
+    }*/
 
 
     
