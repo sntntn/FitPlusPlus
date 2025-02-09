@@ -66,7 +66,7 @@ public class ChatController : ControllerBase
             SenderType = senderType
         };
 
-        var sessionKey = $"{trainerId}:{clientId}";
+        var sessionKey = _webSocketHandler.GetSessionKey(trainerId, clientId);
         
         await Task.WhenAll(
             _webSocketHandler.BroadcastMessage(sessionKey, JsonSerializer.Serialize(newMessage)),

@@ -68,7 +68,7 @@ public class WebSocketHandler
         }
     }
 
-    private string GetSessionKey(string trainerId, string clientId)
+    public string GetSessionKey(string trainerId, string clientId)
     {
         return $"{trainerId}:{clientId}";
     }
