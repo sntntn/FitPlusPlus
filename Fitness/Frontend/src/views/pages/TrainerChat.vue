@@ -77,6 +77,7 @@ export default {
       clients: [],
       selectedClient: null,
       newMessage: "",
+      socket: null,
     };
   },
   created() {
@@ -87,12 +88,26 @@ export default {
   mounted() {
    
   },
+  beforeDestroy() {
+    if (this.socket) {
+      console.log("Closing WebSocket before component is destroyed.");
+      this.socket.close();
+    }
+  },
+
   methods: {
     selectClient(client) {
+      if (this.selectedClient && this.socket) {
+        this.socket.close();
+        console.log("Closed previous WebSocket");
+      }
+
       this.selectedClient = client;
       console.log(client.id);
       this.fetchMessages(client.id);
+      this.openWebSocket(client.id);
     },
+
     async sendMessage() {
       if (this.newMessage.trim() !== "") {
         try{
@@ -166,13 +181,46 @@ export default {
         console.log("Transformed Messages:", transformedMessages);
         this.selectedClient.messages = transformedMessages;
 
-        
       } catch (error) {
         console.error("Failed to fetch messages:", error);
         this.selectedClient.messages = [];
 
       }
     },
+
+    openWebSocket(clientId) {
+      const trainerId = this.trainerId;
+      const wsUrl = `ws://localhost:5000/ws/chat?trainerId=${trainerId}&clientId=${clientId}`; // Prilagodi URL ako treba
+
+      this.socket = new WebSocket(wsUrl);
+
+      this.socket.onopen = () => {
+        console.log("WebSocket connected for client:", clientId);
+      };
+
+      this.socket.onmessage = (event) => {
+        const messageData = JSON.parse(event.data);
+        console.log("New message received:", messageData);
+
+        // Proveri da li je poruka za trenutno izabranog klijenta
+        if (this.selectedClient && this.selectedClient.id === clientId) {
+          this.selectedClient.messages.push({
+            id: messageData.id || Date.now(),
+            text: messageData.text,
+            sender: messageData.sender.toLowerCase(),
+          });
+        }
+      };
+
+      this.socket.onclose = () => {
+        console.log("WebSocket closed for client:", clientId);
+      };
+
+      this.socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    },
+
   },
 };
 </script>
