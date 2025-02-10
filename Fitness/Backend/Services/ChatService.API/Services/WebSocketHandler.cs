@@ -15,7 +15,14 @@ public class WebSocketHandler
     {
         var sessionKey = GetSessionKey(trainerId, clientId);
         
-        _sessions[sessionKey] = webSocket;
+        if (!_sessions.ContainsKey(sessionKey))
+        {
+            _sessions[sessionKey] = webSocket;
+        }
+        else
+        {
+            webSocket = _sessions[sessionKey];
+        }
 
         var buffer = new byte[1024 * 4];
 
