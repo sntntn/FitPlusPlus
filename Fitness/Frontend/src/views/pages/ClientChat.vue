@@ -75,6 +75,7 @@ export default {
       trainers: [],
       selectedTrainer: null,
       newMessage: "",
+      socket: null,
     };
   },
   created() {
@@ -84,13 +85,25 @@ export default {
   },
   mounted() {
   },
+  beforeDestroy() {
+    if (this.socket) {
+      console.log("Closing WebSocket before component is destroyed.");
+      this.socket.close();
+    }
+  },
   methods: {
     selectTrainer(trainer) {
+      if(this.selectedTrainer && this.socket){
+        this.socket.close();
+        console.log("Closed previous WebSocket");
+      }
+
       this.selectedTrainer = trainer;
       console.log(trainer.id);
       this.fetchMessages(trainer.id);
-
+      this.openWebSocket(trainer.id);
     },
+    
     async sendMessage() {
       if (this.newMessage.trim() !== "") {
         try{
@@ -168,6 +181,38 @@ export default {
 
       }
     },
+
+    openWebSocket(trainerId) {
+      const clientId = this.clientId;
+      const wsUrl = `ws://localhost:8082/ws/chat?trainerId=${trainerId}&clientId=${clientId}`;
+
+      this.socket = new WebSocket(wsUrl);
+
+      this.socket.onopen = () => {
+        console.log("WebSocket connected for trainer:", trainerId);
+      };
+
+      this.socket.onmessage = (event) => {
+        const messageData = JSON.parse(event.data);
+        console.log("New message received:", messageData);
+
+        if (this.selectedTrainer && this.selectedTrainer.id === trainerId && messageData.SenderType=="trainer") {
+          this.selectedTrainer.messages.push({
+            id: messageData.Id || Date.now(),
+            text: messageData.Content,
+            sender: messageData.SenderType.toLowerCase(),
+          });
+        }
+      };
+      this.socket.onclose = () => {
+        console.log("WebSocket closed for trainer:", trainerId);
+      };
+
+      this.socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    },
+
   }
 };
 </script>
