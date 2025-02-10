@@ -42,8 +42,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<WebSocketHandler>();
-builder.Services.AddTransient<WebSocketMiddleware>();
-
 
 var app = builder.Build();
 
@@ -54,12 +52,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseWebSockets();
-app.UseMiddleware<WebSocketMiddleware>();
-
+app.UseRouting();
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseWebSockets();
+app.UseMiddleware<WebSocketMiddleware>();
 app.MapControllers();
 
 app.Run();
