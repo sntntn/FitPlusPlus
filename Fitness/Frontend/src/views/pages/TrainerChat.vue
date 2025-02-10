@@ -202,12 +202,13 @@ export default {
         const messageData = JSON.parse(event.data);
         console.log("New message received:", messageData);
 
-
-        if (this.selectedClient && this.selectedClient.id === clientId) {
+        // da bi mi se ispisivale poruke koje stizu u web socket ali samo sa suprotne strane (sa strane klijenta) 
+        if (this.selectedClient && this.selectedClient.id === clientId && messageData.senderType=="client") {
           this.selectedClient.messages.push({
-            id: messageData.id || Date.now(),
-            text: messageData.text,
-            sender: messageData.sender.toLowerCase(),
+            id: messageData.Id || Date.now(),
+            text: messageData.Content,
+            sender: messageData.senderType.toLowerCase(),
+            //sender: typeof messageData.senderType === "string" ? messageData.senderType.toLowerCase() : "unknown",
           });
         }
       };
