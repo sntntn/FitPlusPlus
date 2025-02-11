@@ -36,7 +36,7 @@ services:
     container_name: analyticsdb
     restart: always
     ports:
-      - 27022:27017
+      - 27023:27017
     volumes:
       - analyticsmongo_data:/data/db
   
