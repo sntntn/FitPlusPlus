@@ -21,7 +21,7 @@
     <main class="chat-main">
       <template v-if="selectedClient">
         <h3>Chat with {{ selectedClient.name }}</h3>
-        <div class="chat-messages">
+        <div class="chat-messages" ref="messagesContainer">
           <div
             v-for="message in selectedClient.messages"
             :key="message.id"
@@ -125,8 +125,9 @@ export default {
             sender: "trainer",
           });
           this.newMessage = "";
-          }
-          catch (error) {
+          this.scrollToBottom();
+        }
+        catch (error) {
           console.error("Error sending message:", error);
           alert("Failed to send message. Please try again.");
         }
@@ -180,7 +181,9 @@ export default {
 
         console.log("Transformed Messages:", transformedMessages);
         this.selectedClient.messages = transformedMessages;
-
+        //this.scrollToBottom();
+        this.$nextTick(() => this.scrollToBottom());
+      
       } catch (error) {
         console.error("Failed to fetch messages:", error);
         this.selectedClient.messages = [];
@@ -202,12 +205,18 @@ export default {
         const messageData = JSON.parse(event.data);
         console.log("New message received:", messageData);
 
+        let wasAtBottom = this.isScrolledToBottom();
+
         if (this.selectedClient && this.selectedClient.id === clientId && messageData.SenderType=="client") {
           this.selectedClient.messages.push({
             id: messageData.Id || Date.now(),
             text: messageData.Content,
             sender: messageData.SenderType.toLowerCase(),
           });
+        }
+        
+        if (wasAtBottom) {
+            this.scrollToBottom();
         }
       };
 
@@ -218,6 +227,22 @@ export default {
       this.socket.onerror = (error) => {
         console.error("WebSocket error:", error);
       };
+    },
+
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.messagesContainer;
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+    },
+
+    isScrolledToBottom() {
+      const container = this.$refs.messagesContainer;
+      if (!container) return false;
+
+      return container.scrollHeight - container.scrollTop <= container.clientHeight + 5;
     },
 
   },
