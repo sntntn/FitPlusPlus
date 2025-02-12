@@ -58,9 +58,9 @@ The FitPlusPlus application consists of multiple microservices, some developed b
    - Enables trainers to provide **online mentorship** to their clients via chat.
    - Clients can directly communicate with trainers for **training advice, progress tracking, and personalized plans**.
    - Paid mentorship sessions can be booked and managed within the app.
-   - Uses WebSockets to enable real-time messaging between clients and trainers, ensuring instant updates without manual refresh.
+   - Uses **WebSockets** to enable **real-time messaging between clients and trainers**, ensuring instant updates without manual refresh.
    - Each chat session is identified by a unique WebSocket connection based on the trainer and client IDs.
-   - This ensures efficient synchronization of messages between both participants in the chat.
+   - This ensures efficient **synchronization** of messages between both participants in the chat.
 
 2. **VideoTrainingService**
    - Provides a **library of high-quality instructional videos** on correct exercise execution.
