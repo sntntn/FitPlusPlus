@@ -26,7 +26,7 @@ public class ChatController : ControllerBase
         _webSocketHandler = webSocketHandler;
 
     }
-    [HttpGet("sessions/{userId}/basic-info")]
+    [HttpGet("sessions/{userId}/my-sessions-summary")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
     {
         var basicInfo = await _chatRepository.GetBasicInfoForSessionsAsync(userId);

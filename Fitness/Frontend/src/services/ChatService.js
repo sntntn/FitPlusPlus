@@ -7,7 +7,7 @@ const TRAINER = "http://localhost:8000/api/v1/Trainer";
 
 export async function getBasicInfoForTrainerSessions(trainerId) {
     try {
-      const response = await axios.get(`${BASE_URL}/sessions/${trainerId}/basic-info`);
+      const response = await axios.get(`${BASE_URL}/sessions/${trainerId}/my-sessions-summary`);
       return response.data;
     } catch (error) {
         console.error("Error fetching trainer sessions basic info:", error);
@@ -17,7 +17,7 @@ export async function getBasicInfoForTrainerSessions(trainerId) {
 
 export async function getBasicInfoForClientSessions(clientId) {
   try {
-    const response = await axios.get(`${BASE_URL}/sessions/${clientId}/basic-info`);
+    const response = await axios.get(`${BASE_URL}/sessions/${clientId}/my-sessions-summary`);
     return response.data;
   } catch (error) {
       console.error("Error fetching client sessions basic info:", error);
