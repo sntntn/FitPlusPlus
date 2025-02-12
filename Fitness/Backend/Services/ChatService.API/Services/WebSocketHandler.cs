@@ -9,20 +9,23 @@ namespace ChatService.API.Services;
 
 public class WebSocketHandler
 {
-    private static readonly ConcurrentDictionary<string, WebSocket> _sessions = new();
+    private static readonly ConcurrentDictionary<string, List<WebSocket>> _sessions = new();
 
     public async Task HandleConnection(WebSocket webSocket, string trainerId, string clientId)
     {
         var sessionKey = GetSessionKey(trainerId, clientId);
-        
-        if (!_sessions.ContainsKey(sessionKey))
-        {
-            _sessions[sessionKey] = webSocket;
-        }
-        else
-        {
-            webSocket = _sessions[sessionKey];
-        }
+
+        // ili pravimo novu listu ili samo dodajemo konekciju u postojecu
+        _sessions.AddOrUpdate(sessionKey,
+            _ => new List<WebSocket> { webSocket },
+            (_, sockets) =>
+            {
+                lock (sockets)
+                {
+                    sockets.Add(webSocket);
+                }
+                return sockets;
+            });
 
         var buffer = new byte[1024 * 4];
 
@@ -53,25 +56,47 @@ public class WebSocketHandler
             await CloseConnection(webSocket, sessionKey);
         }
     }
-    
+
     private async Task CloseConnection(WebSocket webSocket, string sessionKey)
     {
+        if (_sessions.TryGetValue(sessionKey, out var sockets))
+        {
+            lock (sockets)
+            {
+                sockets.Remove(webSocket);
+            }
+        }
+
         if (webSocket.State == WebSocketState.Open)
         {
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed", CancellationToken.None);
         }
-        _sessions.TryRemove(sessionKey, out _);
+
+        if (_sessions.TryGetValue(sessionKey, out var remainingSockets) && remainingSockets.Count == 0)
+        {
+            _sessions.TryRemove(sessionKey, out _);
+        }
     }
 
-    // zapravo ovaj broadcast salje samo odredjenoj sesiji
     public async Task BroadcastMessage(string sessionKey, string message)
     {
         var buffer = Encoding.UTF8.GetBytes(message);
         var segment = new ArraySegment<byte>(buffer);
 
-        if (_sessions.TryGetValue(sessionKey, out var socket) && socket.State == WebSocketState.Open)
+        if (_sessions.TryGetValue(sessionKey, out var sockets))
         {
-            await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+            lock (sockets)
+            {
+                sockets = new List<WebSocket>(sockets); // pravim kopiju liste da bih izbegao modifikaciju tokom iteracije
+            }
+
+            foreach (var socket in sockets)
+            {
+                if (socket.State == WebSocketState.Open)
+                {
+                    await socket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+            }
         }
     }
 
