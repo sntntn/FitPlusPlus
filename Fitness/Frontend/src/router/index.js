@@ -78,6 +78,24 @@ const routes = [
       },
 
       {
+        path: '/trainer/:id/chat',
+        name: 'Trainer Chat',
+        component: () => import('@/views/pages/TrainerChat.vue')
+      },
+
+      {
+        path: '/client/:id/chat',
+        name: 'Client Chat',
+        component: () => import('@/views/pages/ClientChat.vue'),
+      },
+
+      {
+        path: '/client/:id/pay-chat/:trainerId',
+        name: 'PayChat',
+        component: () => import('@/views/pages/PayChat.vue'),
+      },
+
+      {
         path: '/client/:id/videotrainings',
         name: 'Video Trainings',
         component: () => import('@/views/pages/VideoTrainings.vue')
@@ -122,15 +140,6 @@ const router = createRouter({
   },
 })
 
-/* router.beforeEach(async(to,from)=>{
-   var token = sessionStorage.getItem('accessToken');
-    if (to.path == '/') {
-     router.push('/trainer');
-     return false;
-    }
-   return true;
- })
-*/
 
 router.beforeEach(async (to, from) => {
 

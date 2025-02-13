@@ -184,9 +184,9 @@ namespace IdentityServer.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "298871fd-917c-42e9-9a4d-b5a0ba262fe7", null, "Client", "CLIENT" },
-                    { "6273c7e7-7430-4ddc-8a3c-71948427c459", null, "Trainer", "TRAINER" },
-                    { "b87c880c-bc30-4e20-ab81-5d22e55b093b", null, "Admin", "ADMIN" }
+                    { "08a19f84-14c0-48c5-9cba-f13b9bd4bed2", null, "Trainer", "TRAINER" },
+                    { "4ecf06ad-a066-4e44-a56d-e41b24e3f2cf", null, "Client", "CLIENT" },
+                    { "ddcce0a9-75cc-4e5b-9b92-04e6ebb8432e", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

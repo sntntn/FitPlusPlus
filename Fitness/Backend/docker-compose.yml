@@ -14,13 +14,15 @@ services:
 
   paymentdb:
     image: mongo
+    
+  chatdb:
+    image: mongo
   
   videotrainingdb:
     image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    
     
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
@@ -72,6 +74,15 @@ services:
     depends_on:
       - paymentdb
 
+  chatservice.api:
+    image: ${DOCKER_REGISTRY-}chatserviceapi
+    build:
+      context: .
+      dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+      - rabbitmq
+
   videotrainingservice.api:
     image: ${DOCKER_REGISTRY-}videotrainingserviceapi
     build:
@@ -86,6 +97,7 @@ volumes:
   clientmongo_data:
   paymentmongo_data:
   videotrainingmongo_data:
+  chatmongo_data:
   mssql_data:
 
 

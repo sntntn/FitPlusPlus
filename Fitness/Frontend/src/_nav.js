@@ -13,6 +13,12 @@ export function generateTrainerNav(id) {
       to: `/trainer/${id}/schedule`,
       icon: 'cil-calendar'
     },
+    {
+      component: 'CNavItem',
+      name: 'Chat',
+      to: `/trainer/${id}/chat`,
+      icon: 'cil-speech',
+    },
 
     {
       component: 'CNavItem',
@@ -37,6 +43,12 @@ export function generateClientNav(id) {
       name: 'Schedule',
       to: `/client/${id}/schedule`,
       icon: 'cil-calendar'
+    },
+    {
+      component: 'CNavItem',
+      name: 'Chat',
+      to: `/client/${id}/chat`,
+      icon: 'cil-speech'
     },
     {
       component: 'CNavItem',

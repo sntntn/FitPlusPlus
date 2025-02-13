@@ -10,7 +10,6 @@
       <figcaption> {{ training.name }}</figcaption>
       <p :style="{ fontSize: '20px', fontColor: 'black' }">Svi imaju za sad isti opis.<br>
           Kao nesto pise.<br>
-        Trener: Ime i Prezime.
       </p>
       <button class="overlay" @click="buyProgram">See more</button>
     </figure>
@@ -28,21 +27,28 @@ export default {
       isAvailable: false,
       message: 'Probna verzija!',
       trainings: [
-          { name: 'Prvi', type: require('@/assets/images/running.jpeg')},
-          { name: 'Drugi', type: require('@/assets/images/strength.jpg')},
-          { name: 'Treci', type: require('@/assets/images/yoga.jpg')},
-          { name: 'Cetvrti', type: require('@/assets/images/home.jpeg')},
-          { name: 'Peti', type: require('@/assets/images/strength.jpg')},
-          { name: 'Sesti', type: require('@/assets/images/running.jpeg')},
-      ],
+        { name: 'Prvi', type: require('@/assets/images/running.jpeg')},
+        { name: 'Drugi', type: require('@/assets/images/strength.jpg')},
+        { name: 'Treci', type: require('@/assets/images/yoga.jpg')},
+        { name: 'Cetvrti', type: require('@/assets/images/home.jpeg')},
+        { name: 'Peti', type: require('@/assets/images/strength.jpg')},
+        { name: 'Sesti', type: require('@/assets/images/running.jpeg')},
+      ]
     }
   },
 
   methods: {
-    getTraining(){
-      // await dataServices.methods.get_trainings_for_client(this.$route.params.id);
-
+    async getTraining(){
       this.message = 'Radim!';
+
+      /*await dataServices.methods.get_trainings_for_client(this.$route.params.id).then(
+        response => {
+          console.log(this.$route.params.id);
+          this.trainings = response.data;
+        }
+      );*/
+
+
     },
 
     buyProgram(){
@@ -51,9 +57,9 @@ export default {
 
   },
 
-  //beforeMount() {
-  //  this.getTraining();
-  //},
+  beforeMount() {
+    this.getTraining();
+  },
 
   mounted() {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");

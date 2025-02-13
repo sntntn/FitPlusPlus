@@ -3,7 +3,7 @@ import axios from "axios";
 const TRAINERS = "http://localhost:8000";
 const REVIEW = "http://localhost:8001";
 const CLIENT = "http://localhost:8100";
-const TRAININGS = "http://localhost:8004";
+const TRAININGS = "http://localhost:8004/api/v1/Trainings";
 const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
 const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
 const PAYMENT = "http://localhost:8003/api/v1/Payment/"
@@ -209,9 +209,20 @@ export default {
           return axios.get(`${CLIENT}/api/v1/Client/GetTrainerIdsFromClientSchedule/${cli_id}`);
         },
 
-        get_trainings_for_client(cli_id){
+        async get_trainings_for_client(cli_id){
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAININGS}/api/v1/Training/training/trainingClient/${cli_id}`);
+          return await axios.get(`${TRAININGS}/training/trainingClient/${cli_id}`);
+        },
+
+        async get_trainings_for_trainer(trainer_id){
+        //axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+        try{
+          const data = await axios.get(`${TRAININGS}/training/trainingTrainer/${trainer_id}`);
+        } catch (error) {
+          console.error("Error fetching trainings!", error);
+          throw error;
         }
+
+      }
     }
 }

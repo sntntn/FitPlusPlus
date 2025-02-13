@@ -40,6 +40,14 @@ services:
     volumes:
       - videotrainingmongo_data:/data/db
   
+  chatdb:
+    container_name: chatdb
+    restart: always
+    ports:
+      - 27022:27017
+    volumes:
+      - chatmongo_data:/data/db
+  
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -63,7 +71,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
-      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
+      - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
     ports:
       - "8000:8080"
@@ -119,3 +127,12 @@ services:
       - "DatabaseSetting:ConnectionString=mongodb://videotrainingdb:27017"
     ports:
       - "8004:8080"
+      
+  chatservice.api:
+    container_name: chatService.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "MongoDB:ConnectionString=mongodb://chatdb:27017"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    ports:
+      - 8082:8080
