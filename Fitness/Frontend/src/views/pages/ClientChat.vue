@@ -10,8 +10,8 @@
           :class="{ active: trainer.id === selectedTrainer?.id }"
           @click="selectTrainer(trainer)"
         >
-          <span v-if="!trainer.isUnlocked" class="locked-icon">{{ trainer.name }}🔒</span>  <!--TO DO class -->
-          <span v-if="trainer.isUnlocked" class="unlocked-icon">{{ trainer.name }}</span> <!--🔓-->        </li>
+          <span v-if="!trainer.isUnlocked" class="locked-icon">{{ trainer.name }}🔒</span>
+          <span v-if="trainer.isUnlocked" class="unlocked-icon">{{ trainer.name }}</span> </li>
         <li v-if="trainers.length === 0">
           <p class="warning-text1">No available trainer</p>
         </li>
@@ -134,16 +134,8 @@ export default {
             const basicInfo = await getBasicInfoForClientSessions(clientId);
             
             for (const session of basicInfo){
-              console.log("--------------");
-              console.log("TrainerId:", session.trainerId);
-              console.log("ClientId:", session.clientId);
-              console.log("Is Unlocked:", session.isUnlocked);
-              console.log("Expiration Date:", session.expirationDate);
-
               try {
                 const trainerInfo = await getTrainerById(session.trainerId);
-                //console.log(trainerInfo);
-                console.log("Trainer Name:", trainerInfo.fullName);
 
                 this.trainers.push({
                   id: session.trainerId,
@@ -162,7 +154,6 @@ export default {
     },
     async fetchMessages(trainerId) {
       const clientId = this.clientId;
-      console.log(clientId);
       try {
         const response = await getMessagesFromSession(trainerId, clientId);
         console.log(response);

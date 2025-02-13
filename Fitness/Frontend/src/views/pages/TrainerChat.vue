@@ -140,15 +140,9 @@ export default {
             const basicInfo = await getBasicInfoForTrainerSessions(trainerId);
 
             for (const session of basicInfo) {
-                console.log("--------------");
-                console.log("TrainerId:", session.trainerId);
-                console.log("ClientId:", session.clientId);
-                console.log("Is Unlocked:", session.isUnlocked);
-                console.log("Expiration Date:", session.expirationDate);
-
+              
                 try {
                   const clientInfo = await getClientById(session.clientId);
-                  //console.log(clientInfo);
                   console.log("Client Name:", clientInfo.name, clientInfo.surname);
 
                   this.clients.push({
@@ -176,12 +170,11 @@ export default {
         const transformedMessages = response.map((msg) => ({
           id: msg.id?.id || Date.now(), 
           text: msg.content,
-          sender: msg.senderType.toLowerCase(), // "Trainer" u "trainer"
+          sender: msg.senderType.toLowerCase(), 
         }));
 
         console.log("Transformed Messages:", transformedMessages);
         this.selectedClient.messages = transformedMessages;
-        //this.scrollToBottom();
         this.$nextTick(() => this.scrollToBottom());
       
       } catch (error) {

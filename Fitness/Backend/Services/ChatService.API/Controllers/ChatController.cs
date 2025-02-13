@@ -152,37 +152,5 @@ public class ChatController : ControllerBase
         
         return NoContent();
     }
-
-    // privremena metoda za testiranje
-    [HttpGet("test-mongo-connection")]
-    public IActionResult TestMongoConnection()
-    {
-        try
-        {
-            var databases = _mongoClient.ListDatabaseNames().ToList();
-            return Ok(new { Message = "MongoDB connection successful", Databases = databases });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { Message = "MongoDB connection failed", Error = ex.Message });
-        }
-    }
-    
-    /*[HttpGet("ws")]
-    public async Task GetWebSocket()
-    {
-        if (HttpContext.WebSockets.IsWebSocketRequest)
-        {
-            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            var webSocketHandler = HttpContext.RequestServices.GetRequiredService<WebSocketHandler>();
-            await webSocketHandler.HandleConnection(webSocket, "trainerId", "clientId");  // Ovde prosledjujete konkretne vrednosti za ID-jeve
-        }
-        else
-        {
-            HttpContext.Response.StatusCode = 400;
-        }
-    }*/
-
-
     
 }
