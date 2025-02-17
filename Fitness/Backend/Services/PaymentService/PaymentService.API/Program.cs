@@ -64,7 +64,8 @@ app.Lifetime.ApplicationStopping.Register(() =>
     consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
 });
 
-app.UseAuthorization();
+
+// app.UseAuthorization();
 
 app.MapControllers();
 
