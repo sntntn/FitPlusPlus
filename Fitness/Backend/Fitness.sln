@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Messages", "Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.API", "Services\PaymentService\PaymentService.API\PaymentService.API.csproj", "{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationService.API", "Services\ReservationService\ReservationService.API\ReservationService.API.csproj", "{F3C942A5-0892-4451-9092-900F63365EC1}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.API", "Services\NotificationService\NotificationService.API\NotificationService.API.csproj", "{42D48CA2-5675-47F2-BAE7-91E595258CBA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientService.Common", "Services\ClientService\ClientService.Common\ClientService.Common.csproj", "{FA536695-2D2D-4B71-8883-95B6EEF320F6}"
@@ -83,6 +85,10 @@ Global
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3C942A5-0892-4451-9092-900F63365EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3C942A5-0892-4451-9092-900F63365EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3C942A5-0892-4451-9092-900F63365EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3C942A5-0892-4451-9092-900F63365EC1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{42D48CA2-5675-47F2-BAE7-91E595258CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{42D48CA2-5675-47F2-BAE7-91E595258CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42D48CA2-5675-47F2-BAE7-91E595258CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
