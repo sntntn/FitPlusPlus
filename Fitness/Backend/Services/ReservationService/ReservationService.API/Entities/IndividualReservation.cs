@@ -1,0 +1,16 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace ReservationService.API.Entities;
+
+public class IndividualReservation
+{
+    [BsonId] 
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
+    public string ClientId { get; set; }
+    public string TrainerId { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
+    public DateOnly Date { get; set; }
+}
