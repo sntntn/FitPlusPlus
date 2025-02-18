@@ -21,6 +21,13 @@ builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
     options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
 builder.Services.AddScoped<ReviewGrpcService>();
 
+// cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
 //AutoMapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -46,6 +53,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 app.MapControllers();
