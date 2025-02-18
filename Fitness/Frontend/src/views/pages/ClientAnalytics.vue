@@ -60,6 +60,7 @@ export default {
       return trainingTypes.map(type => type.name).join(', ');
     },
     fetchAnalytics() {
+      console.log(this.$route);
       const clientId = this.$route.params.id;
       dataServices.methods.get_client_analytics(clientId).then(response => {
         // console.log(response);
@@ -69,6 +70,7 @@ export default {
   },
   mounted() {
     this.fetchAnalytics();
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
   }
 }
 </script>
