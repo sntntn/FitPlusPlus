@@ -60,7 +60,6 @@ export default {
       return trainingTypes.map(type => type.name).join(', ');
     },
     fetchAnalytics() {
-      console.log(this.$route);
       const clientId = this.$route.params.id;
       dataServices.methods.get_client_analytics(clientId).then(response => {
         // console.log(response);

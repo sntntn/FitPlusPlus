@@ -208,7 +208,7 @@ export default {
           return axios.get(`${CLIENT}/api/v1/Client/GetTrainerIdsFromClientSchedule/${cli_id}`);
         },
         get_client_analytics(cli_id) {
-          return Promise.resolve({
+          let harcodedObject = Promise.resolve({
               data: {
                 attendedTrainings: 10,
                 cancelledTrainings: 2,
@@ -227,6 +227,8 @@ export default {
                 ]
               }
           });
+
+          return harcodedObject;
         }
     }
 }
