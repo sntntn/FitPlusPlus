@@ -19,6 +19,12 @@ export function generateTrainerNav(id) {
       to: `/trainer/${id}/chat`,
       icon: 'cil-speech',
     },
+    {
+      component: 'CNavItem',
+      name: 'Analytics',
+      to: `/trainer/${id}/analytics`,
+      icon: 'cilBarChart'
+    },
   ];
 }
 
