@@ -18,6 +18,9 @@ services:
     
   chatdb:
     image: mongo
+    
+  reservationdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -99,6 +102,12 @@ services:
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+      
+  reservationservice.api:
+    image: ${DOCKER_REGISTRY-}reservationserviceapi
+    build:
+      context: .
+      dockerfile: Services/ReservationService/ReservationService.API/Dockerfile
     depends_on:
       - paymentdb
       - consul
@@ -124,6 +133,7 @@ volumes:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  reservationmongo_data:
   notificationmongo_data:
   chatmongo_data:
   mssql_data:
