@@ -1,17 +1,17 @@
 <template>
   <div>
-    <h3>Client Analytics</h3>
+    <h3>Trainer Analytics</h3>
     <div class="analytics-container">
       <div class="analytics-item">
-        <h5>Number of Attended Trainings</h5>
-        <p>{{ analytics.attendedTrainings }}</p>
+        <h5>Number of Trainings Held</h5>
+        <p>{{ analytics.trainingsHeld }}</p>
       </div>
       <div class="analytics-item">
-        <h5>Number of Cancelled Trainings</h5>
-        <p>{{ analytics.cancelledTrainings }}</p>
+        <h5>Number of Clients</h5>
+        <p>{{ analytics.numOfClients }}</p>
       </div>
       <div class="analytics-item">
-        <h5>Average Rating of Trainings</h5>
+        <h5>Average Rating</h5>
         <p>{{ analytics.averageRating.toFixed(1) }}</p>
       </div>
     </div>
@@ -48,8 +48,8 @@ export default {
   data() {
     return {
       analytics: {
-        attendedTrainings: 0,
-        cancelledTrainings: 0,
+        trainingsHeld: 0,
+        numOfClients: 0,
         averageRating: 0,
         trainersWorkedWith: []
       }
@@ -62,7 +62,7 @@ export default {
     fetchAnalytics() {
       const clientId = this.$route.params.id;
       dataServices.methods.get_client_analytics(clientId).then(response => {
-        // console.log(response);
+        console.log(response);
         this.analytics = response.data;
       });
     }
