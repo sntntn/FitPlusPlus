@@ -32,7 +32,7 @@ export default {
             'Content-Type': 'application/json'
           };
 
-          return axios.post(AUTH_URL + '/Login', data, { headers });                  
+          return axios.post(AUTH_URL + '/Login', data, { headers });
         },
 
         register(firstname, lastname, username, password, email, phonenumber, role) {
@@ -43,7 +43,7 @@ export default {
             password: password,
             email: email,
             phonenumber: phonenumber
-          }; 
+          };
 
           const headers = {
             'Content-Type': 'application/json'
@@ -208,6 +208,27 @@ export default {
         delete_review(rev_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.delete(`${REVIEW}/${rev_id}`);
+        },
+        get_client_analytics(cli_id) {
+          return Promise.resolve({
+            data: {
+              attendedTrainings: 10,
+              cancelledTrainings: 2,
+              averageRating: 7.4,
+              trainersWorkedWith: [
+                {
+                  fullName: "Vukasin Markovic",
+                  contactEmail: "vmark@fitness.com",
+                  contactPhone: "+38160123456",
+                  trainingTypes: [
+                    { name: "yoga" },
+                    { name: "pilates "}
+                  ],
+                  averageRating: 10.0
+                }
+              ]
+            }
+          });
         }
     }
 }

@@ -105,7 +105,11 @@ const routes = [
         name: 'PayChat',
         component: () => import('@/views/pages/PayChat.vue'),
       },
-
+      {
+        path: '/client/:id/analytics',
+        name: 'ClientAnalytics',
+        component: () => import('@/views/pages/ClientAnalytics.vue')
+      }
     ],
   },
   {
