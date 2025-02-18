@@ -48,7 +48,7 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ~/docker/sql/mssql/:/var/opt/mssql/
+      - ~/docker/sql/mssql/data:/var/opt/mssql/data
       - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
   
   consul:
