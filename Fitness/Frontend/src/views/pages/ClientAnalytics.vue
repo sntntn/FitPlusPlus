@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import dataServices from '@/services/data_services';
+// import dataServices from '@/services/data_services';
+import analyticsService from '@/services/AnalyticsService'
 
 export default {
   name: "ClientAnalytics",
@@ -61,9 +62,9 @@ export default {
     },
     fetchAnalytics() {
       const clientId = this.$route.params.id;
-      dataServices.methods.get_client_analytics(clientId).then(response => {
+      analyticsService.getClientAnalytics(clientId).then(response => {
         // console.log(response);
-        this.analytics = response.data;
+        this.analytics.attendedTrainings = response.data;
       });
     }
   },
