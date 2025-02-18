@@ -54,6 +54,12 @@ export function generateClientNav(id) {
       to: `/client/${id}/chat`,
       icon: 'cil-speech'
     },
+    {
+      component: 'CNavItem',
+      name: 'Analytics',
+      to: `/client/${id}/analytics`,
+      icon: 'cilBarChart'
+    },
   ];
 }
 

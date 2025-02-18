@@ -80,6 +80,7 @@ import {
   cilTrash,
   cilToggleOn,
   cilToggleOff,
+  cilBarChart
 } from '@coreui/icons'
 
 
@@ -140,7 +141,8 @@ export const iconsSet = Object.assign(
     cilXCircle,
     cilTrash,
     cilToggleOn,
-    cilToggleOff
+    cilToggleOff,
+    cilBarChart
   },
   {
     cifUs,
