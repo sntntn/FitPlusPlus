@@ -42,7 +42,7 @@ namespace IdentityServer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("IdentityServer.Entities.User", b =>
@@ -147,19 +147,19 @@ namespace IdentityServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ddcce0a9-75cc-4e5b-9b92-04e6ebb8432e",
+                            Id = "c9724c59-0894-4f23-8f5b-64032f4864b2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "08a19f84-14c0-48c5-9cba-f13b9bd4bed2",
+                            Id = "5a1b8cb7-37bc-431b-b9e5-33f0b2e82c87",
                             Name = "Trainer",
                             NormalizedName = "TRAINER"
                         },
                         new
                         {
-                            Id = "4ecf06ad-a066-4e44-a56d-e41b24e3f2cf",
+                            Id = "780ae70f-59cb-4c58-82bd-74015b491110",
                             Name = "Client",
                             NormalizedName = "CLIENT"
                         });
