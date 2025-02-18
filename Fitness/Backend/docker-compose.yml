@@ -12,9 +12,13 @@ services:
 
   paymentdb:
     image: mongo
+    
+  reservationdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -50,12 +54,19 @@ services:
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+      
+  reservationservice.api:
+    image: ${DOCKER_REGISTRY-}reservationserviceapi
+    build:
+      context: .
+      dockerfile: Services/ReservationService/ReservationService.API/Dockerfile
 
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  reservationmongo_data:
   mssql_data:
 
 

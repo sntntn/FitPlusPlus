@@ -31,6 +31,14 @@ services:
       - 27020:27017
     volumes:
       - paymentmongo_data:/data/db
+    
+  reservationdb:
+    container_name: reservationdb
+    restart: always
+    ports:
+      - 27023:27017
+    volumes:
+      - reservationmongo_data:/data/db
   
   rabbitmq:
     container_name: rabbitmq
@@ -117,3 +125,13 @@ services:
     ports:
       - "8003:8080"
 
+
+  reservationservice.api:
+    container_name: reservationservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://payment:27017"
+    depends_on:
+      - reservationdb
+    ports:
+      - "8025:8080"
