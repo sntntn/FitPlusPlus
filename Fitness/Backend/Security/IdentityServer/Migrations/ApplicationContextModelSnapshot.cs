@@ -42,7 +42,7 @@ namespace IdentityServer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("IdentityServer.Entities.User", b =>
