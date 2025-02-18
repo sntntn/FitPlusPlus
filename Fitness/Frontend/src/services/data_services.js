@@ -210,25 +210,27 @@ export default {
           return axios.delete(`${REVIEW}/${rev_id}`);
         },
         get_client_analytics(cli_id) {
-          return Promise.resolve({
-            data: {
-              attendedTrainings: 10,
-              cancelledTrainings: 2,
-              averageRating: 7.4,
-              trainersWorkedWith: [
-                {
-                  fullName: "Vukasin Markovic",
-                  contactEmail: "vmark@fitness.com",
-                  contactPhone: "+38160123456",
-                  trainingTypes: [
-                    { name: "yoga" },
-                    { name: "pilates "}
-                  ],
-                  averageRating: 10.0
-                }
-              ]
-            }
+          let harcodedObject = Promise.resolve({
+              data: {
+                attendedTrainings: 10,
+                cancelledTrainings: 2,
+                averageRating: 7.4,
+                trainersWorkedWith: [
+                  {
+                    fullName: "Vukasin Markovic",
+                    contactEmail: "vmark@fitness.com",
+                    contactPhone: "+38160123456",
+                    trainingTypes: [
+                      { name: "yoga" },
+                      { name: "pilates "}
+                    ],
+                    averageRating: 10.0
+                  }
+                ]
+              }
           });
+
+          return harcodedObject;
         }
     }
 }
