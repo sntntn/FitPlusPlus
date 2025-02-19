@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Messages", "Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.API", "Services\PaymentService\PaymentService.API\PaymentService.API.csproj", "{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService.API", "Services\GatewayService\GatewayService.API\GatewayService.API.csproj", "{0E6E9A4F-6271-45A4-BA0A-9468C6F15275}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsulConfig.Settings", "Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj", "{E8032951-A2BF-4DA6-B433-C3004A2D1021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,14 @@ Global
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39B7B5E9-F9D8-4A1F-B4E5-216248755CCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E6E9A4F-6271-45A4-BA0A-9468C6F15275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E6E9A4F-6271-45A4-BA0A-9468C6F15275}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E6E9A4F-6271-45A4-BA0A-9468C6F15275}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E6E9A4F-6271-45A4-BA0A-9468C6F15275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8032951-A2BF-4DA6-B433-C3004A2D1021}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +86,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DD1D07DE-12AA-437E-AC5C-B6F21A9D64C8} = {89F11E05-9275-456A-B680-9E47AEFC6A05}
 		{4E7EFF7C-F700-473B-9265-48C289A497BF} = {08A30FB7-C7FE-49F3-B26F-FB0F9945EF7A}
+		{E8032951-A2BF-4DA6-B433-C3004A2D1021} = {08A30FB7-C7FE-49F3-B26F-FB0F9945EF7A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B317DCB6-F066-4D68-9E03-E9DF67260B22}

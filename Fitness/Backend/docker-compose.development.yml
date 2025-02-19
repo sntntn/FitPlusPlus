@@ -3,7 +3,7 @@ services:
     container_name: trainerdb
     restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - trainermongo_data:/data/db
 
@@ -12,15 +12,15 @@ services:
     container_name: clientdb
     restart: always
     ports:
-    - 27019:27017
+      - "27019:27017"
     volumes: 
-    - clientmongo_data:/data/db
+      - clientmongo_data:/data/db
 
   reviewdb:
     container_name: reviewdb
     restart: always
     ports:
-      - 27018:27017
+      - "27018:27017"
     volumes:
       - reviewmongo_data:/data/db
  
@@ -28,7 +28,7 @@ services:
     container_name: paymentdb
     restart: always
     ports:
-      - 27020:27017
+      - "27020:27017"
     volumes:
       - paymentmongo_data:/data/db
   
@@ -36,19 +36,37 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
+  
   mssql:
     container_name: mssql
     environment:
       - SA_PASSWORD=MATF12345678rs2
-      - ACCEPT_EULA=Y 
+      - ACCEPT_EULA=Y
     restart: always
     ports:
       - "1433:1433"
     volumes:
-      - mssql_data:/var/opt/mssql/data 
-
+      - ~/docker/sql/mssql/data:/var/opt/mssql/data
+      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
+  
+  consul:
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+    volumes:
+      - ~/docker/consul/data:/consul/data
+      
+  
+  gatewayservice.api:
+    container_name: gatewayservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8005:8080"    
+  
   trainerservice.api:
     container_name: trainerservice.api
     environment:
@@ -64,7 +82,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"  
     ports:
       - "8100:8080"
 
@@ -84,7 +102,6 @@ services:
     ports:
       - "8001:8080"
 
-
   reviewservice.grpc:
     container_name: reviewservice.grpc
     environment:
@@ -102,4 +119,3 @@ services:
       - PAYPAL_CLIENT_SECRET="PayPalSettings:ClientSecret"
     ports:
       - "8003:8080"
-
