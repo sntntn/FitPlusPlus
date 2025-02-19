@@ -19,6 +19,17 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     
+  consul:
+    image: consul:1.15.4
+    
+  gatewayservice.api:
+    image: ${DOCKER_REGIRSTRY-}gatewayserviceapi
+    build:
+      context: .
+      dockerfile: Services/GatewayService/GatewayService.API/Dockerfile
+    depends_on:
+      - consul
+  
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -27,6 +38,8 @@ services:
     depends_on:
       - trainerdb
       - rabbitmq
+      - consul
+  
   
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
@@ -36,6 +49,7 @@ services:
     depends_on:
       - clientdb
       - rabbitmq
+      - consul
   
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
@@ -43,6 +57,7 @@ services:
       context: .
       dockerfile: Security/IdentityServer/Dockerfile
     depends_on:
+      - consul
       - mssql
 
   reviewservice.api:
@@ -52,6 +67,7 @@ services:
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
     depends_on:
       - reviewdb
+      - consul
 
   reviewservice.grpc:
     image: ${DOCKER_REGISTRY-}reviewservicegrpc
@@ -60,6 +76,7 @@ services:
       dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
     depends_on:
       - reviewdb
+      - consul
 
   paymentservice.api:
     image: ${DOCKER_REGISTRY-}paymentserviceapi
@@ -68,6 +85,7 @@ services:
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
     depends_on:
       - paymentdb
+      - consul
 
   chatservice.api:
     image: ${DOCKER_REGISTRY-}chatserviceapi
@@ -85,5 +103,6 @@ volumes:
   paymentmongo_data:
   chatmongo_data:
   mssql_data:
+  consul_data:
 
 

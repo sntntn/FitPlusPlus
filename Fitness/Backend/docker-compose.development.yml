@@ -56,8 +56,24 @@ services:
       - "1433:1433"
     volumes:
       - ~/docker/sql/mssql/data:/var/opt/mssql/data
-      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/ 
-
+      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
+  
+  consul:
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+    volumes:
+      - ~/docker/consul/data:/consul/data
+      
+  
+  gatewayservice.api:
+    container_name: gatewayservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8005:8080"    
+  
   trainerservice.api:
     container_name: trainerservice.api
     environment:
