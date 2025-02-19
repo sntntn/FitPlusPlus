@@ -62,6 +62,12 @@ The FitPlusPlus application consists of multiple microservices, some developed b
    - Each chat session is identified by a unique WebSocket connection based on the trainer and client IDs.
    - This ensures efficient **synchronization** of messages between both participants in the chat.
 
+      ### Real-Time Chat Performance Demo  
+   
+      This video demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
+      
+      [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
+
 2. **VideoTrainingService**
    - Provides a **library of high-quality instructional videos** on correct exercise execution.
    - Designed for **independent training** at home, covering beginner to advanced levels.
