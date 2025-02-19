@@ -55,7 +55,8 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - mssql_data:/var/opt/mssql/data 
+      - ~/docker/sql/mssql/data:/var/opt/mssql/data
+      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/ 
 
   trainerservice.api:
     container_name: trainerservice.api
