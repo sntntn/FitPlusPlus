@@ -95,6 +95,7 @@ services:
     depends_on:
       - chatdb
       - rabbitmq
+      - consul
 
 volumes:
   trainermongo_data:
