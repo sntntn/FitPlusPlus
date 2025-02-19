@@ -3,7 +3,9 @@ using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservationService.API.Entities;
+using ReservationService.API.Publishers;
 using ReservationService.API.Repository;
+// ReSharper disable All
 
 namespace ReservationService.API.Controllers;
 
@@ -13,14 +15,12 @@ namespace ReservationService.API.Controllers;
 public class ReservationController : ControllerBase
 {
     private readonly IReservationRepository _repository;
-    private readonly IMapper _mapper;
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly INotificationPublisher _notificationPublisher;
 
-    public ReservationController(IReservationRepository repository, IMapper mapper, IPublishEndpoint publishEndpoint)
+    public ReservationController(IReservationRepository repository, INotificationPublisher notificationPublisher)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+        _notificationPublisher = notificationPublisher ?? throw new ArgumentNullException(nameof(notificationPublisher));
     }
 
     [Authorize(Roles = "Admin")]
@@ -105,6 +105,12 @@ public class ReservationController : ControllerBase
     public async Task<ActionResult<IndividualReservation>> CreateIndividualReservation([FromBody] IndividualReservation reservation)
     {
         await _repository.CreateIndividualReservationAsync(reservation);
+
+        var users = new Dictionary<string, string>();
+        users.Add(reservation.ClientId, "Client");
+        users.Add(reservation.TrainerId, "Trainer");
+        await _notificationPublisher.PublishNotification("Training reservation created", reservation.ToString(), "Information", true, users);
+        
         return CreatedAtRoute(nameof(GetIndividualReservation), new { id = reservation.Id }, reservation);
     }
     
@@ -122,7 +128,18 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateIndividualReservation([FromBody] IndividualReservation reservation)
     {
-        return Ok(await _repository.UpdateIndividualReservationAsync(reservation));
+        var updated = await _repository.UpdateIndividualReservationAsync(reservation);
+
+        if (updated)
+        {
+            var users = new Dictionary<string, string>();
+            users.Add(reservation.ClientId, "Client");
+            users.Add(reservation.TrainerId, "Trainer");
+            await _notificationPublisher.PublishNotification("Training reservation updated", reservation.ToString(),
+                "Information", true, users);
+        }
+
+        return Ok(updated);
     }  
     
     [Authorize(Roles = "Trainer")]
@@ -130,7 +147,21 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateGroupReservation([FromBody] GroupReservation reservation)
     {
-        return Ok(await _repository.UpdateGroupReservationAsync(reservation));
+        var updated = await _repository.UpdateGroupReservationAsync(reservation);
+
+        if (updated)
+        {
+            var users = new Dictionary<string, string>();
+            foreach (var clientId in reservation.Clients)
+            {
+                users.Add(clientId, "Client");
+            }
+            users.Add(reservation.TrainerId, "Trainer");
+            await _notificationPublisher.PublishNotification("Training reservation updated", reservation.ToString(),
+                "Information", true, users);
+        }
+
+        return Ok(updated);
     }
 
     [Authorize(Roles = "Client, Trainer")]
@@ -138,7 +169,21 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteIndividualReservation(string id)
     {
-        return Ok(await _repository.DeleteIndividualReservationAsync(id));
+        var reservation = await _repository.GetIndividualReservationByIdAsync(id);
+        var deleted = await _repository.DeleteIndividualReservationAsync(id);
+
+        if (deleted)
+        {
+            var users = new Dictionary<string, string>
+            {
+                { reservation.ClientId, "Client" },
+                { reservation.TrainerId, "Trainer" }
+            };
+            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
+                "Information", true, users);
+        }
+
+        return Ok(deleted);
     }
 
     [Authorize(Roles = "Trainer")]
@@ -146,7 +191,22 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteGroupReservation(string id)
     {
-        return Ok(await _repository.DeleteGroupReservationAsync(id));
+        var reservation = await _repository.GetGroupReservationByIdAsync(id);
+        var deleted = await _repository.UpdateGroupReservationAsync(reservation);
+
+        if (deleted)
+        {
+            var users = new Dictionary<string, string>();
+            foreach (var clientId in reservation.Clients)
+            {
+                users.Add(clientId, "Client");
+            }
+            users.Add(reservation.TrainerId, "Trainer");
+            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
+                "Information", true, users);
+        }
+
+        return Ok(deleted);
     }
 
     [Authorize(Roles = "Client")]
@@ -154,7 +214,19 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> BookGroupReservation(string id, [FromQuery] string clientId)
     {
-        return Ok(await _repository.BookGroupReservationAsync(id, clientId));
+        var reservation = await _repository.GetGroupReservationByIdAsync(id);
+        var booked = await _repository.BookGroupReservationAsync(id, clientId);
+
+        if (booked)
+        {
+            var users = new Dictionary<string, string>();
+            users.Add(clientId, "Client");
+            users.Add(reservation.TrainerId, "Trainer");
+            await _notificationPublisher.PublishNotification("Training reservation booked", reservation.ToString(),
+                "Information", true, users);
+        }
+        
+        return Ok(booked);
     }
 
     [Authorize(Roles = "Client")]
@@ -162,6 +234,20 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> CancelGroupReservation(string id, [FromQuery] string clientId)
     { 
-        return Ok(await _repository.CancelGroupReservationAsync(id, clientId));
+        var reservation = await _repository.GetGroupReservationByIdAsync(id);
+        var cancelled = await _repository.CancelGroupReservationAsync(id, clientId);
+
+        if (cancelled)
+        {
+            var users = new Dictionary<string, string>
+            {
+                { clientId, "Client" },
+                { reservation.TrainerId, "Trainer" }
+            };
+            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
+                "Information", true, users);
+        }
+        
+        return Ok(cancelled);
     }
 }
