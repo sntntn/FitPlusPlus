@@ -48,7 +48,9 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - mssql_data:/var/opt/mssql
+      - mssql_data:/var/opt/mssql/data
+      - mssql_volume:/var/opt/sqlserver/
+  
   
   consul:
     container_name: consul
