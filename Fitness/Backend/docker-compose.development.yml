@@ -54,6 +54,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+        
   mssql:
     container_name: mssql
     environment:
@@ -63,7 +64,7 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - mssql_data:/var/opt/mssql/data 
+      - mssql_data:/var/opt/mssql
 
   trainerservice.api:
     container_name: trainerservice.api
