@@ -58,6 +58,15 @@ The FitPlusPlus application consists of multiple microservices, some developed b
    - Enables trainers to provide **online mentorship** to their clients via chat.
    - Clients can directly communicate with trainers for **training advice, progress tracking, and personalized plans**.
    - Paid mentorship sessions can be booked and managed within the app.
+   - Uses **WebSockets** to enable **real-time messaging between clients and trainers**, ensuring instant updates without manual refresh.
+   - Each chat session is identified by a unique WebSocket connection based on the trainer and client IDs.
+   - This ensures efficient **synchronization** of messages between both participants in the chat.
+
+      ### Real-Time Chat Performance Demo  
+   
+      This video demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
+      
+      [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
 
 2. **VideoTrainingService**
    - Provides a **library of high-quality instructional videos** on correct exercise execution.
@@ -93,9 +102,10 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 - **Database:** MongoDB, Microsoft SQL Server
 - **Containerization:** Docker and Docker Compose
 - **Event Bus:** RabbitMQ for microservices communication
-- **Communication Protocols:** GRPC and REST API for microservices communication
+- **Communication Protocols:** WebSockets (real-time chat), GRPC and REST API for microservices communication
 - **Payment Integration:** PayPal for chat session payments and booking training
 - **CQRS:** Implemented for Command and Query separation in the chat service (planned)
+
 
 ---
 
@@ -113,7 +123,7 @@ To start the updated application:
 2. Start all microservices from FitPlusPlus/Fitness/Backend:
 
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+   docker-compose -f docker-compose.yml -f docker-compose.development.yml up -d --build
    ```
 
 3. Start the frontend service from FitPlusPlus/Fitness/Frontend directory:

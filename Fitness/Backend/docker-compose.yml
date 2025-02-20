@@ -2,7 +2,7 @@ services:
   trainerdb:
     image: mongo
   mssql:
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
 
   clientdb:
     image: mongo
@@ -12,50 +12,100 @@ services:
 
   paymentdb:
     image: mongo
+    
+  chatdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
+  consul:
+    image: consul:1.15.4
+    
+  gatewayservice.api:
+    image: ${DOCKER_REGIRSTRY-}gatewayserviceapi
+    build:
+      context: .
+      dockerfile: Services/GatewayService/GatewayService.API/Dockerfile
+    depends_on:
+      - consul
+  
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
       context: .
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
+    depends_on:
+      - trainerdb
+      - rabbitmq
+      - consul
+  
   
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
     build:
       context: .
       dockerfile: Services/ClientService/ClientService.API/Dockerfile
-
+    depends_on:
+      - clientdb
+      - rabbitmq
+      - consul
+  
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
     build:
       context: .
       dockerfile: Security/IdentityServer/Dockerfile
+    depends_on:
+      - consul
+      - mssql
 
   reviewservice.api:
     image: ${DOCKER_REGISTRY-}reviewserviceapi
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
+    depends_on:
+      - reviewdb
+      - consul
 
   reviewservice.grpc:
     image: ${DOCKER_REGISTRY-}reviewservicegrpc
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
+    depends_on:
+      - reviewdb
+      - consul
 
   paymentservice.api:
     image: ${DOCKER_REGISTRY-}paymentserviceapi
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+    depends_on:
+      - paymentdb
+      - consul
+
+  chatservice.api:
+    image: ${DOCKER_REGISTRY-}chatserviceapi
+    build:
+      context: .
+      dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+      - rabbitmq
+      - consul
 
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  chatmongo_data:
   mssql_data:
+  mssql_volume:
+  consul_data:
+
 
 

@@ -2,8 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ReviewService.Common.Extentions;
 using System.Text;
+using Consul;
+using ConsulConfig.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
 
 // Add services to the container.
 
@@ -12,6 +16,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", builder =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
+builder.Services.AddSingleton(consulConfig);
+builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new ConsulClient(config =>
+{
+    config.Address = new Uri(consulConfig.Address);
+}));
 
 builder.Services.AddControllers();
 builder.Services.AddReviewCommonExtentions();
@@ -45,6 +54,27 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+
+    var registration = new AgentServiceRegistration
+    {
+        ID = consulConfig.ServiceId,
+        Name = consulConfig.ServiceName,
+        Address = consulConfig.ServiceAddress,
+        Port = consulConfig.ServicePort
+    };
+
+    consulClient.Agent.ServiceRegister(registration).Wait();
+});
+
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+    consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
+});
+
 app.UseCors("CorsPolicy");
 
 
@@ -57,8 +87,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.MapControllers();
 

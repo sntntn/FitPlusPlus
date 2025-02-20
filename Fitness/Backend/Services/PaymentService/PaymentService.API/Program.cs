@@ -1,3 +1,5 @@
+using Consul;
+using ConsulConfig.Settings;
 using PaymentService.API.Data;
 using PaymentService.API.Repositories;
 using PaymentService.API.Services;
@@ -5,10 +7,17 @@ using PayPalCheckoutSdk.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
+
 // Add services to the container.
 
 builder.Services.AddScoped<IPaymentContext, PaymentContext>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddSingleton(consulConfig);
+builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new ConsulClient(config =>
+{
+    config.Address = new Uri(consulConfig.Address);
+}));
 
 builder.Services.AddSingleton<PayPalClient>();
 
@@ -34,7 +43,29 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+
+    var registration = new AgentServiceRegistration
+    {
+        ID = consulConfig.ServiceId,
+        Name = consulConfig.ServiceName,
+        Address = consulConfig.ServiceAddress,
+        Port = consulConfig.ServicePort
+    };
+
+    consulClient.Agent.ServiceRegister(registration).Wait();
+});
+
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+    consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
+});
+
+
+// app.UseAuthorization();
 
 app.MapControllers();
 
