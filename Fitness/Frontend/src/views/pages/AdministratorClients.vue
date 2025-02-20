@@ -111,6 +111,7 @@ export default {
     }
   },
   mounted() {
+    this.$parent.$parent.$parent.setUserData(null, "administrator");
     this.fetchClients();
   }
 };

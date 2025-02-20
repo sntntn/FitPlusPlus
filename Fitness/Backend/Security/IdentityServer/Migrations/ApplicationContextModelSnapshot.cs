@@ -147,19 +147,19 @@ namespace IdentityServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "775ed1c7-7d9d-4ebc-ba6b-0be2e22ff895",
+                            Id = "ddcce0a9-75cc-4e5b-9b92-04e6ebb8432e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "57f95dba-dc9f-4b4d-a042-952a3a26f3ca",
+                            Id = "08a19f84-14c0-48c5-9cba-f13b9bd4bed2",
                             Name = "Trainer",
                             NormalizedName = "TRAINER"
                         },
                         new
                         {
-                            Id = "f7e771ff-99a4-424f-8f85-5d465de069ec",
+                            Id = "4ecf06ad-a066-4e44-a56d-e41b24e3f2cf",
                             Name = "Client",
                             NormalizedName = "CLIENT"
                         });

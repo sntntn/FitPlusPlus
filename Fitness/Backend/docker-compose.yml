@@ -12,6 +12,9 @@ services:
 
   paymentdb:
     image: mongo
+    
+  chatdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -84,11 +87,22 @@ services:
       - paymentdb
       - consul
 
+  chatservice.api:
+    image: ${DOCKER_REGISTRY-}chatserviceapi
+    build:
+      context: .
+      dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+      - rabbitmq
+      - consul
+
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  chatmongo_data:
   mssql_data:
   mssql_volume:
   consul_data:
