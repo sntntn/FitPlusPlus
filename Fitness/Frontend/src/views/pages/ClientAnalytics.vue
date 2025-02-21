@@ -1,18 +1,57 @@
 <template>
   <div>
-    <h3>Client Analytics</h3>
+    <!-- Section 1: Statistics About Trainings -->
+    <div class="statistics-section">
+      <h3>Training Statistics</h3>
+      <div class="statistics-grid">
+        <div class="statistic-card">
+          <h5>Total Trainings</h5>
+          <p>{{ numOfHeldTrainings + numOfCancelledTrainings }}</p>
+        </div>
+        <div class="statistic-card">
+          <h5>Held Trainings</h5>
+          <p>{{ numOfHeldTrainings }}</p>
+        </div>
+        <div class="statistic-card">
+          <h5>Cancelled Trainings</h5>
+          <p>{{ numOfCancelledTrainings }}</p>
+        </div>
+      </div>
+
+      <h4>Trainings by Type</h4>
+      <CTable caption="top" class="tbl" color="dark" striped>
+        <CTableHead>
+          <CTableRow>
+            <CTableHeaderCell>Training Type</CTableHeaderCell>
+            <CTableHeaderCell>Count</CTableHeaderCell>
+          </CTableRow>
+        </CTableHead>
+        <CTableBody>
+          <!-- <CTableRow v-for="(count, type) in statistics.trainingsByType" :key="type">
+            <CTableDataCell>{{ type }}</CTableDataCell>
+            <CTableDataCell>{{ count }}</CTableDataCell>
+          </CTableRow> -->
+        </CTableBody>
+      </CTable>
+    </div>
+
+    <h3>Your Analytics</h3>
     <div class="analytics-container">
       <div class="analytics-item">
+        <h5>Total Number Trainings</h5>
+        <p>{{ numOfHeldTrainings + numOfCancelledTrainings }}</p>
+      </div>
+      <div class="analytics-item">
         <h5>Number of Attended Trainings</h5>
-        <p>{{ analytics.attendedTrainings }}</p>
+        <p>{{ numOfHeldTrainings }}</p>
       </div>
       <div class="analytics-item">
         <h5>Number of Cancelled Trainings</h5>
-        <p>{{ analytics.cancelledTrainings }}</p>
+        <p>{{ numOfCancelledTrainings }}</p>
       </div>
       <div class="analytics-item">
         <h5>Average Rating of Trainings</h5>
-        <p>{{ analytics.averageRating.toFixed(1) }}</p>
+        <p>{{ 0 }}</p>
       </div>
     </div>
 
@@ -27,7 +66,7 @@
           <CTableHeaderCell>Rating</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
-      <CTableBody>
+      <!-- <CTableBody>
         <CTableRow v-for="(trainer, index) in analytics.trainersWorkedWith" :key="index">
           <CTableDataCell>{{ trainer.fullName }}</CTableDataCell>
           <CTableDataCell>{{ trainer.contactEmail }}</CTableDataCell>
@@ -35,7 +74,7 @@
           <CTableDataCell>{{ getTrainingTypes(trainer.trainingTypes) }}</CTableDataCell>
           <CTableDataCell>{{ trainer.averageRating.toFixed(1) }}</CTableDataCell>
         </CTableRow>
-      </CTableBody>
+      </CTableBody> -->
     </CTable>
   </div>
 </template>
@@ -48,12 +87,9 @@ export default {
   name: "ClientAnalytics",
   data() {
     return {
-      analytics: {
-        attendedTrainings: 0,
-        cancelledTrainings: 0,
-        averageRating: 0,
-        trainersWorkedWith: []
-      }
+      clientTrainings: [],
+      numOfHeldTrainings: 0,
+      numOfCancelledTrainings: 0
     };
   },
   methods: {
@@ -63,8 +99,18 @@ export default {
     fetchAnalytics() {
       const clientId = this.$route.params.id;
       analyticsService.getClientAnalytics(clientId).then(response => {
-        // console.log(response);
-        this.analytics.attendedTrainings = response.data;
+        this.clientTrainings = response.data;
+        this.calculateStatistics();
+      });
+    },
+    calculateStatistics() {
+      this.clientTrainings.forEach(training => {
+        if (training.status == 0) {
+          this.numOfHeldTrainings++;
+        }
+        else {
+          this.numOfCancelledTrainings++;
+        }
       });
     }
   },
@@ -77,8 +123,8 @@ export default {
 
 <style>
 .analytics-container {
-  display: flex;
-  justify-content: space-around;
+  /* display: flex;
+  justify-content: space-around; */
   margin-bottom: 20px;
 }
 
