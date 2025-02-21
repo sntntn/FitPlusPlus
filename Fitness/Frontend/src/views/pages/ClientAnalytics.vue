@@ -1,87 +1,57 @@
 <template>
   <div>
     <!-- Section 1: Statistics About Trainings -->
-    <div class="statistics-section">
-      <h3>Training Statistics</h3>
-      <div class="statistics-grid">
-        <div class="statistic-card">
-          <h5>Total Trainings</h5>
-          <p>{{ numOfHeldTrainings + numOfCancelledTrainings }}</p>
+    <h2>Your Analytics</h2>
+
+    <div class="section">
+      <h3>Trainings</h3>
+      <div class="analytics-container">
+        <div class="analytics-item">
+          <h5>Total Number Trainings: <b>{{ numOfHeldTrainings + numOfCancelledTrainings }}</b></h5>
         </div>
-        <div class="statistic-card">
-          <h5>Held Trainings</h5>
-          <p>{{ numOfHeldTrainings }}</p>
+        <div class="analytics-item">
+          <h5>Number of Attended Trainings:
+            <b>{{ numOfHeldTrainings }} ({{ (numOfHeldTrainings / (numOfHeldTrainings + numOfCancelledTrainings) * 100).toFixed(2) }} %)</b>
+          </h5>
         </div>
-        <div class="statistic-card">
-          <h5>Cancelled Trainings</h5>
-          <p>{{ numOfCancelledTrainings }}</p>
+        <div class="analytics-item">
+          <h5> Number of Cancelled Trainings:
+            <b>{{ numOfCancelledTrainings }} ({{ (numOfCancelledTrainings / (numOfHeldTrainings + numOfCancelledTrainings) * 100).toFixed(2) }} %)</b>
+          </h5>
         </div>
       </div>
+    </div>
 
-      <h4>Trainings by Type</h4>
+    <div class="section">
+      <h3>Trainers Worked With</h3>
       <CTable caption="top" class="tbl" color="dark" striped>
         <CTableHead>
           <CTableRow>
-            <CTableHeaderCell>Training Type</CTableHeaderCell>
-            <CTableHeaderCell>Count</CTableHeaderCell>
+            <CTableHeaderCell>Name</CTableHeaderCell>
+            <CTableHeaderCell>Email</CTableHeaderCell>
+            <CTableHeaderCell>Phone</CTableHeaderCell>
+            <CTableHeaderCell>Num of Trainings</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          <!-- <CTableRow v-for="(count, type) in statistics.trainingsByType" :key="type">
-            <CTableDataCell>{{ type }}</CTableDataCell>
-            <CTableDataCell>{{ count }}</CTableDataCell>
-          </CTableRow> -->
+          <CTableRow v-for="(trainer, index) in trainersWorkedWith" :key="index">
+            <CTableDataCell>{{ trainer.fullName }}</CTableDataCell>
+            <CTableDataCell>{{ trainer.contactEmail }}</CTableDataCell>
+            <CTableDataCell>{{ trainer.contactPhone }}</CTableDataCell>
+            <CTableDataCell>{{ trainer.numOfTrainings }}</CTableDataCell>
+            <!-- <CTableDataCell>{{ getTrainingTypes(trainer.trainingTypes) }}</CTableDataCell>
+            <CTableDataCell>{{ trainer.averageRating.toFixed(1) }}</CTableDataCell> -->
+          </CTableRow>
         </CTableBody>
       </CTable>
     </div>
-
-    <h3>Your Analytics</h3>
-    <div class="analytics-container">
-      <div class="analytics-item">
-        <h5>Total Number Trainings</h5>
-        <p>{{ numOfHeldTrainings + numOfCancelledTrainings }}</p>
-      </div>
-      <div class="analytics-item">
-        <h5>Number of Attended Trainings</h5>
-        <p>{{ numOfHeldTrainings }}</p>
-      </div>
-      <div class="analytics-item">
-        <h5>Number of Cancelled Trainings</h5>
-        <p>{{ numOfCancelledTrainings }}</p>
-      </div>
-      <div class="analytics-item">
-        <h5>Average Rating of Trainings</h5>
-        <p>{{ 0 }}</p>
-      </div>
-    </div>
-
-    <h4>Trainers Worked With</h4>
-    <CTable caption="top" class="tbl" color="dark" striped>
-      <CTableHead>
-        <CTableRow>
-          <CTableHeaderCell>Name</CTableHeaderCell>
-          <CTableHeaderCell>Email</CTableHeaderCell>
-          <CTableHeaderCell>Phone</CTableHeaderCell>
-          <CTableHeaderCell>Training Types</CTableHeaderCell>
-          <CTableHeaderCell>Rating</CTableHeaderCell>
-        </CTableRow>
-      </CTableHead>
-      <!-- <CTableBody>
-        <CTableRow v-for="(trainer, index) in analytics.trainersWorkedWith" :key="index">
-          <CTableDataCell>{{ trainer.fullName }}</CTableDataCell>
-          <CTableDataCell>{{ trainer.contactEmail }}</CTableDataCell>
-          <CTableDataCell>{{ trainer.contactPhone }}</CTableDataCell>
-          <CTableDataCell>{{ getTrainingTypes(trainer.trainingTypes) }}</CTableDataCell>
-          <CTableDataCell>{{ trainer.averageRating.toFixed(1) }}</CTableDataCell>
-        </CTableRow>
-      </CTableBody> -->
-    </CTable>
   </div>
 </template>
 
 <script>
 // import dataServices from '@/services/data_services';
 import analyticsService from '@/services/AnalyticsService'
+import dataServices from '@/services/data_services';
 
 export default {
   name: "ClientAnalytics",
@@ -89,7 +59,8 @@ export default {
     return {
       clientTrainings: [],
       numOfHeldTrainings: 0,
-      numOfCancelledTrainings: 0
+      numOfCancelledTrainings: 0,
+      trainersWorkedWith: []
     };
   },
   methods: {
@@ -100,10 +71,11 @@ export default {
       const clientId = this.$route.params.id;
       analyticsService.getClientAnalytics(clientId).then(response => {
         this.clientTrainings = response.data;
-        this.calculateStatistics();
+        this.calculateTrainingStatistics();
+        this.calculateTrainersStatistics();
       });
     },
-    calculateStatistics() {
+    calculateTrainingStatistics() {
       this.clientTrainings.forEach(training => {
         if (training.status == 0) {
           this.numOfHeldTrainings++;
@@ -111,6 +83,32 @@ export default {
         else {
           this.numOfCancelledTrainings++;
         }
+      });
+    },
+    calculateTrainersStatistics() {
+      let trainers = new Map();
+      this.clientTrainings.forEach(training => {
+        let id = training.trainerId;
+        if (trainers.has(id)) {
+          trainers.set(id, trainers.get(id) + 1);
+        }
+        else {
+          trainers.set(id, 1);
+        }
+      });
+
+      dataServices.methods.get_trainers().then(response => {
+        response.data.forEach(trainer => {
+          if (trainers.has(trainer.id)) {
+            this.trainersWorkedWith.push({
+              "id": trainer.id,
+              "fullName": trainer.fullName,
+              "contactEmail": trainer.contactEmail,
+              "contactPhone": trainer.contactPhone,
+              "numOfTrainings": trainers.get(trainer.id)
+            });
+          }
+        });
       });
     }
   },
@@ -122,6 +120,14 @@ export default {
 </script>
 
 <style>
+.section {
+  background-color: rgb(144, 161, 168);
+  border-radius: 6px;
+  padding: 1em;
+  padding-bottom: 3px;
+  margin-bottom: 1em;
+}
+
 .analytics-container {
   /* display: flex;
   justify-content: space-around; */
@@ -129,7 +135,8 @@ export default {
 }
 
 .analytics-item {
-  text-align: center;
+  display: flex;
+  /* text-align: center; */
 }
 
 .analytics-item h5 {
