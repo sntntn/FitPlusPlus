@@ -1,9 +1,8 @@
 services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2017-latest
-  
   trainerdb:
     image: mongo
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
 
   clientdb:
     image: mongo
@@ -20,11 +19,27 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     
+  consul:
+    image: consul:1.15.4
+    
+  gatewayservice.api:
+    image: ${DOCKER_REGIRSTRY-}gatewayserviceapi
+    build:
+      context: .
+      dockerfile: Services/GatewayService/GatewayService.API/Dockerfile
+    depends_on:
+      - consul
+  
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
       context: .
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
+    depends_on:
+      - trainerdb
+      - rabbitmq
+      - consul
+  
   
   trainerservice.grpc:
     image: ${DOCKER_REGISTRY-}trainerservicegrpc
@@ -37,6 +52,11 @@ services:
     build:
       context: .
       dockerfile: Services/ClientService/ClientService.API/Dockerfile
+    depends_on:
+      - clientdb
+      - rabbitmq
+      - consul
+  
       
   clientservice.grpc:
     image: ${DOCKER_REGISTRY-}clientservicegrpc
@@ -49,24 +69,36 @@ services:
     build:
       context: .
       dockerfile: Security/IdentityServer/Dockerfile
+    depends_on:
+      - consul
+      - mssql
 
   reviewservice.api:
     image: ${DOCKER_REGISTRY-}reviewserviceapi
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
+    depends_on:
+      - reviewdb
+      - consul
 
   reviewservice.grpc:
     image: ${DOCKER_REGISTRY-}reviewservicegrpc
     build:
       context: .
       dockerfile: Services/ReviewService/ReviewService.GRPC/Dockerfile
+    depends_on:
+      - reviewdb
+      - consul
 
   paymentservice.api:
     image: ${DOCKER_REGISTRY-}paymentserviceapi
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+    depends_on:
+      - paymentdb
+      - consul
 
   notificationservice.api:
     image: ${DOCKER_REGISTRY-}notificationserviceapi
@@ -81,5 +113,6 @@ volumes:
   paymentmongo_data:
   notificationmongo_data:
   mssql_data:
+  consul_data:
 
 
