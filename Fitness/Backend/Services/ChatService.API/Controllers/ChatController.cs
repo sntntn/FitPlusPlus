@@ -17,15 +17,17 @@ public class ChatController : ControllerBase
     private readonly IChatRepository _chatRepository;
     private readonly IMongoClient _mongoClient;
     private readonly WebSocketHandler _webSocketHandler;
+    private readonly RabbitMqPublisher _rabbitMqPublisher;
 
 
-    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler)
+    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler, RabbitMqPublisher rabbitMqPublisher)
     {
         _chatRepository = chatRepository;
         _mongoClient = mongoClient;
         _webSocketHandler = webSocketHandler;
-
+        _rabbitMqPublisher = rabbitMqPublisher;
     }
+    
     [HttpGet("sessions/{userId}/my-sessions-summary")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
     {
@@ -107,6 +109,17 @@ public class ChatController : ControllerBase
         try
         {
             await _chatRepository.CreateChatSessionAsync(trainerId,clientId);
+            
+            var eventData = new ChatSessionEvent
+            {
+                TrainerId = trainerId,
+                ClientId = clientId,
+                Timestamp = DateTime.UtcNow
+            };
+            
+            _rabbitMqPublisher.PublishEvent("ChatSessionCreated", eventData);
+
+            
             return Ok(new { Message = "Session created successfully." });
         }
         catch (InvalidOperationException e)
@@ -150,6 +163,15 @@ public class ChatController : ControllerBase
             return NotFound(new { Message = "Chat session not found." });
         }
         
+        var eventData = new ChatSessionEvent
+        {
+            TrainerId = "TrainerID_placeholder",            //TO DO
+            ClientId = "ClientID_placeholder",      // zameniti placeholdere podacima
+            Timestamp = DateTime.UtcNow
+        };
+        
+        _rabbitMqPublisher.PublishEvent("ChatSessionUnlocked", eventData);
+
         return NoContent();
     }
     

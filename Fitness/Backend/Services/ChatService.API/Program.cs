@@ -53,6 +53,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<WebSocketHandler>();
+builder.Services.AddSingleton<RabbitMqPublisher>();
 
 var app = builder.Build();
 
