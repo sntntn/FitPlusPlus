@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Consul;
+using ConsulConfig.Settings;
 
 namespace IdentityServer
 {
@@ -26,8 +28,13 @@ namespace IdentityServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication();
-
+            var consulConfig = Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
+            
+            services.AddSingleton<IConsulClient>(provider => new ConsulClient(config =>
+            {
+                config.Address = new Uri(consulConfig.Address);
+            }));
+            
             services.ConfigurePersistence(Configuration);
             services.ConfigureIdentity();
             services.ConfigureJWT(Configuration);
@@ -42,8 +49,28 @@ namespace IdentityServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime, IConsulClient consulClient)
         {
+            var consulConfig = Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
+
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                var registration = new AgentServiceRegistration
+                {
+                    ID = consulConfig.ServiceId,
+                    Name = consulConfig.ServiceName,
+                    Address = consulConfig.ServiceAddress,
+                    Port = consulConfig.ServicePort
+                };
+
+                consulClient.Agent.ServiceRegister(registration).Wait();
+            });
+
+            lifetime.ApplicationStopping.Register(() =>
+            {
+                consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
+            });
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

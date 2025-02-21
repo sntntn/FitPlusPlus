@@ -10,8 +10,8 @@
           :class="{ active: trainer.id === selectedTrainer?.id }"
           @click="selectTrainer(trainer)"
         >
-          <span v-if="!trainer.isUnlocked" class="locked-icon">{{ trainer.name }}🔒</span>  <!--TO DO class -->
-          <span v-if="trainer.isUnlocked" class="unlocked-icon">{{ trainer.name }}</span> <!--🔓-->        </li>
+          <span v-if="!trainer.isUnlocked" class="locked-icon">{{ trainer.name }}🔒</span>
+          <span v-if="trainer.isUnlocked" class="unlocked-icon">{{ trainer.name }}</span> </li>
         <li v-if="trainers.length === 0">
           <p class="warning-text1">No available trainer</p>
         </li>
@@ -21,7 +21,7 @@
     <main class="chat-main">
       <template v-if="selectedTrainer">
         <h3>Chat with {{ selectedTrainer.name }}</h3>
-        <div class="chat-messages">
+        <div class="chat-messages" ref="messagesContainer">
           <div
             v-for="message in selectedTrainer.messages"
             :key="message.id"
@@ -75,6 +75,7 @@ export default {
       trainers: [],
       selectedTrainer: null,
       newMessage: "",
+      socket: null,
     };
   },
   created() {
@@ -84,13 +85,25 @@ export default {
   },
   mounted() {
   },
+  beforeDestroy() {
+    if (this.socket) {
+      console.log("Closing WebSocket before component is destroyed.");
+      this.socket.close();
+    }
+  },
   methods: {
     selectTrainer(trainer) {
+      if(this.selectedTrainer && this.socket){
+        this.socket.close();
+        console.log("Closed previous WebSocket");
+      }
+
       this.selectedTrainer = trainer;
       console.log(trainer.id);
       this.fetchMessages(trainer.id);
-
+      this.openWebSocket(trainer.id);
     },
+    
     async sendMessage() {
       if (this.newMessage.trim() !== "") {
         try{
@@ -107,7 +120,8 @@ export default {
               sender: "client",
             });
             this.newMessage = "";
-          }
+            this.scrollToBottom();
+        }
           catch (error) {
           console.error("Error sending message:", error);
           alert("Failed to send message. Please try again.");
@@ -120,16 +134,8 @@ export default {
             const basicInfo = await getBasicInfoForClientSessions(clientId);
             
             for (const session of basicInfo){
-              console.log("--------------");
-              console.log("TrainerId:", session.trainerId);
-              console.log("ClientId:", session.clientId);
-              console.log("Is Unlocked:", session.isUnlocked);
-              console.log("Expiration Date:", session.expirationDate);
-
               try {
                 const trainerInfo = await getTrainerById(session.trainerId);
-                //console.log(trainerInfo);
-                console.log("Trainer Name:", trainerInfo.fullName);
 
                 this.trainers.push({
                   id: session.trainerId,
@@ -148,7 +154,6 @@ export default {
     },
     async fetchMessages(trainerId) {
       const clientId = this.clientId;
-      console.log(clientId);
       try {
         const response = await getMessagesFromSession(trainerId, clientId);
         console.log(response);
@@ -161,13 +166,68 @@ export default {
         console.log("Transformed Messages:", transformedMessages);
         this.selectedTrainer.messages = transformedMessages;
 
-        
+        this.$nextTick(() => this.scrollToBottom());
+
       } catch (error) {
         console.error("Failed to fetch messages:", error);
         this.selectedTrainer.messages = [];
 
       }
     },
+
+    openWebSocket(trainerId) {
+      const clientId = this.clientId;
+      const wsUrl = `ws://localhost:8082/ws/chat?trainerId=${trainerId}&clientId=${clientId}`;
+
+      this.socket = new WebSocket(wsUrl);
+
+      this.socket.onopen = () => {
+        console.log("WebSocket connected for trainer:", trainerId);
+      };
+
+      this.socket.onmessage = (event) => {
+        const messageData = JSON.parse(event.data);
+        console.log("New message received:", messageData);
+
+        let wasAtBottom = this.isScrolledToBottom();
+
+        if (this.selectedTrainer && this.selectedTrainer.id === trainerId && messageData.SenderType=="trainer") {
+          this.selectedTrainer.messages.push({
+            id: messageData.Id || Date.now(),
+            text: messageData.Content,
+            sender: messageData.SenderType.toLowerCase(),
+          });
+        }
+        
+        if (wasAtBottom) {
+            this.scrollToBottom();
+        }
+
+      };
+
+      this.socket.onclose = () => {
+        console.log("WebSocket closed for trainer:", trainerId);
+      };
+
+      this.socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    },
+
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.messagesContainer;
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+    },
+    isScrolledToBottom() {
+      const container = this.$refs.messagesContainer;
+      if (!container) return false;
+      return container.scrollHeight - container.scrollTop <= container.clientHeight + 5;
+    },
+
   }
 };
 </script>

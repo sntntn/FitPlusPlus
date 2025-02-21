@@ -66,6 +66,22 @@ services:
     volumes:
       - mssql_data:/var/opt/mssql
 
+  consul:
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+    volumes:
+      - consul_data:/consul/data
+      
+  
+  gatewayservice.api:
+    container_name: gatewayservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8005:8080"    
+  
   trainerservice.api:
     container_name: trainerservice.api
     environment:

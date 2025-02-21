@@ -1,11 +1,21 @@
 import axios from "axios";
 
-const TRAINERS = "http://localhost:8000";
-const REVIEW = "http://localhost:8001";
-const CLIENT = "http://localhost:8100";
-const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
-const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
-const PAYMENT = "http://localhost:8003/api/v1/Payment/"
+const GATEWAY_URL = "http://localhost:8005";
+
+const TRAINERS = `${GATEWAY_URL}/trainer`;
+const REVIEW = `${GATEWAY_URL}/review`;
+const CLIENT = `${GATEWAY_URL}/client`;
+const AUTH_URL = `${GATEWAY_URL}/authentication`;
+const MSSQL_USERS = `${GATEWAY_URL}/user`;
+const PAYMENT = `${GATEWAY_URL}/payment`;
+
+
+//const TRAINERS = "http://localhost:8000/api/v1/Trainer";
+//const REVIEW = "http://localhost:8001/api/v1/Review";
+//const CLIENT = "http://localhost:8100/api/v1/Client";
+//const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
+//const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
+//const PAYMENT = "http://localhost:8003/api/v1/Payment";
 
 export default {
     methods: {
@@ -19,7 +29,7 @@ export default {
             'Content-Type': 'application/json'
           };
 
-          return axios.post(AUTH_URL + 'Login', data, { headers });                  
+          return axios.post(AUTH_URL + '/Login', data, { headers });                  
         },
 
         register(firstname, lastname, username, password, email, phonenumber, role) {
@@ -36,12 +46,12 @@ export default {
             'Content-Type': 'application/json'
           };
 
-          return axios.post(AUTH_URL + 'Register' + role, data, { headers });
+          return axios.post(AUTH_URL + '/Register' + role, data, { headers });
         },
 
         logout(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.post(AUTH_URL + 'Logout', request);
+          return axios.post(AUTH_URL + '/Logout', request);
         },
 
         create_payment(request) {
@@ -51,12 +61,12 @@ export default {
 
         capture_payment(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.post(`${PAYMENT}CapturePayment`, request);
+          return axios.post(`${PAYMENT}/CapturePayment`, request);
         },
 
         add_client(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.post(`${CLIENT}/api/v1/Client`, request);
+          return axios.post(`${CLIENT}`, request);
         },
 
         unregister_user(email) {
@@ -84,7 +94,7 @@ export default {
 
         get_user(username) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(MSSQL_USERS + username);
+          return axios.get(MSSQL_USERS + '/' + username);
         },
 
         get_user_id(role, email) {
@@ -96,116 +106,116 @@ export default {
 
         get_trainer_id(email) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainerByEmail/${email}`);
+          return axios.get(`${TRAINERS}/GetTrainerByEmail/${email}`);
         },
 
         get_client_id(email) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${CLIENT}/api/v1/Client/GetClientByEmail/${email}`);
+          return axios.get(`${CLIENT}/GetClientByEmail/${email}`);
         },
 
         get_trainers() {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer`);
+          return axios.get(`${TRAINERS}`);
         },
 
         get_clients() {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${CLIENT}/api/v1/Client`);
+          return axios.get(`${CLIENT}`);
         },
 
         add_trainer(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.post(`${TRAINERS}/api/v1/Trainer`, request);
+          return axios.post(`${TRAINERS}`, request);
         },
 
         upt_trainer(tra_id, request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.put(`${TRAINERS}/api/v1/Trainer`, request);
+          return axios.put(`${TRAINERS}`, request);
         },
 
         upt_client(cl_id, request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.put(`${CLIENT}/api/v1/Client`, request);
+          return axios.put(`${CLIENT}`, request);
         },
 
         get_trainer_by_id(tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer/${tra_id}`);
+          return axios.get(`${TRAINERS}/${tra_id}`);
         },
 
         get_trainers_by_type(type) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainersByTrainingType/${type}`);
+          return axios.get(`${TRAINERS}/GetTrainersByTrainingType/${type}`);
         },
 
         get_trainers_by_rating(rating) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainersByRating/${rating}`);
+          return axios.get(`${TRAINERS}/GetTrainersByRating/${rating}`);
         },
 
         remove_trainer(tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.delete(`${TRAINERS}/api/v1/Trainer/${tra_id}`);
+          return axios.delete(`${TRAINERS}/${tra_id}`);
         },
 
         remove_client(cl_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.delete(`${CLIENT}/api/v1/Client/${cl_id}`);
+          return axios.delete(`${CLIENT}/${cl_id}`);
         },
 
         get_price(tra_id, trainingType) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer/GetPrice/${tra_id}/${trainingType}`);
+          return axios.get(`${TRAINERS}/GetPrice/${tra_id}/${trainingType}`);
         },
 
         booking(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.put(`${CLIENT}/api/v1/Client/BookTraining`, request);
+          return axios.put(`${CLIENT}/BookTraining`, request);
         },
 
         cancelBooking(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.put(`${TRAINERS}/api/v1/Trainer/CancelTraining`, request);
+          return axios.put(`${TRAINERS}/CancelTraining`, request);
         },
 
         add_review(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.post(`${REVIEW}/api/v1/Review`, request);
+          return axios.post(`${REVIEW}`, request);
         },
 
         get_reviews(tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${REVIEW}/api/v1/Review/${tra_id}`);
+          return axios.get(`${REVIEW}/${tra_id}`);
         },
 
         delete_review(rev_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.delete(`${REVIEW}/api/v1/Review/${rev_id}`);
+          return axios.delete(`${REVIEW}/${rev_id}`);
         },
 
         update_review(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.put(`${REVIEW}/api/v1/Review`, request);
+          return axios.put(`${REVIEW}`, request);
         },
 
         get_trainer_week_schedule_by_id(week_id, tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAINERS}/api/v1/Trainer/GetTrainerWeekSchedule/${tra_id}/${week_id}`);
+          return axios.get(`${TRAINERS}/GetTrainerWeekSchedule/${tra_id}/${week_id}`);
         },
 
         get_client_week_schedule_by_id(week_id, cl_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${CLIENT}/api/v1/Client/GetClientWeekSchedule/${cl_id}/${week_id}`);
+          return axios.get(`${CLIENT}/GetClientWeekSchedule/${cl_id}/${week_id}`);
         },
 
         get_client_by_id(cli_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${CLIENT}/api/v1/Client/${cli_id}`);
+          return axios.get(`${CLIENT}/${cli_id}`);
         },
         get_schedule_trainers_by_client_id(cli_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${CLIENT}/api/v1/Client/GetTrainerIdsFromClientSchedule/${cli_id}`);
+          return axios.get(`${CLIENT}/GetTrainerIdsFromClientSchedule/${cli_id}`);
         },
     }
 }

@@ -21,7 +21,7 @@
     <main class="chat-main">
       <template v-if="selectedClient">
         <h3>Chat with {{ selectedClient.name }}</h3>
-        <div class="chat-messages">
+        <div class="chat-messages" ref="messagesContainer">
           <div
             v-for="message in selectedClient.messages"
             :key="message.id"
@@ -77,6 +77,7 @@ export default {
       clients: [],
       selectedClient: null,
       newMessage: "",
+      socket: null,
     };
   },
   created() {
@@ -87,12 +88,26 @@ export default {
   mounted() {
    
   },
+  beforeDestroy() {
+    if (this.socket) {
+      console.log("Closing WebSocket before component is destroyed.");
+      this.socket.close();
+    }
+  },
+
   methods: {
     selectClient(client) {
+      if (this.selectedClient && this.socket) {
+        this.socket.close();
+        console.log("Closed previous WebSocket");
+      }
+
       this.selectedClient = client;
       console.log(client.id);
       this.fetchMessages(client.id);
+      this.openWebSocket(client.id);
     },
+
     async sendMessage() {
       if (this.newMessage.trim() !== "") {
         try{
@@ -110,8 +125,9 @@ export default {
             sender: "trainer",
           });
           this.newMessage = "";
-          }
-          catch (error) {
+          this.scrollToBottom();
+        }
+        catch (error) {
           console.error("Error sending message:", error);
           alert("Failed to send message. Please try again.");
         }
@@ -124,15 +140,9 @@ export default {
             const basicInfo = await getBasicInfoForTrainerSessions(trainerId);
 
             for (const session of basicInfo) {
-                console.log("--------------");
-                console.log("TrainerId:", session.trainerId);
-                console.log("ClientId:", session.clientId);
-                console.log("Is Unlocked:", session.isUnlocked);
-                console.log("Expiration Date:", session.expirationDate);
-
+              
                 try {
                   const clientInfo = await getClientById(session.clientId);
-                  //console.log(clientInfo);
                   console.log("Client Name:", clientInfo.name, clientInfo.surname);
 
                   this.clients.push({
@@ -160,19 +170,74 @@ export default {
         const transformedMessages = response.map((msg) => ({
           id: msg.id?.id || Date.now(), 
           text: msg.content,
-          sender: msg.senderType.toLowerCase(), // "Trainer" u "trainer"
+          sender: msg.senderType.toLowerCase(), 
         }));
 
         console.log("Transformed Messages:", transformedMessages);
         this.selectedClient.messages = transformedMessages;
-
-        
+        this.$nextTick(() => this.scrollToBottom());
+      
       } catch (error) {
         console.error("Failed to fetch messages:", error);
         this.selectedClient.messages = [];
 
       }
     },
+
+    openWebSocket(clientId) {
+      const trainerId = this.trainerId;
+      const wsUrl = `ws://localhost:8082/ws/chat?trainerId=${trainerId}&clientId=${clientId}`;
+
+      this.socket = new WebSocket(wsUrl);
+
+      this.socket.onopen = () => {
+        console.log("WebSocket connected for client:", clientId);
+      };
+
+      this.socket.onmessage = (event) => {
+        const messageData = JSON.parse(event.data);
+        console.log("New message received:", messageData);
+
+        let wasAtBottom = this.isScrolledToBottom();
+
+        if (this.selectedClient && this.selectedClient.id === clientId && messageData.SenderType=="client") {
+          this.selectedClient.messages.push({
+            id: messageData.Id || Date.now(),
+            text: messageData.Content,
+            sender: messageData.SenderType.toLowerCase(),
+          });
+        }
+        
+        if (wasAtBottom) {
+            this.scrollToBottom();
+        }
+      };
+
+      this.socket.onclose = () => {
+        console.log("WebSocket closed for client:", clientId);
+      };
+
+      this.socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    },
+
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.messagesContainer;
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+    },
+
+    isScrolledToBottom() {
+      const container = this.$refs.messagesContainer;
+      if (!container) return false;
+
+      return container.scrollHeight - container.scrollTop <= container.clientHeight + 5;
+    },
+
   },
 };
 </script>

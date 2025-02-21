@@ -1,6 +1,7 @@
 using ChatService.API.Data;
 using MongoDB.Driver;
 using ChatService.API.Models;
+using ChatService.API.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 
