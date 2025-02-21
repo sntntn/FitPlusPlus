@@ -29,6 +29,13 @@ public class AnalyticsController : ControllerBase
         return Created();
     }
 
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> DeleteTraining([FromQuery] string id)
+    {
+        return Ok(await _repository.DeleteTraining(id));
+    }
+
     [HttpGet("[action]")]
     [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(double), StatusCodes.Status404NotFound)]

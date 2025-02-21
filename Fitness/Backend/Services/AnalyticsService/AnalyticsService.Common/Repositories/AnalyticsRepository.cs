@@ -20,6 +20,12 @@ public class AnalyticsRepository : IAnalyticsRepository
         await _context.Trainings.InsertOneAsync(training);
     }
 
+    public async Task<bool> DeleteTraining(string id)
+    {
+        var deleteResult = await _context.Trainings.DeleteOneAsync(t => t.Id == id);
+        return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+    }
+
     public async Task<double> GetTrainerAverageTrainingRating(string trainerId)
     {
         var trainings = await _context.Trainings.Find(t => t.TrainerId == trainerId).ToListAsync();
