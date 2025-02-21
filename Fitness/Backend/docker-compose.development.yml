@@ -185,8 +185,8 @@ services:
       - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
-      - "8005:8080"
-  
+      - "8018:8080"
+
   chatservice.api:
     container_name: chatService.api
     environment:
