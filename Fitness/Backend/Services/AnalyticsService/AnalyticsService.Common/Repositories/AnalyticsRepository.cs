@@ -1,18 +1,21 @@
-using System.ComponentModel.DataAnnotations;
 using AnalyticsService.Common.Data;
+using AnalyticsService.Common.DTOs;
 using AnalyticsService.Common.Entities;
+using AutoMapper;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+using ZstdSharp.Unsafe;
 
 namespace AnalyticsService.Common.Repositories;
 
 public class AnalyticsRepository : IAnalyticsRepository
 {
     private readonly IAnalyticsContext _context;
+    private readonly IMapper _mapper;
 
-    public AnalyticsRepository(IAnalyticsContext context)
+    public AnalyticsRepository(IAnalyticsContext context, IMapper mapper)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task CreateTraining(Training training)
@@ -70,5 +73,11 @@ public class AnalyticsRepository : IAnalyticsRepository
     {
         var trainings = await _context.Trainings.FindAsync(t => t.TrainerId == trainerId);
         return trainings.ToList().Select(t => t.ClientId).AsEnumerable();
+    }
+
+    public async Task<IEnumerable<ClientTrainingDTO>> GetClientTrainings(string clientId)
+    {
+        var clientTrainings = await _context.Trainings.FindAsync(t => t.ClientId == clientId);
+        return _mapper.Map<IEnumerable<ClientTrainingDTO>>(clientTrainings.ToList());
     }
 }

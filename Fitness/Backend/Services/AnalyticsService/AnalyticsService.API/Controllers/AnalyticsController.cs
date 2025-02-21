@@ -1,4 +1,6 @@
+using System.Collections;
 using AnalyticsService.API.GrpcServices;
+using AnalyticsService.Common.DTOs;
 using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
 using AutoMapper;
@@ -92,5 +94,12 @@ public class AnalyticsController : ControllerBase
         var response = await _reviewGrpcService.GetReviews(trainerId);
         var reviews = _mapper.Map<IEnumerable<ReviewType>>(response.Reviews);
         return Ok(reviews);
+    }
+
+    [HttpGet("ClientTrainings")]
+    [ProducesResponseType(typeof(IEnumerable<ClientTrainingDTO>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ClientTrainingDTO>>> GetClientTrainings(string clientId)
+    {
+        return Ok(await _repository.GetClientTrainings(clientId));
     }
 }

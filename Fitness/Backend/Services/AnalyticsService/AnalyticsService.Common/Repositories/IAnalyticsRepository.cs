@@ -1,3 +1,4 @@
+using AnalyticsService.Common.DTOs;
 using AnalyticsService.Common.Entities;
 
 namespace AnalyticsService.Common.Repositories;
@@ -12,4 +13,5 @@ public interface IAnalyticsRepository
     Task<int> GetClientNumOfHeldTrainings(string clientId);
     Task<int> GetClientNumOfCancelledTrainings(string clientId);
     Task<IEnumerable<string>> GetTrainerClientIds(string trainerId);
+    Task<IEnumerable<ClientTrainingDTO>> GetClientTrainings(string clientId);
 }

@@ -1,4 +1,6 @@
 using AnalyticsService.Common.Data;
+using AnalyticsService.Common.DTOs;
+using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
