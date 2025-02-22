@@ -39,16 +39,7 @@ export default {
 
   methods: {
     async getTraining(){
-      this.message = 'Radim!';
-
-      /*await dataServices.methods.get_trainings_for_client(this.$route.params.id).then(
-        response => {
-          console.log(this.$route.params.id);
-          this.trainings = response.data;
-        }
-      );*/
-
-
+      this.message = 'Radim za klijenta!';
     },
 
     buyProgram(){
