@@ -30,7 +30,7 @@ export function generateTrainerNav(id) {
       component: 'CNavItem',
       name: 'Video trainings',
       to: `/trainer/${id}/videotrainings`,
-      icon: 'cil-user'
+      icon: 'cil-media-play'
     },
 
     {
@@ -72,7 +72,7 @@ export function generateClientNav(id) {
       component: 'CNavItem',
       name: 'Video trainings',
       to: `/client/${id}/videotrainings`,
-      icon: 'cil-user'
+      icon: 'cil-media-play'
     },
     {
       component: 'CNavItem',
