@@ -1,7 +1,11 @@
 using System.Text.Json;
+using AutoMapper;
 using ChatService.API.Models;
+using ChatService.API.Publishers;
 using ChatService.API.Repositories;
 using ChatService.API.Services;
+using MassTransit;
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -17,14 +21,16 @@ public class ChatController : ControllerBase
     private readonly IChatRepository _chatRepository;
     private readonly IMongoClient _mongoClient;
     private readonly WebSocketHandler _webSocketHandler;
+    private readonly INotificationPublisher _notificationPublisher;
 
 
-    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler)
+    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler,
+        INotificationPublisher notificationPublisher)
     {
         _chatRepository = chatRepository;
         _mongoClient = mongoClient;
         _webSocketHandler = webSocketHandler;
-
+        _notificationPublisher = notificationPublisher;
     }
     [HttpGet("sessions/{userId}/my-sessions-summary")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
@@ -103,10 +109,16 @@ public class ChatController : ControllerBase
     [HttpPost("sessions")]
     public async Task<IActionResult> CreateChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-
         try
         {
             await _chatRepository.CreateChatSessionAsync(trainerId,clientId);
+            await _notificationPublisher.PublishNotification("Chat Session Created",
+                "New chat session created!", "Information", true,
+                new Dictionary<string, string>
+                {
+                    { clientId, "Client" },
+                    { trainerId, "Trainer" }
+                });
             return Ok(new { Message = "Session created successfully." });
         }
         catch (InvalidOperationException e)

@@ -107,7 +107,7 @@ services:
     image: ${DOCKER_REGISTRY-}notificationserviceapi
     build:
       context: .
-      dockerfile: Services/NotifactionService/NotificationService.API/Dockerfile
+      dockerfile: Services/NotificationService/NotificationService.API/Dockerfile
       
   chatservice.api:
     image: ${DOCKER_REGISTRY-}chatserviceapi
