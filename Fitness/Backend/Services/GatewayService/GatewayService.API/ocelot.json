@@ -41,6 +41,13 @@
       "ServiceName": "IdentityServer",
       "UpstreamPathTemplate": "/user/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chat/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ChatService.API",
+      "UpstreamPathTemplate": "/chat/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     }
   ]
 }

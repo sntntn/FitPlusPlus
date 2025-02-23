@@ -75,7 +75,25 @@ const routes = [
         path: '/payment-cancel',
         name: 'Payment Cancel',
         component: () => import('@/views/pages/PaymentCancel.vue')
-      }
+      },
+
+      {
+        path: '/trainer/:id/chat',
+        name: 'Trainer Chat',
+        component: () => import('@/views/pages/TrainerChat.vue')
+      },
+
+      {
+        path: '/client/:id/chat',
+        name: 'Client Chat',
+        component: () => import('@/views/pages/ClientChat.vue'),
+      },
+
+      {
+        path: '/client/:id/pay-chat/:trainerId',
+        name: 'PayChat',
+        component: () => import('@/views/pages/PayChat.vue'),
+      },
 
     ],
   },
@@ -117,15 +135,6 @@ const router = createRouter({
   },
 })
 
-/* router.beforeEach(async(to,from)=>{
-   var token = sessionStorage.getItem('accessToken');
-    if (to.path == '/') {
-     router.push('/trainer');
-     return false;
-    }
-   return true;
- })
-*/
 
 router.beforeEach(async (to, from) => {
 

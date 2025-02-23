@@ -7,6 +7,7 @@ services:
     volumes:
       - trainermongo_data:/data/db
 
+
   clientdb:
     container_name: clientdb
     restart: always
@@ -39,6 +40,14 @@ services:
     volumes:
       - notificationmongo_data:/data/db
   
+  chatdb:
+    container_name: chatdb
+    restart: always
+    ports:
+      - 27022:27017
+    volumes:
+      - chatmongo_data:/data/db
+  
   rabbitmq:
     container_name: rabbitmq
     restart: always
@@ -55,8 +64,9 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ~/docker/sql/mssql/data:/var/opt/mssql/data
-      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
+      - mssql_data:/var/opt/mssql/data
+      - mssql_volume:/var/opt/sqlserver/
+  
   
   consul:
     container_name: consul
@@ -64,7 +74,7 @@ services:
       - "8500:8500"
     command: "agent -dev -client=0.0.0.0"
     volumes:
-      - ~/docker/consul/data:/consul/data
+      - consul_data:/consul/data
       
   
   gatewayservice.api:
@@ -99,7 +109,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"  
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8100:8080"
         
@@ -166,3 +176,12 @@ services:
     ports:
       - "8004:8080"
   
+
+  chatservice.api:
+    container_name: chatService.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "MongoDB:ConnectionString=mongodb://chatdb:27017"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    ports:
+      - 8082:8080

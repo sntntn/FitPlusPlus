@@ -15,6 +15,9 @@ services:
     
   notificationdb:
     image: mongo
+    
+  chatdb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -106,13 +109,23 @@ services:
       context: .
       dockerfile: Services/NotifactionService/NotificationService.API/Dockerfile
       
+  chatservice.api:
+    image: ${DOCKER_REGISTRY-}chatserviceapi
+    build:
+      context: .
+      dockerfile: Services/ChatService.API/Dockerfile
+    depends_on:
+      - chatdb
+      - rabbitmq
+      - consul
+
 volumes:
   trainermongo_data:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
   notificationmongo_data:
+  chatmongo_data:
   mssql_data:
+  mssql_volume:
   consul_data:
-
-
