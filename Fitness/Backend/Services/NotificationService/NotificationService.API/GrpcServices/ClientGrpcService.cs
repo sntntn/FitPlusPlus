@@ -13,10 +13,12 @@ public class ClientGrpcService
                                     throw new ArgumentNullException(nameof(clientProtoServiceClient));
     }
 
-    public async Task<GetClientsResponse> GetClients(IEnumerable<string> ids)
+    public async Task<GetClientResponse> GetClient(string id)
     {
-        var getClientsRequest = new GetClientsRequest();
-        getClientsRequest.Ids.AddRange(ids);
-        return await _clientProtoServiceClient.GetClientsAsync(getClientsRequest);
+        var getClientsRequest = new GetClientRequest
+        {
+            Id = id
+        };
+        return await _clientProtoServiceClient.GetClientAsync(getClientsRequest);
     }
 }

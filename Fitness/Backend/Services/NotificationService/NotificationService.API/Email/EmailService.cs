@@ -16,9 +16,10 @@ public class EmailService : IEmailService
         var response = await _fluentEmail
             .To(to)
             .Subject(subject)
-            .Body(body, isHtml: false)
+            .Body(body)
             .SendAsync();
 
+        Console.Out.WriteLine("TRAINER: " + response);
         return response.Successful;
     }
 }

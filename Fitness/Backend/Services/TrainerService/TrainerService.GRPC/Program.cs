@@ -1,7 +1,7 @@
 using TrainerService.Common.Entities;
 using TrainerService.Common.Extensions;
+using TrainerService.GRPC.Protos;
 using TrainerService.GRPC.Services;
-using static TrainerService.GRPC.Protos.GetTrainersResponse.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddGrpc();
 builder.Services.AddTrainerCommonExtensions();
 builder.Services.AddAutoMapper(configuration =>
 {
-    configuration.CreateMap<TrainerReply, Trainer>().ReverseMap();
+    configuration.CreateMap<GetTrainerResponse, Trainer>().ReverseMap();
 });
 
 var app = builder.Build();

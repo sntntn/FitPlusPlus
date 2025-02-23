@@ -27,38 +27,31 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
     
     public async Task Consume(ConsumeContext<NotificationEvent> context)
     {
-        var notification = _mapper.Map<Notification>(context.Message);
-        await _repository.CreateNotification(notification);
+        var notification = _mapper.Map<NotificationReceived>(context.Message);
+        await _repository.CreateNotification(_mapper.Map<Notification>(notification));
         
         if (notification.Email)
         {
-            var clients = await _clientGrpcService.GetClients(notification.UserIdToUserType.Keys);
-            var clientsList = _mapper.Map<IEnumerable<Client>>(clients.Clients);
+            var client = await _clientGrpcService.GetClient(notification.UserId);
+            var clientInfo = _mapper.Map<Client>(client);
 
-            var trainers = await _trainerGrpcService.GetTrainers(notification.UserIdToUserType.Keys);
-            var trainersList = _mapper.Map<IEnumerable<Trainer>>(trainers.Trainers);
+            // var trainer = await _trainerGrpcService.GetTrainers(notification.UserId);
+            // var trainerInfo = _mapper.Map<Trainer>(trainer);
             
             var subject = "[FitPlusPlus Gym] " + notification.Title;
             var body = "You have a new notification from your FitPlusPlus Gym Account:\n\n" + notification.Content +
                           "\n\nTime: " + notification.CreationDate;
             
-            foreach (var client in clientsList)
+            if (clientInfo != null)
             {
-                await _emailService.SendEmailAsync(
-                    to: client.Email,
-                    subject: subject,
-                    body: body
-                );
+                await _emailService.SendEmailAsync(clientInfo.Email, subject, body);
             }
-            
-            foreach (var trainer in trainersList)
-            {
-                await _emailService.SendEmailAsync(
-                    to: trainer.Email,
-                    subject: subject,
-                    body: body
-                );
-            }
+
+            // if (trainerInfo != null)
+            // { 
+            //     Console.WriteLine(trainerInfo.Email);
+            //     await _emailService.SendEmailAsync(trainerInfo.Email, subject, body);
+            // }
         }
     }
 }

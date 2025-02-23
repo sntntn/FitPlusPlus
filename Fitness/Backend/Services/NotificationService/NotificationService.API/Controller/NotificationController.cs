@@ -13,12 +13,10 @@ namespace NotificationService.API.Controller;
 public class NotificationController : ControllerBase
 {
     private readonly IRepository _repository;
-    private readonly IMapper _mapper;
 
     public NotificationController(IRepository repository, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     //[Authorize(Roles = "Admin")]
@@ -42,7 +40,7 @@ public class NotificationController : ControllerBase
     //[Authorize(Roles = "Admin, Trainer, Client")]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
-    public async Task<ActionResult<Notification>> GetNotificationById(Guid id)
+    public async Task<ActionResult<Notification>> GetNotificationById(string id)
     {
         var notification = await _repository.GetNotificationById(id);
         return Ok(notification);
@@ -76,7 +74,7 @@ public class NotificationController : ControllerBase
     //[Authorize(Roles = "Admin, Trainer, Client")]
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteNotification(Guid id)
+    public async Task<IActionResult> DeleteNotification(string id)
     {
         return Ok( await _repository.DeleteNotification(id));
     }

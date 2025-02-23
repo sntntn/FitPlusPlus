@@ -2,7 +2,6 @@ using AutoMapper;
 using ClientService.Common.Repositories;
 using Grpc.Core;
 using ClientService.GRPC.Protos;
-using static ClientService.GRPC.Protos.GetClientsResponse.Types;
 
 namespace ClientService.GRPC.Services;
 
@@ -17,11 +16,10 @@ public class ClientServiceGrpc : ClientProtoService.ClientProtoServiceBase
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public override async Task<GetClientsResponse> GetClients(GetClientsRequest request, ServerCallContext context)
+    public override async Task<GetClientResponse> GetClient(GetClientRequest request, ServerCallContext context)
     {
-        var clients = await _repository.GetClientsByIds(request.Ids);
-        var clientsList = new GetClientsResponse();
-        clientsList.Clients.AddRange(_mapper.Map<IEnumerable<ClientReply>>(clients));
-        return clientsList;
+        var client = await _repository.GetClientById(request.Id);
+        var clientInfo = _mapper.Map<GetClientResponse>(client);
+        return clientInfo;
     }
 }

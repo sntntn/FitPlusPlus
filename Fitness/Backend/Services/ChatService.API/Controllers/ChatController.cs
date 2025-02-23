@@ -114,11 +114,10 @@ public class ChatController : ControllerBase
             await _chatRepository.CreateChatSessionAsync(trainerId,clientId);
             await _notificationPublisher.PublishNotification("Chat Session Created",
                 "New chat session created!", "Information", true,
-                new Dictionary<string, string>
-                {
-                    { clientId, "Client" },
-                    { trainerId, "Trainer" }
-                });
+                clientId);
+            await _notificationPublisher.PublishNotification("Chat Session Created",
+                "New chat session created!", "Information", true,
+                trainerId);
             return Ok(new { Message = "Session created successfully." });
         }
         catch (InvalidOperationException e)

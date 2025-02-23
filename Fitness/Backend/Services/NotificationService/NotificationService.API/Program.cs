@@ -57,10 +57,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(configuration =>
 {
-    configuration.CreateMap<NotificationEvent.NotificationType, Notification.NotificationType>().ReverseMap();
-    configuration.CreateMap<NotificationEvent, Notification>().ReverseMap();
-    configuration.CreateMap<GetClientsResponse.Types.ClientReply, Client>().ReverseMap();
-    configuration.CreateMap<GetTrainersResponse.Types.TrainerReply, Trainer>().ReverseMap();
+    configuration.CreateMap<NotificationEvent.NotificationType, NotificationReceived.NotificationType>().ReverseMap();
+    configuration.CreateMap<NotificationEvent, NotificationReceived>().ReverseMap();
+    configuration.CreateMap<NotificationReceived, Notification>().ReverseMap();
+    configuration.CreateMap<GetClientResponse, Client>().ReverseMap();
+    configuration.CreateMap<GetTrainerResponse, Trainer>().ReverseMap();
 });
 
 // EventBus 

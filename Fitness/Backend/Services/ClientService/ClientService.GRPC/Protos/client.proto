@@ -3,17 +3,14 @@ syntax = "proto3";
 option csharp_namespace = "ClientService.GRPC.Protos";
 
 service ClientProtoService {
-  rpc GetClients (GetClientsRequest) returns (GetClientsResponse);
+  rpc GetClient (GetClientRequest) returns (GetClientResponse);
 }
 
-message GetClientsRequest {
-  repeated string ids = 1;
+message GetClientRequest {
+  string id = 1;
 }
 
-message GetClientsResponse {
-  message ClientReply {
-    string id = 1;
-    string email = 2;
-  }
-  repeated ClientReply clients = 1;
+message GetClientResponse {
+  string id = 1;
+  string email = 2;
 }

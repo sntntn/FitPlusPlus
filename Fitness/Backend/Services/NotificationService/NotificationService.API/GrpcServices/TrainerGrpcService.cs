@@ -12,10 +12,12 @@ public class TrainerGrpcService
                                      throw new ArgumentNullException(nameof(trainerProtoServiceClient));
     }
 
-    public async Task<GetTrainersResponse> GetTrainers(IEnumerable<string> ids)
+    public async Task<GetTrainerResponse> GetTrainers(string id)
     {
-        var getTrainersRequest = new GetTrainersRequest();
-        getTrainersRequest.Ids.AddRange(ids);
-        return await _trainerProtoServiceClient.GetTrainersAsync(getTrainersRequest);
+        var getTrainerRequest = new GetTrainerRequest
+        {
+            Id = id
+        };
+        return await _trainerProtoServiceClient.GetTrainerAsync(getTrainerRequest);
     }
 }

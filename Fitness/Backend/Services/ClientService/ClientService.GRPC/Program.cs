@@ -2,7 +2,6 @@ using ClientService.Common.Entities;
 using ClientService.Common.Extensions;
 using ClientService.GRPC.Protos;
 using ClientService.GRPC.Services;
-using static ClientService.GRPC.Protos.GetClientsResponse.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +10,7 @@ builder.Services.AddGrpc();
 builder.Services.AddClientCommonExtensions();
 builder.Services.AddAutoMapper(configuration =>
 {
-    configuration.CreateMap<ClientReply, Client>().ReverseMap();
+    configuration.CreateMap<GetClientResponse, Client>().ReverseMap();
 });
 
 var app = builder.Build();

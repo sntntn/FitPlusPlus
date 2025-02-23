@@ -3,18 +3,14 @@ syntax = "proto3";
 option csharp_namespace = "TrainerService.GRPC.Protos";
 
 service TrainerProtoService {
-  rpc GetTrainers (GetTrainersRequest) returns (GetTrainersResponse);
+  rpc GetTrainer (GetTrainerRequest) returns (GetTrainerResponse);
 }
 
-message GetTrainersRequest {
-  repeated string ids = 1;
+message GetTrainerRequest {
+  string id = 1;
 }
 
-message GetTrainersResponse {
-  message TrainerReply {
-    string id = 1;
-    string email = 2;
-  }
-  
-  repeated TrainerReply trainers = 1;
+message GetTrainerResponse {
+  string id = 1;
+  string email = 2;
 }

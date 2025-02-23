@@ -64,9 +64,8 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - mssql_data:/var/opt/mssql/data
-      - mssql_volume:/var/opt/sqlserver/
-  
+      - ~/docker/sql/mssql/:/var/opt/mssql/
+      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
   
   consul:
     container_name: consul
@@ -165,7 +164,7 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
       - "EmailSettings:FromEmail=fitplusplus.rs2@gmail.com"
       - "EmailSettings:SmtpHost=smtp.gmail.com"
-      - "EmailSettings:SmtpPort=587"
+      - "EmailSettings:SmtpPort=465"
       - "EmailSettings:Username=fitplusplus.rs2@gmail.com"
       - "EmailSettings:EnableSsl=true"
       - "GrpcSettings:ClientUrl=http://host.docker.internal:8101"
