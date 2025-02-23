@@ -8,13 +8,13 @@ public interface IRepository
 
     Task<IEnumerable<Notification>> GetNotificationsByUserId(string userId);
 
-    Task<Notification> GetNotificationById(Guid id);
+    Task<Notification> GetNotificationById(string id);
 
     Task CreateNotification(Notification notification);
 
     Task<bool> UpdateNotification(Notification notification);
 
-    Task<bool> DeleteNotification(Guid id);
+    Task<bool> DeleteNotification(string id);
 
     Task<bool> DeleteNotificationsByUserId(string userId);
 

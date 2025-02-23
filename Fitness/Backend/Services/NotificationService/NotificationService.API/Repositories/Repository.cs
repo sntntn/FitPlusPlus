@@ -23,7 +23,7 @@ public class Repository : IRepository
         return await _context.Notifications.Find(n => n.UserIdToUserType.ContainsKey(userId)).ToListAsync();
     }
 
-    public async Task<Notification> GetNotificationById(Guid id)
+    public async Task<Notification> GetNotificationById(string id)
     {
         return await _context.Notifications.Find(n => n.Id == id).FirstOrDefaultAsync();
     }
@@ -39,7 +39,7 @@ public class Repository : IRepository
         return result.IsAcknowledged && result.ModifiedCount > 0;
     }
 
-    public async Task<bool> DeleteNotification(Guid id)
+    public async Task<bool> DeleteNotification(string id)
     {
         var result = await _context.Notifications.DeleteOneAsync(n => n.Id == id);
         return result.IsAcknowledged && result.DeletedCount > 0;

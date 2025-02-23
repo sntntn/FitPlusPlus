@@ -7,7 +7,7 @@ public class Notification
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public Guid Id { get; set; }
+    public string Id { get; set; }
     public DateTime CreationDate { get; set; }
     public IDictionary<string, string> UserIdToUserType;
     public string Title { get; set; }
