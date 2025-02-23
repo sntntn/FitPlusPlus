@@ -16,16 +16,18 @@ public class NotificationPublisher : INotificationPublisher
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task PublishNotification(string title, string content, string type, bool email, string userId)
+    public async Task PublishNotification(string title, string content, string type, bool email, string userId, string userType)
     {
-        Enum.TryParse(type, out Notification.NotificationType notificationType);
+        Enum.TryParse(userType, out Notification.UserType uType);
+        Enum.TryParse(type, out Notification.NotificationType nType);
         var notification = new Notification
         {
             Title = title,
             Content = content,
-            Type = notificationType,
+            NType = nType,
             Email = email,
-            UserId = userId
+            UserId = userId,
+            UType = uType
         };
 
         var eventMessage = _mapper.Map<NotificationEvent>(notification);

@@ -18,8 +18,7 @@ public class EmailService : IEmailService
             .Subject(subject)
             .Body(body)
             .SendAsync();
-
-        Console.Out.WriteLine("TRAINER: " + response);
+        
         return response.Successful;
     }
 }

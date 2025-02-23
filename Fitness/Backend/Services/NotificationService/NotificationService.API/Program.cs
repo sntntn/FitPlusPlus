@@ -4,6 +4,7 @@ using System.Text;
 using ClientService.GRPC.Protos;
 using EventBus.Messages.Constants;
 using EventBus.Messages.Events;
+using FluentEmail.MailKitSmtp;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -39,14 +40,18 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-builder.Services.AddFluentEmail(emailSettings["FromEmail"]!)
-    .AddSmtpSender(new SmtpClient
-    {
-        Host = emailSettings["SmtpHost"]!,
-        Port = int.Parse(emailSettings["SmtpPort"]!),
-        Credentials = new NetworkCredential(emailSettings["Username"]!, Environment.GetEnvironmentVariable("EMAIL_PASSWORD")!),
-        EnableSsl = bool.Parse(emailSettings["EnableSsl"]!)
-    });
+Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_PASSWORD"));
+var options = new SmtpClientOptions
+{
+    Server = emailSettings["SmtpHost"]!,
+    Port = int.Parse(emailSettings["SmtpPort"]!),
+    User = emailSettings["Username"],
+    Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD"),
+    UseSsl = bool.Parse(emailSettings["EnableSsl"]!),
+    RequiresAuthentication = true
+};
+builder.Services.AddFluentEmail(emailSettings["FromEmail"]!).AddMailKitSender(options);
+
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 

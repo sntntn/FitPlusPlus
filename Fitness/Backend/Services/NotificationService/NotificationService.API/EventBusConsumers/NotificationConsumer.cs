@@ -32,26 +32,21 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
         
         if (notification.Email)
         {
-            var client = await _clientGrpcService.GetClient(notification.UserId);
-            var clientInfo = _mapper.Map<Client>(client);
-
-            // var trainer = await _trainerGrpcService.GetTrainers(notification.UserId);
-            // var trainerInfo = _mapper.Map<Trainer>(trainer);
-            
             var subject = "[FitPlusPlus Gym] " + notification.Title;
             var body = "You have a new notification from your FitPlusPlus Gym Account:\n\n" + notification.Content +
-                          "\n\nTime: " + notification.CreationDate;
+                       "\n\nTime: " + notification.CreationDate;
             
-            if (clientInfo != null)
+            if (notification.UType == NotificationReceived.UserType.Client)
             {
+                var client = await _clientGrpcService.GetClient(notification.UserId);
+                var clientInfo = _mapper.Map<Client>(client);
                 await _emailService.SendEmailAsync(clientInfo.Email, subject, body);
+            } else if (notification.UType == NotificationReceived.UserType.Trainer)
+            {
+                var trainer = await _trainerGrpcService.GetTrainers(notification.UserId);
+                var trainerInfo = _mapper.Map<Trainer>(trainer);
+                await _emailService.SendEmailAsync(trainerInfo.ContactEmail, subject, body);
             }
-
-            // if (trainerInfo != null)
-            // { 
-            //     Console.WriteLine(trainerInfo.Email);
-            //     await _emailService.SendEmailAsync(trainerInfo.Email, subject, body);
-            // }
         }
     }
 }

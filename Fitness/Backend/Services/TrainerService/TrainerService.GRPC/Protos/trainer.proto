@@ -12,5 +12,5 @@ message GetTrainerRequest {
 
 message GetTrainerResponse {
   string id = 1;
-  string email = 2;
+  string contact_email = 2;
 }

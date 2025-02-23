@@ -164,11 +164,13 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
       - "EmailSettings:FromEmail=fitplusplus.rs2@gmail.com"
       - "EmailSettings:SmtpHost=smtp.gmail.com"
-      - "EmailSettings:SmtpPort=465"
+      - "EmailSettings:SmtpPort=587"
       - "EmailSettings:Username=fitplusplus.rs2@gmail.com"
-      - "EmailSettings:EnableSsl=true"
+      - "EmailSettings:EnableSsl=false"
       - "GrpcSettings:ClientUrl=http://host.docker.internal:8101"
       - "GrpcSettings:TrainerUrl=http://host.docker.internal:8102"
+    env_file:
+      - ./Services/NotificationService/NotificationService.API/.env
     depends_on:
       - notificationdb
       - rabbitmq
