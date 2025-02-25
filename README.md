@@ -64,7 +64,7 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 
       ### Real-Time Chat Performance Demo  
    
-      This video demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
+      This **video** demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
       
       [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
 
@@ -104,8 +104,6 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 - **Event Bus:** RabbitMQ for microservices communication
 - **Communication Protocols:** WebSockets (real-time chat), GRPC and REST API for microservices communication
 - **Payment Integration:** PayPal for chat session payments and booking training
-- **CQRS:** Implemented for Command and Query separation in the chat service (planned)
-
 
 ---
 
