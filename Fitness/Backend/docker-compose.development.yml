@@ -64,8 +64,8 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ~/docker/sql/mssql/:/var/opt/mssql/
-      - ~/docker/sql/sqlserver/:/var/opt/sqlserver/
+      - mssql_data:/var/opt/mssql/
+      - mssql_volume:/var/opt/sqlserver/
   
   consul:
     container_name: consul
@@ -185,4 +185,4 @@ services:
       - "MongoDB:ConnectionString=mongodb://chatdb:27017"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
-      - 8082:8080
+      - "8082:8080"
