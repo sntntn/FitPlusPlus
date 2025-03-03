@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ClientService.API.Entities;
-using ClientService.API.Repositories;
+using ClientService.Common.Entities;
+using ClientService.Common.Repositories;
 using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +46,8 @@ namespace ClientService.API.Controllers
             }
             return Ok(result);
         }
+        
+        // TODO("Dodati GetClientsByIds - mozda gRPC!!!")
 
         // [Authorize(Roles = "Admin, Trainer, Client")]
         [Route("[action]/{name}")]

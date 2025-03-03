@@ -48,6 +48,13 @@
       "ServiceName": "ChatService.API",
       "UpstreamPathTemplate": "/chat/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/notification/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "NotificationService.API",
+      "UpstreamPathTemplate": "/notification/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     }
   ]
 }

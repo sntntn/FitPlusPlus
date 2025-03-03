@@ -1,7 +1,5 @@
 using Amazon.Runtime.Internal;
-using ClientService.API.Data;
 using ClientService.API.EventBusConsumers;
-using ClientService.API.Repositories;
 using EventBus.Messages.Constants;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +9,9 @@ using System.Reflection;
 using System.Text;
 using Consul;
 using ConsulConfig.Settings;
+using ClientService.Common.Data;
+using ClientService.Common.Extensions;
+using ClientService.Common.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,9 @@ builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new Consu
 }));
 
 // Add services to the container.
+
+builder.Services.AddClientCommonExtensions();
+
 
 builder.Services.AddCors(options =>
 {
@@ -82,7 +86,6 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -111,11 +114,10 @@ app.Lifetime.ApplicationStopping.Register(() =>
     consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
 });
 
-app.UseRouting();
-
 // app.UseAuthentication();
 // app.UseAuthorization();
 
+app.UseRouting();
 app.MapControllers();
 
 app.Run();
