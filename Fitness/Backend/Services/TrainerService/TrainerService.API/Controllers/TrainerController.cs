@@ -4,10 +4,9 @@ using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
-using RabbitMQ.Client;
-using TrainerService.API.Entities;
+using TrainerService.Common.Entities;
+using TrainerService.Common.Repositories;
 using TrainerService.API.GrpcServices;
-using TrainerService.API.Repositories;
 
 namespace TrainerService.API.Controllers
 {

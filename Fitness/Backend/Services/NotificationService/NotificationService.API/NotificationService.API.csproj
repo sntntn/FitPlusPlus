@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Consul" Version="1.7.14.5" />
+        <PackageReference Include="DotNetEnv" Version="3.1.1" />
+        <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+        <PackageReference Include="MassTransit" Version="8.2.4" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+        <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
+      <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Protobuf Include="..\..\ClientService\ClientService.GRPC\Protos\client.proto" GrpcServices="Client">
+            <Link>Protos\client.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\..\TrainerService\TrainerService.GRPC\Protos\trainer.proto" GrpcServices="Client">
+            <Link>Protos\trainer.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+
+</Project>

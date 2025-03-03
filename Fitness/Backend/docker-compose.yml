@@ -13,6 +13,9 @@ services:
   paymentdb:
     image: mongo
     
+  notificationdb:
+    image: mongo
+    
   chatdb:
     image: mongo
   
@@ -41,6 +44,12 @@ services:
       - consul
   
   
+  trainerservice.grpc:
+    image: ${DOCKER_REGISTRY-}trainerservicegrpc
+    build:
+      context: .
+      dockerfile: Services/TrainerService/TrainerService.GRPC/Dockerfile
+  
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
     build:
@@ -51,6 +60,13 @@ services:
       - rabbitmq
       - consul
   
+      
+  clientservice.grpc:
+    image: ${DOCKER_REGISTRY-}clientservicegrpc
+    build:
+      context: .
+      dockerfile: Services/ClientService/ClientService.GRPC/Dockerfile
+
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
     build:
@@ -87,6 +103,12 @@ services:
       - paymentdb
       - consul
 
+  notificationservice.api:
+    image: ${DOCKER_REGISTRY-}notificationserviceapi
+    build:
+      context: .
+      dockerfile: Services/NotificationService/NotificationService.API/Dockerfile
+      
   chatservice.api:
     image: ${DOCKER_REGISTRY-}chatserviceapi
     build:
@@ -102,10 +124,8 @@ volumes:
   reviewmongo_data:
   clientmongo_data:
   paymentmongo_data:
+  notificationmongo_data:
   chatmongo_data:
   mssql_data:
   mssql_volume:
   consul_data:
-
-
-

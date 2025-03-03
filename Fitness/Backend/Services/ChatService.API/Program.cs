@@ -1,12 +1,15 @@
 using ChatService.API.Data;
 using ChatService.API.Middleware;
 using ChatService.API.Models;
+using ChatService.API.Publishers;
 using ChatService.API.Repositories;
 using ChatService.API.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Consul;
 using ConsulConfig.Settings;
+using EventBus.Messages.Events;
+using MassTransit;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +44,8 @@ builder.Services.AddScoped<IContext, Context>();
 // Register ChatRepository
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
+builder.Services.AddScoped<INotificationPublisher, NotificationPublisher>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -53,6 +58,22 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<WebSocketHandler>();
+
+builder.Services.AddAutoMapper(configuration =>
+{
+    configuration.CreateMap<NotificationEvent.NotificationType, Notification.NotificationType>().ReverseMap();
+    configuration.CreateMap<NotificationEvent, Notification>().ReverseMap();
+});
+
+builder.Services.AddMassTransit(config =>
+{
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+    });
+});
+
+
 
 var app = builder.Build();
 

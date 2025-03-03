@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ClientService.API.Entities;
+using ClientService.Common.Entities;
 using EventBus.Messages.Events;
 
 namespace ClientService.API.Mapper
