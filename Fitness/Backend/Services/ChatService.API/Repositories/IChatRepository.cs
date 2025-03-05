@@ -8,7 +8,7 @@ namespace ChatService.API.Repositories
 
         Task<IEnumerable<object>> GetBasicInfoForSessionsAsync(string userId);
         Task<ChatSession?> GetChatSessionAsync(string trainerId, string clientId);
-        Task CreateChatSessionAsync(string trainerId, string clientId);
+        Task InsertChatSessionAsync(ChatSession session);
         Task<bool> DeleteChatSessionAsync(string trainerId, string clientId);
 
         Task<bool> UnlockChatSessionAsync(string sessionId);

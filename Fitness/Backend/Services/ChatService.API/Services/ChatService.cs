@@ -2,6 +2,7 @@ using System.Text.Json;
 using ChatService.API.Models;
 using ChatService.API.Publishers;
 using ChatService.API.Repositories;
+using MongoDB.Bson;
 
 namespace ChatService.API.Services;
 
@@ -65,12 +66,26 @@ public class ChatService: IChatService
 
     public async Task CreateChatSessionAsync(string trainerId, string clientId)
     {
-        await _chatRepository.CreateChatSessionAsync(trainerId, clientId);
+        var existingSession = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
+        if (existingSession != null)
+        {
+            throw new InvalidOperationException("A session between this trainer and client already exists.");
+        }
 
+        var session = new ChatSession
+        {
+            TrainerId = trainerId,
+            ClientId = clientId,
+            IsUnlocked = true,
+            ExpirationDate = DateTime.UtcNow.AddDays(30),
+            Messages = CreateInitialMessages()
+        };
+        await _chatRepository.InsertChatSessionAsync(session);
+        
         await Task.WhenAll(
             _notificationPublisher.PublishNotification("Chat Session Created", "New chat session created!", "Information", true, clientId, "Client"),
             _notificationPublisher.PublishNotification("Chat Session Created", "New chat session created!", "Information", true, trainerId, "Trainer")
-        );    
+        );
     }
 
     public async Task<ChatSession?> GetChatSessionAsync(string trainerId, string clientId)
@@ -86,5 +101,34 @@ public class ChatService: IChatService
     public async Task<bool> UnlockChatSessionAsync(string sessionId)
     {
         return await _chatRepository.UnlockChatSessionAsync(sessionId);
+    }
+    
+    private List<Message> CreateInitialMessages()
+    {
+        return new List<Message>
+        {
+            new Message
+            {
+                Id = ObjectId.GenerateNewId(),
+                Content = "Ćao, ja sam tvoj trener!",
+                Timestamp = DateTime.UtcNow,
+                SenderType = "trainer"
+            },
+            new Message
+            {
+                Id = ObjectId.GenerateNewId(),
+                Content =
+                    "Upravo ti je uplaćeno online mentorstvo na 30 dana i za to vreme me možeš pitati bilo šta vezano za vežbanje ili ishranu.",
+                Timestamp = DateTime.UtcNow,
+                SenderType = "trainer"
+            },
+            new Message
+            {
+                Id = ObjectId.GenerateNewId(),
+                Content = "Stojim ti na usluzi! :)",
+                Timestamp = DateTime.UtcNow,
+                SenderType = "trainer"
+            }
+        };
     }
 }
