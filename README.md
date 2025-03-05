@@ -105,6 +105,15 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 - **Communication Protocols:** WebSockets (real-time chat), GRPC and REST API for microservices communication
 - **Payment Integration:** PayPal for chat session payments and booking training
 
+## Platform Compatibility
+
+FitPlusPlus has been **developed and tested** on the following operating systems:
+- **Windows**
+- **macOS**
+- **Linux**
+
+This ensures that developers and users can run the application smoothly across different environments.
+
 ---
 
 ## Running the Application
