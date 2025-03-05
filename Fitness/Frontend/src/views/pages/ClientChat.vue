@@ -10,8 +10,16 @@
           :class="{ active: trainer.id === selectedTrainer?.id }"
           @click="selectTrainer(trainer)"
         >
-          <span v-if="!trainer.isUnlocked" class="locked-icon">{{ trainer.name }}🔒</span>
-          <span v-if="trainer.isUnlocked" class="unlocked-icon">{{ trainer.name }}</span> </li>
+          <span v-if="!trainer.isUnlocked">
+            {{ trainer.name }}🔒
+          </span>
+          <span v-if="trainer.isUnlocked">
+            {{ trainer.name }}
+          </span>
+          <span :class="trainer.isUnlocked ? 'expires-text' : 'expired-text'">
+            {{ trainer.isUnlocked ? 'Expires' : 'Expired' }}: {{ formatDate(trainer.expirationDate) }}
+          </span>
+        </li>
         <li v-if="trainers.length === 0">
           <p class="warning-text1">No available trainer</p>
         </li>
@@ -227,6 +235,11 @@ export default {
       if (!container) return false;
       return container.scrollHeight - container.scrollTop <= container.clientHeight + 5;
     },
+    formatDate(dateString) {
+      if (!dateString) return "Unknown";
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    },
 
   }
 };
@@ -320,5 +333,15 @@ export default {
   color: rgb(163, 30, 30);
   font-weight: normal;
   text-align: center;
+}
+.expired-text {
+  color: rgb(255, 0, 0);
+  float: right;
+  font-size: 0.9em;
+}
+.expires-text {
+  color: rgb(182, 182, 182);
+  float: right;
+  font-size: 0.9em;
 }
 </style>
