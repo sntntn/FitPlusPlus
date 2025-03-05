@@ -1,14 +1,6 @@
-using System.Text.Json;
-using AutoMapper;
 using ChatService.API.Models;
-using ChatService.API.Publishers;
-using ChatService.API.Repositories;
 using ChatService.API.Services;
-using MassTransit;
-using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace ChatService.API.Controllers;
 
@@ -18,25 +10,18 @@ namespace ChatService.API.Controllers;
 [Route("api/[controller]")]
 public class ChatController : ControllerBase
 {
-    private readonly IChatRepository _chatRepository;
-    private readonly IMongoClient _mongoClient;
-    private readonly WebSocketHandler _webSocketHandler;
-    private readonly INotificationPublisher _notificationPublisher;
+    private readonly IChatService _chatService;
 
-
-    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler,
-        INotificationPublisher notificationPublisher)
+    public ChatController(IChatService chatService)
     {
-        _chatRepository = chatRepository;
-        _mongoClient = mongoClient;
-        _webSocketHandler = webSocketHandler;
-        _notificationPublisher = notificationPublisher;
+        _chatService = chatService;
     }
+
+
     [HttpGet("sessions/{userId}/my-sessions-summary")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
     {
-        var basicInfo = await _chatRepository.GetBasicInfoForSessionsAsync(userId);
-
+        var basicInfo = await _chatService.GetBasicInfoForSessionsAsync(userId);
         if (basicInfo == null || !basicInfo.Any())
         {
             return NotFound(new { Message = "No chat sessions found for the specified trainer." });
@@ -49,46 +34,21 @@ public class ChatController : ControllerBase
     [HttpPost("sessions/messages")]
     public async Task<IActionResult> AddMessageToSession([FromQuery] string trainerId, [FromQuery] string clientId, [FromBody] string content, [FromQuery] string senderType)
     {
-        if (senderType != "trainer" && senderType != "client")
+        try
         {
-            return BadRequest(new { Message = "Invalid sender type. Must be either 'trainer' or 'client'." });
+            await _chatService.AddMessageToSessionAsync(trainerId, clientId, content, senderType);
+            return Ok(new { Message = "Message added successfully." });
         }
-        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
-
-        if (session == null)
+        catch (Exception e)
         {
-            return NotFound(new { Message = "Chat session not found for the specified trainer and client." });
+            return BadRequest(new { Message = e.Message });
         }
-
-        if (session.ExpirationDate.HasValue && session.ExpirationDate.Value < DateTime.UtcNow)
-        {
-            return BadRequest(new { Message = "Chat session has expired. Please pay if you want to send a message again." });
-        }
-
-        var newMessage = new Message
-        {
-            Content = content,
-            Timestamp = DateTime.UtcNow,
-            SenderType = senderType
-        };
-
-        var sessionKey = _webSocketHandler.GetSessionKey(trainerId, clientId);
-        
-        await Task.WhenAll(
-            _webSocketHandler.BroadcastMessage(sessionKey, JsonSerializer.Serialize(newMessage)),
-            _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage)
-        );
-        
-        return CreatedAtAction(nameof(GetMessagesFromSession), new { trainerId, clientId }, newMessage);
     }
-
-    
-
     
     [HttpGet("sessions/messages")]
     public async Task<IActionResult> GetMessagesFromSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
+        var session = await _chatService.GetChatSessionAsync(trainerId, clientId);
     
         if (session == null)
         {
@@ -111,16 +71,10 @@ public class ChatController : ControllerBase
     {
         try
         {
-            await _chatRepository.CreateChatSessionAsync(trainerId,clientId);
-            await _notificationPublisher.PublishNotification("Chat Session Created",
-                "New chat session created!", "Information", true,
-                clientId, "Client");
-            await _notificationPublisher.PublishNotification("Chat Session Created",
-                "New chat session created!", "Information", true,
-                trainerId, "Trainer");
+            await _chatService.CreateChatSessionAsync(trainerId, clientId);
             return Ok(new { Message = "Session created successfully." });
         }
-        catch (InvalidOperationException e)
+        catch (Exception e)
         {
             return BadRequest(new { Message = e.Message });
         }
@@ -129,39 +83,24 @@ public class ChatController : ControllerBase
     [HttpGet("sessions")]
     public async Task<IActionResult> GetChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
-
-        if (session == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(session);
+        var session = await _chatService.GetChatSessionAsync(trainerId, clientId);
+        return session != null ? Ok(session) : NotFound(new { Message = "Chat session not found." });
     }
 
     [HttpDelete("sessions")]
     public async Task<IActionResult> DeleteChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-        var success = await _chatRepository.DeleteChatSessionAsync(trainerId, clientId);
-
-        if (success)
-        {
-            return Ok(new { Message = "Session deleted successfully." });
-        }
-
-        return NotFound(new { Message = "Session not found or already deleted." });
+        return await _chatService.DeleteChatSessionAsync(trainerId, clientId)
+            ? Ok(new { Message = "Session deleted successfully." })
+            : NotFound(new { Message = "Session not found or already deleted." });
     }
     
     [HttpPost("sessions/{sessionId}/unlock")]
     public async Task<IActionResult> UnlockChatSession(string sessionId)
     {
-        var success = await _chatRepository.UnlockChatSessionAsync(sessionId);
-        if (!success)
-        {
-            return NotFound(new { Message = "Chat session not found." });
-        }
-        
-        return NoContent();
+        return await _chatService.UnlockChatSessionAsync(sessionId)
+            ? NoContent()
+            : NotFound(new { Message = "Chat session not found." });
     }
     
 }

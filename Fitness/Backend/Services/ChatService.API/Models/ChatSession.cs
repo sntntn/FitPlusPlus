@@ -6,7 +6,7 @@ namespace ChatService.API.Models;
 public class ChatSession
 {
     [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)] // da bi MongoDB automatski radio konverziju izmedju string i ObjectID
+    [BsonRepresentation(BsonType.ObjectId)]
     public ObjectId Id { get; set; }
     public string TrainerId { get; set; }
     public string ClientId { get; set; }

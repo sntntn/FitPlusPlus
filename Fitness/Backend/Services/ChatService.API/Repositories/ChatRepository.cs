@@ -1,8 +1,6 @@
 using ChatService.API.Data;
 using MongoDB.Driver;
 using ChatService.API.Models;
-using ChatService.API.Services;
-using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 
 namespace ChatService.API.Repositories
@@ -41,52 +39,11 @@ namespace ChatService.API.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task CreateChatSessionAsync(string trainerId, string clientId)
+        public async Task InsertChatSessionAsync(ChatSession session)
         {
-            var existingSession = await _chatSessions
-                .Find(s => s.TrainerId == trainerId && s.ClientId == clientId)
-                .FirstOrDefaultAsync();
-
-            if (existingSession != null)
-            {
-                throw new InvalidOperationException("Unable to create. A session between this trainer and client already exists.");
-            }
-            
-            var session = new ChatSession
-            {
-                TrainerId = trainerId,
-                ClientId = clientId,
-                IsUnlocked = true,
-                ExpirationDate = DateTime.UtcNow.AddDays(30),
-                Messages = new List<Message>
-                {
-                    new Message
-                    {
-                        Id = ObjectId.GenerateNewId(),
-                        Content = "Ćao, ja sam tvoj trener!",
-                        Timestamp = DateTime.UtcNow,
-                        SenderType = "trainer"
-                    },
-                    new Message
-                    {
-                        Id = ObjectId.GenerateNewId(),
-                        Content = "Upravo ti je uplaćeno online mentorstvo na 30 dana i za to vreme me možeš pitati bilo šta vezano za vežbanje ili ishranu.",
-                        Timestamp = DateTime.UtcNow,
-                        SenderType = "trainer"
-                    },
-                    new Message
-                    {
-                        Id = ObjectId.GenerateNewId(),
-                        Content = "Stojim ti na usluzi! :)",
-                        Timestamp = DateTime.UtcNow,
-                        SenderType = "trainer"
-                    }
-                }
-            };
-            
             await _chatSessions.InsertOneAsync(session);
         }
-
+        
         public async Task<bool> DeleteChatSessionAsync(string trainerId, string clientId)
         {
             var filter = Builders<ChatSession>.Filter.Eq(s => s.TrainerId, trainerId) &
@@ -124,6 +81,7 @@ namespace ChatService.API.Repositories
 
             return session?.Messages ?? Enumerable.Empty<Message>();
         }
+        
     }
     
 }
