@@ -38,11 +38,9 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(settings.ConnectionString);
 });
 
-// Register Data
 builder.Services.AddScoped<IContext, Context>();
-
-// Register ChatRepository
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IChatService, ChatService.API.Services.ChatService>();
 
 builder.Services.AddScoped<INotificationPublisher, NotificationPublisher>();
 
