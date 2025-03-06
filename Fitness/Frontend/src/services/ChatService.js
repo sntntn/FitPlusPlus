@@ -64,6 +64,30 @@ export async function sendMessageToSession(trainerId, clientId, content, senderT
   }
 }
 
+export async function createChatSession(trainerId, clientId) {
+  try {
+    const response = await axios.post(
+      `${CHAT}/sessions`, 
+      null,
+      {
+        params: {
+          trainerId,
+          clientId,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+
+  } catch (error) {
+    console.error("Error creating chat session:", error);
+    alert("Failed to create chat session. Please try again.");
+    throw error;
+  }
+}
+
 export async function getClientById(clientId) {
   try {
     const response = await axios.get(`${CLIENT}/${clientId}`);
