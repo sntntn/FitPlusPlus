@@ -95,10 +95,10 @@ public class ChatController : ControllerBase
             : NotFound(new { Message = "Session not found or already deleted." });
     }
     
-    [HttpPost("sessions/{sessionId}/unlock")]
-    public async Task<IActionResult> UnlockChatSession(string sessionId)
+    [HttpPost("sessions/extend")]
+    public async Task<IActionResult> ExtendChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
-        return await _chatService.UnlockChatSessionAsync(sessionId)
+        return await _chatService.ExtendChatSessionAsync(trainerId,clientId)
             ? NoContent()
             : NotFound(new { Message = "Chat session not found." });
     }

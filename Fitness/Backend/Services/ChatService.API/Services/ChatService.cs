@@ -40,6 +40,11 @@ public class ChatService: IChatService
 
         if (session.ExpirationDate.HasValue && session.ExpirationDate.Value < DateTime.UtcNow)
         {
+            if (session.IsUnlocked) 
+            {
+                session.IsUnlocked = false;
+                await _chatRepository.updateChatSessionStatusAsync(session);
+            }
             throw new InvalidOperationException("Chat session has expired. Please pay if you want to send a message again.");
         }
 
@@ -98,9 +103,16 @@ public class ChatService: IChatService
         return await _chatRepository.DeleteChatSessionAsync(trainerId, clientId);
     }
 
-    public async Task<bool> UnlockChatSessionAsync(string sessionId)
+    public async Task<bool> ExtendChatSessionAsync(string trainerId, string clientId)
     {
-        return await _chatRepository.UnlockChatSessionAsync(sessionId);
+        var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
+
+        if (session == null)
+        {
+            return false;
+        }
+
+        return await _chatRepository.ExtendChatSessionAsync(session.Id.ToString());
     }
     
     private List<Message> CreateInitialMessages()

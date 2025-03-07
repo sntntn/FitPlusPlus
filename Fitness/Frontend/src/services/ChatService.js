@@ -79,7 +79,31 @@ export async function createChatSession(trainerId, clientId) {
         },
       }
     );
-    return response.data;
+    return response;
+
+  } catch (error) {
+    console.error("Error creating chat session:", error);
+    alert("Failed to create chat session. Please try again.");
+    throw error;
+  }
+}
+
+export async function extendChatSession(trainerId, clientId) {
+  try {
+    const response = await axios.post(
+      `${CHAT}/sessions/extend`, 
+      null,
+      {
+        params: {
+          trainerId,
+          clientId,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response;
 
   } catch (error) {
     console.error("Error creating chat session:", error);

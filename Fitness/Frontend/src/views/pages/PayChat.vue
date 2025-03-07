@@ -31,7 +31,7 @@
         <button @click="redirectToPayPal" class="paypal-button">
           Pay with PayPal
         </button>
-        <button @click="createChatSession" class="apply-button">
+        <button @click="payChatSession" class="apply-button">
           Apply Your 30 Days
         </button>
       </div>
@@ -41,7 +41,8 @@
 <script>
 
 import { 
-  createChatSession
+  createChatSession,
+  extendChatSession
 } from "../../services/ChatService";
 
 export default {
@@ -54,26 +55,38 @@ export default {
   },
   methods: {
   
-    async createChatSession() {
+    async payChatSession() {
       try {
         if (!this.trainerId || !this.clientId) {
           alert("Trainer ID or Client ID is missing.");
-          console.log(this.clientId,this.trainerId)
+          console.log(this.clientId, this.trainerId);
           return;
         }
 
-        const response = await createChatSession(this.trainerId, this.clientId);
+        const extendResponse = await extendChatSession(this.trainerId,this.clientId);
 
-        if (response.status === 201) { 
-          alert("Chat session created successfully!");
-        } else {
-          alert("Failed to create chat session. Chat session may have already been created");
+        if (extendResponse.status === 204) {
+          alert("Chat session extended successfully!");
+          return;
+        }
+
+        if (extendResponse.status === 404) {
+          console.log("Chat session not found, creating a new one...");
+
+          const createResponse = await createChatSession(this.trainerId, this.clientId);
+
+          if (createResponse.status === 201) {
+            alert("Chat session created successfully!");
+          } else {
+            alert("Failed to create chat session.");
+          }
         }
       } catch (error) {
-        alert("Failed to create chat session. Please try again.");
+        alert("Failed to process chat session. Please try again.");
         console.error("Error:", error);
       }
     },
+
 
     redirectToPayPal() {
       const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=STAVITI_PAYPAL_MAIL&item_name=Chat Mentorship&amount=30.00&currency_code=USD`;

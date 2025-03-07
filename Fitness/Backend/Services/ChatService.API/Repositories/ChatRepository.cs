@@ -54,7 +54,7 @@ namespace ChatService.API.Repositories
             return result.DeletedCount > 0;
         }
 
-        public async Task<bool> UnlockChatSessionAsync(string sessionId)
+        public async Task<bool> ExtendChatSessionAsync(string sessionId)
         {
             var filter = Builders<ChatSession>.Filter.Eq(s => s.Id, new ObjectId(sessionId));
             var update = Builders<ChatSession>.Update
@@ -73,15 +73,12 @@ namespace ChatService.API.Repositories
             await _chatSessions.UpdateOneAsync(filter, update);
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesFromChatSessionAsync(string sessionId)
+        public async Task updateChatSessionStatusAsync(ChatSession session)
         {
-            var session = await _chatSessions
-                .Find(s => s.Id == ObjectId.Parse(sessionId))
-                .FirstOrDefaultAsync();
-
-            return session?.Messages ?? Enumerable.Empty<Message>();
+            var filter = Builders<ChatSession>.Filter.Eq(s => s.Id, session.Id);
+            var update = Builders<ChatSession>.Update.Set(s => s.IsUnlocked, session.IsUnlocked);
+            await _chatSessions.UpdateOneAsync(filter, update);
         }
-        
     }
     
 }
