@@ -31,25 +31,71 @@
         <button @click="redirectToPayPal" class="paypal-button">
           Pay with PayPal
         </button>
+        <button @click="payChatSession" class="apply-button">
+          Apply Your 30 Days
+        </button>
       </div>
     </div>
 </template>
   
 <script>
-  export default {
-    name: "PayChat",
-    mounted() {
-      this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
-    },
-    methods: {
-      redirectToPayPal() {
-        const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=STAVITI_PAYPAL_MAIL&item_name=Chat Mentorship&amount=30.00&currency_code=USD`;
-        
-        window.location.href = paypalUrl;
-      }
-    }
 
-  };
+import { 
+  createChatSession,
+  extendChatSession
+} from "../../services/ChatService";
+
+export default {
+  name: "PayChat",
+  mounted() {
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
+    const pathParts = this.$route.path.split("/"); 
+    this.clientId = pathParts[2];
+    this.trainerId = pathParts[4];
+  },
+  methods: {
+  
+    async payChatSession() {
+      try {
+        if (!this.trainerId || !this.clientId) {
+          alert("Trainer ID or Client ID is missing.");
+          console.log(this.clientId, this.trainerId);
+          return;
+        }
+
+        const extendResponse = await extendChatSession(this.trainerId,this.clientId);
+
+        if (extendResponse.status === 204) {
+          alert("Chat session extended successfully!");
+          return;
+        }
+
+        if (extendResponse.status === 404) {
+          console.log("Chat session not found, creating a new one...");
+
+          const createResponse = await createChatSession(this.trainerId, this.clientId);
+
+          if (createResponse.status === 201) {
+            alert("Chat session created successfully!");
+          } else {
+            alert("Failed to create chat session.");
+          }
+        }
+      } catch (error) {
+        alert("Failed to process chat session. Please try again.");
+        console.error("Error:", error);
+      }
+    },
+
+
+    redirectToPayPal() {
+      const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=STAVITI_PAYPAL_MAIL&item_name=Chat Mentorship&amount=30.00&currency_code=USD`;
+      
+      window.location.href = paypalUrl;
+    }
+  }
+
+};
 
 </script>
   
@@ -139,6 +185,20 @@
     background-color: #005ea6;
   }
 
+  .apply-button {
+    background-color: #28a745; /* Zelena boja */
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .apply-button:hover {
+    background-color: #218838;
+  }
 
 </style>
   

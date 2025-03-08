@@ -117,8 +117,6 @@ export default {
             this.newMessage,
             "trainer"
           );
-  
-  
           this.selectedClient.messages.push({
             id: Date.now(),
             text: this.newMessage,

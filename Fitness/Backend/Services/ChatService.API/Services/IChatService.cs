@@ -10,5 +10,5 @@ public interface IChatService
     Task CreateChatSessionAsync(string trainerId, string clientId);
     Task<ChatSession?> GetChatSessionAsync(string trainerId, string clientId);
     Task<bool> DeleteChatSessionAsync(string trainerId, string clientId);
-    Task<bool> UnlockChatSessionAsync(string sessionId);
+    Task<bool> ExtendChatSessionAsync(string trainerId, string clientId);
 }
