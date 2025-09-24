@@ -1,0 +1,60 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/client/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ClientService.API",
+      "UpstreamPathTemplate": "/client/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/trainer/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "TrainerService.API",
+      "UpstreamPathTemplate": "/trainer/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/payment/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "PaymentService.API",
+      "UpstreamPathTemplate": "/payment/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/review/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ReviewService.API",
+      "UpstreamPathTemplate": "/review/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/authentication/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "IdentityServer",
+      "UpstreamPathTemplate": "/authentication/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/user/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "IdentityServer",
+      "UpstreamPathTemplate": "/user/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chat/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ChatService.API",
+      "UpstreamPathTemplate": "/chat/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/notification/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "NotificationService.API",
+      "UpstreamPathTemplate": "/notification/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ClientService.API.Entities;
-using ClientService.API.Repositories;
+using ClientService.Common.Entities;
+using ClientService.Common.Repositories;
 using EventBus.Messages.Events;
 using MassTransit;
 

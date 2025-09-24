@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using EventBus.Messages.Events;
 using MassTransit;
-using TrainerService.API.Entities;
-using TrainerService.API.Repositories;
+using TrainerService.Common.Entities;
+using TrainerService.Common.Repositories;
 
 namespace TrainerService.API.EventBusConsumers
 {

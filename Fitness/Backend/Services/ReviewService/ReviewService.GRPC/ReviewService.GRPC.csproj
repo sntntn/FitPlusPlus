@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Consul" Version="1.7.14.5" />
     <PackageReference Include="Google.Protobuf" Version="3.27.3" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
@@ -26,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
     <ProjectReference Include="..\ReviewService.Common\ReviewService.Common.csproj" />
   </ItemGroup>
 

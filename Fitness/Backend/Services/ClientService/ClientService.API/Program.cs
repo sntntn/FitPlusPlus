@@ -1,23 +1,34 @@
 using Amazon.Runtime.Internal;
-using ClientService.API.Data;
 using ClientService.API.EventBusConsumers;
-using ClientService.API.Repositories;
 using EventBus.Messages.Constants;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 // using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using Consul;
+using ConsulConfig.Settings;
+using ClientService.Common.Data;
+using ClientService.Common.Extensions;
+using ClientService.Common.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
 
 builder.Services.AddScoped<IContext, Context>();
 builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddSingleton(consulConfig);
+builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new ConsulClient(config =>
+{
+    config.Address = new Uri(consulConfig.Address);
+}));
 
 // Add services to the container.
+
+builder.Services.AddClientCommonExtensions();
+
 
 builder.Services.AddCors(options =>
 {
@@ -75,7 +86,6 @@ var app = builder.Build();
 
 app.UseCors("CorsPolicy");
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -83,11 +93,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+
+    var registration = new AgentServiceRegistration
+    {
+        ID = consulConfig.ServiceId,
+        Name = consulConfig.ServiceName,
+        Address = consulConfig.ServiceAddress,
+        Port = consulConfig.ServicePort
+    };
+    
+    consulClient.Agent.ServiceRegister(registration).Wait();
+});
+
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+    consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
+});
+
+// app.UseAuthentication();
+// app.UseAuthorization();
+
 app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

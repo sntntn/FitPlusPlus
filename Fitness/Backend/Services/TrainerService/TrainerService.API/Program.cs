@@ -5,13 +5,24 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ReviewService.GRPC.Protos;
 using System.Text;
-using TrainerService.API.Data;
-using TrainerService.API.Entities;
+using Consul;
+using ConsulConfig.Settings;
 using TrainerService.API.EventBusConsumers;
 using TrainerService.API.GrpcServices;
-using TrainerService.API.Repositories;
+using TrainerService.Common.Data;
+using TrainerService.Common.Entities;
+using TrainerService.Common.Extensions;
+using TrainerService.Common.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
+
+builder.Services.AddSingleton(consulConfig);
+builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new ConsulClient(config =>
+{
+    config.Address = new Uri(consulConfig.Address);
+}));
 
 // Add services to the container.
 
@@ -19,7 +30,7 @@ builder.Services.AddScoped<ITrainerContext, TrainerContext>();
 builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
 
 builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
-    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
+    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]!));
 builder.Services.AddScoped<ReviewGrpcService>();
 
 builder.Services.AddAutoMapper(configuration =>
@@ -51,6 +62,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddTrainerCommonExtensions();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -80,6 +92,27 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+
+    var registration = new AgentServiceRegistration
+    {
+        ID = consulConfig.ServiceId,
+        Name = consulConfig.ServiceName,
+        Address = consulConfig.ServiceAddress,
+        Port = consulConfig.ServicePort
+    };
+
+    consulClient.Agent.ServiceRegister(registration).Wait();
+});
+
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    var consulClient = app.Services.GetRequiredService<IConsulClient>();
+    consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
+});
+
 app.UseCors("CorsPolicy");
 
 // Configure the HTTP request pipeline.
@@ -91,8 +124,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.MapControllers();
 

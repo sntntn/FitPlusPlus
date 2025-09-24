@@ -480,3 +480,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+.idea/**
+
+# MacOS
+.DS_Store
+
+# .env
+**/.env

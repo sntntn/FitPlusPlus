@@ -8,6 +8,12 @@ public class NotificationEvent : IntegrationBaseEvent
     public NotificationType Type { get; set; }
     public bool Email { get; set; }
 
+    public enum UserType
+    {
+        Client,
+        Trainer
+    }
+    
     public enum NotificationType
     {
         Information,

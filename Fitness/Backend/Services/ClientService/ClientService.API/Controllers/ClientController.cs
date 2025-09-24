@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ClientService.API.Entities;
-using ClientService.API.Repositories;
+using ClientService.Common.Entities;
+using ClientService.Common.Repositories;
 using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ClientService.API.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ClientController:ControllerBase
@@ -24,7 +24,7 @@ namespace ClientService.API.Controllers
             _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
-        [Authorize(Roles = "Admin, Trainer")]
+        // [Authorize(Roles = "Admin, Trainer")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Client>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
@@ -33,7 +33,7 @@ namespace ClientService.API.Controllers
             return Ok(clients);
         }
 
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        // [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("{id}", Name = "GetClient")]
         [ProducesResponseType(typeof(IEnumerable<Client>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -46,8 +46,10 @@ namespace ClientService.API.Controllers
             }
             return Ok(result);
         }
+        
+        // TODO("Dodati GetClientsByIds - mozda gRPC!!!")
 
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        // [Authorize(Roles = "Admin, Trainer, Client")]
         [Route("[action]/{name}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Client>), StatusCodes.Status200OK)]
@@ -57,7 +59,7 @@ namespace ClientService.API.Controllers
             return Ok(results);
         }
 
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        // [Authorize(Roles = "Admin, Trainer, Client")]
         [Route("[action]/{surname}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Client>), StatusCodes.Status200OK)]
@@ -67,7 +69,7 @@ namespace ClientService.API.Controllers
             return Ok(results);
         }
 
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        // [Authorize(Roles = "Admin, Trainer, Client")]
         [Route("[action]/{email}")]
         [HttpGet]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
@@ -85,7 +87,7 @@ namespace ClientService.API.Controllers
             return CreatedAtRoute("GetClient", new { id = client.Id }, client);
 
         }
-        [Authorize(Roles = "Admin, Client")]
+        // [Authorize(Roles = "Admin, Client")]
         [HttpPut]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateClient([FromBody] Client client)
@@ -93,7 +95,7 @@ namespace ClientService.API.Controllers
             return Ok(await _repository.UpdateClient(client));
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("{id}", Name = "DeleteClient")]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteClient(string id)
@@ -101,7 +103,7 @@ namespace ClientService.API.Controllers
             return Ok(await _repository.DeleteClient(id));
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [Route("[action]")]
         [HttpDelete]
         [ProducesResponseType(typeof(Client), StatusCodes.Status200OK)]
@@ -111,7 +113,7 @@ namespace ClientService.API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "Client")]
+        // [Authorize(Roles = "Client")]
         [Route("[action]/{id}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ClientSchedule>), StatusCodes.Status200OK)]
@@ -126,7 +128,7 @@ namespace ClientService.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Client")]
+        // [Authorize(Roles = "Client")]
         [Route("[action]/{clientId}/{weekId}")]
         [HttpGet]
         [ProducesResponseType(typeof(WeeklySchedule), StatusCodes.Status200OK)]
@@ -141,7 +143,7 @@ namespace ClientService.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Client")]
+        // [Authorize(Roles = "Client")]
         [Route("[action]/{clientId}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<String>), StatusCodes.Status200OK)]
@@ -156,7 +158,7 @@ namespace ClientService.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Client")]
+        // [Authorize(Roles = "Client")]
         [Route("[action]")]
         [HttpPut]
         [ProducesResponseType(typeof(ClientSchedule), StatusCodes.Status200OK)]
@@ -166,7 +168,7 @@ namespace ClientService.API.Controllers
 
         }
 
-        [Authorize(Roles = "Client")]
+        // [Authorize(Roles = "Client")]
         [Route("[action]")]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
