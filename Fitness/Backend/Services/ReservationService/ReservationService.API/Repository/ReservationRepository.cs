@@ -43,7 +43,7 @@ namespace ReservationService.API.Repository
 
         public async Task<IEnumerable<GroupReservation>> GetGroupReservationsByClientIdAsync(string clientId)
         {
-            return await _context.GroupReservations.Find(r => r.Clients.Contains(clientId)).ToListAsync();
+            return await _context.GroupReservations.Find(r => r.ClientIds.Contains(clientId)).ToListAsync();
         }
 
         public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByTrainerIdAsync(string trainerId)
@@ -93,10 +93,10 @@ namespace ReservationService.API.Repository
         public async Task<bool> BookGroupReservationAsync(string id, string clientId)
         {
             var reservation = await GetGroupReservationByIdAsync(id);
-            if (reservation.Capacity >= reservation.Clients.Count)
+            if (reservation.Capacity >= reservation.ClientIds.Count)
                 return false;
             
-            reservation.Clients.Add(clientId);
+            reservation.ClientIds.Add(clientId);
             var result = await _context.GroupReservations.ReplaceOneAsync(r => r.Id == id, reservation);
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
@@ -104,7 +104,7 @@ namespace ReservationService.API.Repository
         public async Task<bool> CancelGroupReservationAsync(string id, string clientId)
         {
             var reservation = await GetGroupReservationByIdAsync(id);
-            reservation.Clients.Remove(clientId);
+            reservation.ClientIds.Remove(clientId);
             var result = await _context.GroupReservations.ReplaceOneAsync(r => r.Id == id, reservation);
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
