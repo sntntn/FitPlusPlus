@@ -104,6 +104,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<IndividualReservation>> CreateIndividualReservation([FromBody] IndividualReservation reservation)
     {
+        // You need to check the availability of the client and the trainer!!!
         await _repository.CreateIndividualReservationAsync(reservation);
 
         var users = new Dictionary<string, string>();
@@ -119,6 +120,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<GroupReservation>> CreateGroupReservation([FromBody] GroupReservation reservation)
     {
+        // You need to check the availability of the trainer!!!
         await _repository.CreateGroupReservationAsync(reservation);
         return CreatedAtRoute(nameof(GetGroupReservation), new { id = reservation.Id }, reservation);
     }
@@ -128,6 +130,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateIndividualReservation([FromBody] IndividualReservation reservation)
     {
+        // Also we need to check if the updated information make sense -- are the client and the trainer available
         var updated = await _repository.UpdateIndividualReservationAsync(reservation);
 
         if (updated)
@@ -147,12 +150,13 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateGroupReservation([FromBody] GroupReservation reservation)
     {
+        // Also we need to check if the updated information make sense -- is the trainer available
         var updated = await _repository.UpdateGroupReservationAsync(reservation);
 
         if (updated)
         {
             var users = new Dictionary<string, string>();
-            foreach (var clientId in reservation.Clients)
+            foreach (var clientId in reservation.ClientIds)
             {
                 users.Add(clientId, "Client");
             }
@@ -197,7 +201,7 @@ public class ReservationController : ControllerBase
         if (deleted)
         {
             var users = new Dictionary<string, string>();
-            foreach (var clientId in reservation.Clients)
+            foreach (var clientId in reservation.ClientIds)
             {
                 users.Add(clientId, "Client");
             }
