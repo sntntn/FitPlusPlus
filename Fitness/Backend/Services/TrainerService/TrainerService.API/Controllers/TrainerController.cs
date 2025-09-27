@@ -18,14 +18,12 @@ namespace TrainerService.API.Controllers
         private readonly ITrainerRepository _repository;
         private readonly ReviewGrpcService _reviewGrpcService;
         private readonly IMapper _mapper;
-        private readonly IPublishEndpoint _publishEndpoint;
 
-        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper, IPublishEndpoint publishEndpoint)
+        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _reviewGrpcService = reviewGrpcService ?? throw new ArgumentNullException(nameof(reviewGrpcService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
 
