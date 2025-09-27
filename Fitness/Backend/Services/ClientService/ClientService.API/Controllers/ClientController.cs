@@ -14,13 +14,11 @@ namespace ClientService.API.Controllers
     {
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
-        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ClientController(IRepository repository, IMapper mapper, IPublishEndpoint publishEndpoint)
+        public ClientController(IRepository repository, IMapper mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         // [Authorize(Roles = "Admin, Trainer")]
