@@ -6,6 +6,5 @@ namespace ClientService.Common.Data
     public interface IContext
     {
         IMongoCollection<Client> Clients { get; }
-        IMongoCollection<ClientSchedule> ClientSchedules { get; }
     }
 }
