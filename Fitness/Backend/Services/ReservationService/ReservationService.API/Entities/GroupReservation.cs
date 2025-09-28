@@ -12,6 +12,7 @@ public class GroupReservation
     public string Name { get; set; }
     public string About { get; set; }
     public string TrainerId { get; set; }
+    public string TrainingTypeId { get; set; }
     public int Capacity { get; set; }
     public List<string> ClientIds { get; set; }
     public TimeSpan StartTime { get; set; }
