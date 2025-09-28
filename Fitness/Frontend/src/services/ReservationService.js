@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const GATEWAY_URL = "http://localhost:8005";
-//const RESERVATIONS = `${GATEWAY_URL}/reservation`;
+//const RESERVATIONS = `${GATEWAY_URL}/reservation`;                // When Mitreski switch Backend for Reservation to Gateway!!!
 
-const RESERVATIONS = "http://localhost:8025/api/v1/Reservation";
+const RESERVATIONS = "http://localhost:8025/api/v1/Reservation";    //temporary
 
 
 
