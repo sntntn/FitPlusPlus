@@ -176,8 +176,9 @@ services:
       - rabbitmq
     ports:
       - "8004:8080"
+      
+ 
   
-
   chatservice.api:
     container_name: chatService.api
     environment:
@@ -186,3 +187,17 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8082:8080"
+      
+  nutritionservice.api:
+    ports:
+      - "8103:8080"
+    #volumes:
+     # - ./Services/NutritionService/NutritionService.API:/app
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      
+

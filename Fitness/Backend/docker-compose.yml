@@ -118,6 +118,15 @@ services:
       - chatdb
       - rabbitmq
       - consul
+      
+  nutritionservice.api:
+    image: ${DOCKER_REGISTRY-}nutritionserviceapi
+    build:
+      context: .
+      dockerfile: Services/NutritionService/NutritionService.API/Dockerfile
+    depends_on:
+      - consul
+
 
 volumes:
   trainermongo_data:
