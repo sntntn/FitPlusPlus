@@ -40,13 +40,13 @@ export function generateClientNav(id) {
       component: 'CNavItem',
       name: 'Group training',
       to: `/client/${id}/groupTrainings`,
-      icon: 'cil-speech',
+      icon: 'cil-people',
     },
     {
       component: 'CNavItem',
       name: 'Individual training',
       to: `/client/${id}/individualTrainings`,
-      icon: 'cil-speech',
+      icon: 'cil-user-follow',
     },
     {
       component: 'CNavItem',
