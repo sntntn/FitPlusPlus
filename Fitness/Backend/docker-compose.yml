@@ -136,6 +136,10 @@ services:
     build:
       context: .
       dockerfile: Services/ReservationService/ReservationService.API/Dockerfile
+    depends_on:
+      - reservationdb
+      - rabbitmq
+      - consul
 
 volumes:
   trainermongo_data:
