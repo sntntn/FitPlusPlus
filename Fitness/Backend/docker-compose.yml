@@ -18,6 +18,9 @@ services:
     
   chatdb:
     image: mongo
+    
+  nutritiondb:
+    image: mongo
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -135,6 +138,8 @@ volumes:
   paymentmongo_data:
   notificationmongo_data:
   chatmongo_data:
+  nutritionmongo_data:
   mssql_data:
   mssql_volume:
   consul_data:
+  

@@ -47,6 +47,15 @@ services:
       - 27022:27017
     volumes:
       - chatmongo_data:/data/db
+      
+  nutritiondb:
+    container_name: nutritiondb
+    restart: always
+    ports:
+      - "27023:27017"
+    volumes:
+      - nutritionmongo_data:/data/db
+
   
   rabbitmq:
     container_name: rabbitmq
@@ -191,13 +200,14 @@ services:
   nutritionservice.api:
     ports:
       - "8103:8080"
-    #volumes:
-     # - ./Services/NutritionService/NutritionService.API:/app
     environment:
       - DOTNET_USE_POLLING_FILE_WATCHER=1
       - DOTNET_RUNNING_IN_CONTAINER=true
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      - nutritiondb
+      - consul
       
 
