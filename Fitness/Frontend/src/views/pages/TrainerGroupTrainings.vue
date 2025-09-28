@@ -63,6 +63,10 @@
 
 <script>
 import dataServices from "../../services/data_services";
+//import * as reservationService from "../../services/ReservationService";
+// import {
+//     getAllGroupReservations
+// } from "../../services/ReservationService";
 
 export default {
   name: "TrainerGroupTrainings",
@@ -78,6 +82,8 @@ export default {
   },
   created() {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+    this.trainerId = this.$route.params.id;
+    console.log("id trenera: " + this.trainerId);
 
     // hardcoded trainings
     this.trainings = [
@@ -86,10 +92,13 @@ export default {
     ];
 
     // trainers trainingTypes
-    const id = this.$route.params.id;
+    const id = this.trainerId;
     dataServices.methods.get_trainer_by_id(id).then((response) => {
       this.trainer = response.data;
+      console.log(response.data);
+      console.log(this.trainer);
     });
+
   },
   methods: {
     createTraining() {
