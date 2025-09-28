@@ -66,6 +66,12 @@ const routes = [
       },
 
       {
+        path: '/client/:id/groupTrainings',
+        name: 'Client Schedule',
+        component: () => import('@/views/pages/ClientGroupTrainings.vue')
+      },
+
+      {
         path: '/payment-success',
         name: 'Payment Success',
         component: () => import('@/views/pages/PaymentSuccess.vue')
