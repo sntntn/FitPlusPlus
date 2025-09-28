@@ -2,6 +2,7 @@ using AutoMapper;
 using ChatService.API.Models;
 using EventBus.Messages.Events;
 using MassTransit;
+using MongoDB.Bson;
 
 namespace ChatService.API.Publishers;
 
@@ -16,18 +17,17 @@ public class NotificationPublisher : INotificationPublisher
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task PublishNotification(string title, string content, string type, bool email, string userId, string userType)
+    public async Task PublishNotification(string title, string content, string type, bool email,
+        IDictionary<string, string> users)
     {
-        Enum.TryParse(userType, out Notification.UserType uType);
         Enum.TryParse(type, out Notification.NotificationType nType);
         var notification = new Notification
         {
+            UserIdToUserType = users,
             Title = title,
             Content = content,
-            NType = nType,
+            Type = nType,
             Email = email,
-            UserId = userId,
-            UType = uType
         };
 
         var eventMessage = _mapper.Map<NotificationEvent>(notification);
