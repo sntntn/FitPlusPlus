@@ -10,13 +10,10 @@ COPY ["Services/NutritionService/NutritionService.API/NutritionService.API.cspro
 COPY ["Common/ConsulConfig.Settings/ConsulConfig.Settings.csproj", "Common/ConsulConfig.Settings/"]
 COPY ["Common/EventBus.Messages/EventBus.Messages.csproj", "Common/EventBus.Messages/"]
 
-# Restore
 RUN dotnet restore "Services/NutritionService/NutritionService.API/NutritionService.API.csproj"
 
-# Kopiraj ceo projekat
 COPY . .
 
-# Build
 WORKDIR "/src/Services/NutritionService/NutritionService.API"
 RUN dotnet build "NutritionService.API.csproj" -c Release -o /app/build
 
