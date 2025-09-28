@@ -15,6 +15,12 @@ export function generateTrainerNav(id) {
     },
     {
       component: 'CNavItem',
+      name: 'Group training',
+      to: `/trainer/${id}/groupTrainings`,
+      icon: 'cil-people',
+    },
+    {
+      component: 'CNavItem',
       name: 'Chat',
       to: `/trainer/${id}/chat`,
       icon: 'cil-speech',
