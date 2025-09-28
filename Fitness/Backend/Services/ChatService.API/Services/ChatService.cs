@@ -86,11 +86,13 @@ public class ChatService: IChatService
             Messages = CreateInitialMessages()
         };
         await _chatRepository.InsertChatSessionAsync(session);
+
+        var users = new Dictionary<string, string>();
+        users.Add(clientId, "Client");
+        users.Add(trainerId, "Trainer");
         
-        await Task.WhenAll(
-            _notificationPublisher.PublishNotification("Chat Session Created", "New chat session created!", "Information", true, clientId, "Client"),
-            _notificationPublisher.PublishNotification("Chat Session Created", "New chat session created!", "Information", true, trainerId, "Trainer")
-        );
+        await _notificationPublisher.PublishNotification("Chat Session Created", "New chat session created!",
+            "Information", true, users);
     }
 
     public async Task<ChatSession?> GetChatSessionAsync(string trainerId, string clientId)

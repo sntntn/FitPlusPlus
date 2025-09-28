@@ -19,6 +19,8 @@ public class EmailService : IEmailService
             .Body(body)
             .SendAsync();
         
+        Console.WriteLine(response.Successful);
+        
         return response.Successful;
     }
 }
