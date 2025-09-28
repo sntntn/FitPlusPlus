@@ -4,24 +4,9 @@
       <CHeaderToggler class="ps-1">
       </CHeaderToggler>
       <CHeaderBrand class="mx-auto d-lg-none" to="/">
-      
       </CHeaderBrand>
-      <CHeaderNav>
-        <CNavItem>
-          <CNavLink href="#">
-            <CIcon class="mx-2" icon="cil-bell" size="lg" />
-          </CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#">
-            <CIcon class="mx-2" icon="cil-list" size="lg" />
-          </CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#">
-            <CIcon class="mx-2" icon="cil-envelope-open" size="lg" />
-          </CNavLink>
-        </CNavItem>
+      <CHeaderNav class="align-items-center">
+        <AppHeaderDropdownNotif />
         <AppHeaderDropdownAccnt />
       </CHeaderNav>
     </CContainer>
@@ -30,14 +15,13 @@
 
 <script>
 import AppHeaderDropdownAccnt from './AppHeaderDropdownAccnt'
+import AppHeaderDropdownNotif from './AppHeaderDropdownNotif'
+
 export default {
   name: 'AppHeader',
   components: {
     AppHeaderDropdownAccnt,
+    AppHeaderDropdownNotif,
   },
-  setup() {
-    return {
-    }
-  }
 }
 </script>
