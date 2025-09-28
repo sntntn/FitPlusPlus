@@ -72,6 +72,17 @@ const routes = [
       },
 
       {
+        path: '/trainer/:id/groupTrainings',
+        name: 'Trainer Group Trainings',
+        component: () => import('@/views/pages/TrainerGroupTrainings.vue')
+      },
+      // {
+      //   path: '/trainer/:id/groupTrainings',
+      //   name: 'Trainer Group Trainings',
+      //   component: () => import('@/views/pages/TrainerGroupTrainings.vue')
+      // },
+
+      {
         path: '/client/:id/individualTrainings',
         name: 'Client Individual Trainings',
         component: () => import('@/views/pages/ClientIndividualTrainings.vue')
