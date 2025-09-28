@@ -230,3 +230,17 @@ services:
       - "DatabaseSetting:ConnectionString=mongodb://videotrainingdb:27017"
     ports:
       - "8007:8080"
+      
+  nutritionservice.api:
+    ports:
+      - "8157:8080"
+    #volumes:
+     # - ./Services/NutritionService/NutritionService.API:/app
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      
+
