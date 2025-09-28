@@ -38,6 +38,12 @@ export function generateClientNav(id) {
     },
     {
       component: 'CNavItem',
+      name: 'Group training',
+      to: `/client/${id}/groupTrainings`,
+      icon: 'cil-speech',
+    },
+    {
+      component: 'CNavItem',
       name: 'Chat',
       to: `/client/${id}/chat`,
       icon: 'cil-speech'
