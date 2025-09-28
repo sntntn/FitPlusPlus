@@ -7,7 +7,6 @@ services:
     volumes:
       - trainermongo_data:/data/db
 
-
   clientdb:
     container_name: clientdb
     restart: always
@@ -44,9 +43,17 @@ services:
     container_name: chatdb
     restart: always
     ports:
-      - 27022:27017
+      - "27022:27017"
     volumes:
       - chatmongo_data:/data/db
+  
+  reservationdb:
+    container_name: reservationdb
+    restart: always
+    ports:
+      - "27023:27017"
+    volumes:
+      - reservationmongo_data:/data/db
   
   rabbitmq:
     container_name: rabbitmq
@@ -98,8 +105,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
-    depends_on:
-      - trainerdb
     ports:
       - "8102:8080"
 
@@ -117,8 +122,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://clientdb:27017"
-    depends_on:
-      - reviewdb
     ports:
       - "8101:8080"
 
@@ -171,13 +174,9 @@ services:
       - "GrpcSettings:TrainerUrl=http://host.docker.internal:8102"
     env_file:
       - ./Services/NotificationService/NotificationService.API/.env
-    depends_on:
-      - notificationdb
-      - rabbitmq
     ports:
       - "8004:8080"
   
-
   chatservice.api:
     container_name: chatService.api
     environment:
@@ -186,3 +185,12 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8082:8080"
+        
+  reservationservice.api:
+    container_name: reservationservice.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://reservationdb:27017"
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    ports:
+      - "8103:8080"
