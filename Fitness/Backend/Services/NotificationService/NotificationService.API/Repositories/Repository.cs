@@ -20,7 +20,7 @@ public class Repository : IRepository
 
     public async Task<IEnumerable<Notification>> GetNotificationsByUserId(string userId)
     {
-        return await _context.Notifications.Find(n => n.UserId == userId).ToListAsync();
+        return await _context.Notifications.Find(n => n.UserIdToUserType.ContainsKey(userId)).ToListAsync();
     }
 
     public async Task<Notification> GetNotificationById(string id)
@@ -47,7 +47,7 @@ public class Repository : IRepository
 
     public async Task<bool> DeleteNotificationsByUserId(string userId)
     {
-        var result = await _context.Notifications.DeleteManyAsync(n => n.UserId == userId);
+        var result = await _context.Notifications.DeleteManyAsync(n => n.UserIdToUserType.ContainsKey(userId));
         return result.IsAcknowledged && result.DeletedCount > 0;
     }
 

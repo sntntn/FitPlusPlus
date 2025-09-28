@@ -1,6 +1,7 @@
 using AutoMapper;
 using MassTransit;
 using EventBus.Messages.Events;
+using MongoDB.Bson;
 using NotificationService.API.Email;
 using NotificationService.API.Entities;
 using NotificationService.API.GrpcServices;
@@ -36,16 +37,20 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
             var body = "You have a new notification from your FitPlusPlus Gym Account:\n\n" + notification.Content +
                        "\n\nTime: " + notification.CreationDate;
             
-            if (notification.UType == NotificationReceived.UserType.Client)
+            foreach (var (key, value) in notification.UserIdToUserType)
             {
-                var client = await _clientGrpcService.GetClient(notification.UserId);
-                var clientInfo = _mapper.Map<Client>(client);
-                await _emailService.SendEmailAsync(clientInfo.Email, subject, body);
-            } else if (notification.UType == NotificationReceived.UserType.Trainer)
-            {
-                var trainer = await _trainerGrpcService.GetTrainers(notification.UserId);
-                var trainerInfo = _mapper.Map<Trainer>(trainer);
-                await _emailService.SendEmailAsync(trainerInfo.ContactEmail, subject, body);
+                if (value.Equals("Client"))
+                {
+                    var client = await _clientGrpcService.GetClient(key);
+                    var clientInfo = _mapper.Map<Client>(client);
+                    await _emailService.SendEmailAsync(clientInfo.Email, subject, body);
+                }
+                else if (value.Equals("Trainer"))
+                {
+                    var trainer = await _trainerGrpcService.GetTrainers(key);
+                    var trainerInfo = _mapper.Map<Trainer>(trainer);
+                    await _emailService.SendEmailAsync(trainerInfo.ContactEmail, subject, body);
+                }
             }
         }
     }
