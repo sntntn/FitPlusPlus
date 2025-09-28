@@ -75,7 +75,7 @@ export default {
 
           const createResponse = await createChatSession(this.trainerId, this.clientId);
 
-          if (createResponse.status === 201) {
+          if (createResponse.status === 200) {
             alert("Chat session created successfully!");
           } else {
             alert("Failed to create chat session.");
