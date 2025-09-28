@@ -1,9 +1,7 @@
 services:
   trainerdb:
     image: mongo
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-
+    
   clientdb:
     image: mongo
 
@@ -13,18 +11,21 @@ services:
   paymentdb:
     image: mongo
     
-  reservationdb:
-    image: mongo
-    
   notificationdb:
     image: mongo
     
   chatdb:
     image: mongo
   
+  reservationdb:
+    image: mongo
+  
   rabbitmq:
     image: rabbitmq:3-management-alpine
     
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest  
+  
   consul:
     image: consul:1.15.4
     
@@ -53,6 +54,8 @@ services:
     build:
       context: .
       dockerfile: Services/TrainerService/TrainerService.GRPC/Dockerfile
+    depends_on:
+      - trainerdb
   
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
@@ -70,6 +73,8 @@ services:
     build:
       context: .
       dockerfile: Services/ClientService/ClientService.GRPC/Dockerfile
+    depends_on:
+      - clientdb
 
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
@@ -112,6 +117,9 @@ services:
     build:
       context: .
       dockerfile: Services/NotificationService/NotificationService.API/Dockerfile
+    depends_on:
+      - notificationdb
+      - rabbitmq
       
   chatservice.api:
     image: ${DOCKER_REGISTRY-}chatserviceapi
@@ -131,12 +139,12 @@ services:
 
 volumes:
   trainermongo_data:
-  reviewmongo_data:
   clientmongo_data:
+  reviewmongo_data:
   paymentmongo_data:
-  reservationmongo_data:
   notificationmongo_data:
   chatmongo_data:
+  reservationmongo_data:
   mssql_data:
   mssql_volume:
   consul_data:
