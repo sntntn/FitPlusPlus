@@ -99,8 +99,6 @@ export default {
       console.log(this.trainer);
     });
 
-    console.log(reservationService.getAllGroupReservations());
-
   },
   methods: {
     createTraining() {
