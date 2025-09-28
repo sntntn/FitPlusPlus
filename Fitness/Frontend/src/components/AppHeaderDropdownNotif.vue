@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Dropdown -->
     <CDropdown variant="nav-item" placement="bottom-end">
       <CDropdownToggle class="py-0 d-flex align-items-center" :caret="false">
         <CIcon icon="cil-bell" size="lg" class="mx-2" />
@@ -27,18 +26,19 @@
       </CDropdownMenu>
     </CDropdown>
 
-    <!-- Modal za detalje -->
     <CModal :visible="showModal" @close="showModal = false">
       <CModalHeader>
         <CModalTitle>{{ selectedNotification?.title }}</CModalTitle>
       </CModalHeader>
-      <CModalBody>
-        <p><strong>Datum:</strong> {{ formatDate(selectedNotification?.creationDate) }}</p>
-        <p><strong>Tip:</strong> {{ selectedNotification?.nType }}</p>
-        <p><strong>Sadržaj:</strong> {{ selectedNotification?.content }}</p>
-        <p><strong>User ID:</strong> {{ selectedNotification?.userId }}</p>
-        <p><strong>Uloga:</strong> {{ selectedNotification?.uType }}</p>
-        <p><strong>Email poslat:</strong> {{ selectedNotification?.email ? "Da" : "Ne" }}</p>
+      <CModalBody v-if="selectedNotification">
+        <p><strong>Datum:</strong> {{ formatDate(selectedNotification.creationDate) }}</p>
+        <p><strong>Tip:</strong> {{ selectedNotification.type }}</p>
+        <p><strong>Sadržaj:</strong> {{ selectedNotification.content }}</p>
+        <p><strong>Email poslat:</strong> {{ selectedNotification.email ? "Da" : "Ne" }}</p>
+        <p><strong>Status:</strong> 
+          <span v-if="selectedNotification.notificationRead">Pročitano</span>
+          <span v-else>Nepročitano</span>
+        </p>
       </CModalBody>
       <CModalFooter>
         <CButton color="secondary" @click="showModal = false">Close</CButton>
