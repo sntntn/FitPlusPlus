@@ -63,7 +63,7 @@
 
 <script>
 import dataServices from "../../services/data_services";
-//import * as reservationService from "../../services/ReservationService";
+import * as reservationService from "../../services/ReservationService";
 // import {
 //     getAllGroupReservations
 // } from "../../services/ReservationService";
@@ -98,6 +98,8 @@ export default {
       console.log(response.data);
       console.log(this.trainer);
     });
+
+    console.log(reservationService.getAllGroupReservations());
 
   },
   methods: {
