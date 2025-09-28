@@ -1,3 +1,6 @@
+using NutritionService.API.Repositories;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -7,6 +10,8 @@ builder.Services.AddCors(o =>
 {
     o.AddPolicy("CorsPolicy", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
+
+builder.Services.AddSingleton<IFoodRepository, FoodRepository>();
 
 var app = builder.Build();
 
@@ -21,3 +26,5 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.Run();
+
+

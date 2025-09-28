@@ -16,4 +16,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+   <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+  </ItemGroup>
+
 </Project>
