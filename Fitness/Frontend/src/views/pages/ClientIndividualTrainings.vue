@@ -12,7 +12,7 @@
       >
         <option disabled value="">-- Select trainer --</option>
         <option v-for="trainer in trainers" :key="trainer.id" :value="trainer.id">
-          {{ trainer.name }}
+          {{ trainer.fullName }}
         </option>
       </select>
     </div>
@@ -77,16 +77,17 @@
 </template>
 
 <script>
-export default {
-  name: "IndividualTrainingPage",
+import dataServices from '@/services/data_services';
+import {
+  getGroupReservationsByTrainer,
+  getIndividualReservationsByTrainer,
+  createIndividualReservation
+} from '@/services/ReservationService'
 
+export default {
   data() {
     return {
-      trainers: [
-        { id: 1, name: "Marko Marković" },
-        { id: 2, name: "Ana Anić" },
-        { id: 3, name: "Jovan Jovanović" }
-      ],
+      trainers: [],
       selectedTrainer: "",
       unavailableSlots: [],
       date: "",
@@ -97,13 +98,35 @@ export default {
 
   methods: {
     checkAvailability() {
-      console.log("Checking availability for trainer:", this.selectedTrainer);
-      // MOCK: vraćamo zauzete termine
-      this.unavailableSlots = [
-        { date: "2025-10-03", start: "18:00", end: "19:00" },
-        { date: "2025-10-04", start: "16:00", end: "17:00" }
-      ];
-      // ovde ide API call -> ReservationService.getUnavailableSlots(trainerId)
+      this.unavailableSlots = [];
+
+      getIndividualReservationsByTrainer(this.selectedTrainer)
+        .then(list => {
+          list.data.forEach(element => {
+            this.unavailableSlots.push({
+              date: element.date,
+              start: element.startTime,
+              end: element.endTime
+            });
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching individual reservations:", error);
+        });
+
+      getGroupReservationsByTrainer(this.selectedTrainer)
+        .then(list => {
+          list.data.forEach(element => {
+            this.unavailableSlots.push({
+              date: element.date,
+              start: element.startTime,
+              end: element.endTime
+            });
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching group reservations:", error);
+        });
     },
 
     bookTraining() {
@@ -113,17 +136,46 @@ export default {
       }
 
       const payload = {
+        id: "",
         trainerId: this.selectedTrainer,
-        clientId: this.$route.params.id, // pretpostavka kao kod group page-a
+        clientId: this.$route.params.id,
+        trainingTypeId: "",
         date: this.date,
-        start: this.startTime,
-        end: this.endTime
+        startTime: this.startTime + ":00",
+        endTime: this.endTime + ":00"
       };
 
       console.log("Booking training with payload:", payload);
-      // ovde ide API call -> ReservationService.bookIndividualTraining(payload)
-      alert("Training booked successfully!");
+
+      createIndividualReservation(payload)
+        .then(response => {
+          if (response.status === 201) {
+            alert("Training booked successfully!");
+          } else {
+            alert(`Booking failed. Status: ${response.status}`);
+          }
+        })
+        .catch(error => {
+          console.error("Booking error:", error);
+          alert("An error occurred while booking the training.");
+        });
+    },
+
+    // Fetch list of trainers
+    fetchTrainers() {
+      dataServices.methods.get_trainers()
+        .then(response => {
+          this.trainers = response.data;
+        })
+        .catch(error => {
+          console.error("Failed to fetch trainers:", error);
+        });
     }
+  },
+
+  mounted() {
+    this.fetchTrainers();
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
   }
 };
 </script>
