@@ -15,7 +15,7 @@ public class GroupReservation
     public string TrainingTypeId { get; set; }
     public int Capacity { get; set; }
     public List<string> ClientIds { get; set; }
-    public TimeSpan StartTime { get; set; }
-    public TimeSpan EndTime { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
     public DateOnly Date { get; set; }
 }
