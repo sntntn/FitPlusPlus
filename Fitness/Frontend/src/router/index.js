@@ -113,7 +113,7 @@ const routes = [
       {
         path: '/trainer/:id/analytics',
         name: 'TrainerAnalytics',
-        component: () => import('@/views/pages/ClientAnalytics.vue')
+        component: () => import('@/views/pages/TrainerAnalytics.vue')
       }
     ],
   },
