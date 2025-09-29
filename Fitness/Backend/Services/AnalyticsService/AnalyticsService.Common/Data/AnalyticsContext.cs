@@ -11,7 +11,7 @@ public class AnalyticsContext : IAnalyticsContext
         var mongoClient = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
         var database = mongoClient.GetDatabase("AnalyticsDB");
         Trainings = database.GetCollection<Training>("Trainings");
-        SeedData(Trainings);
+        // SeedData(Trainings);
     }
     
     public IMongoCollection<Training> Trainings { get; set; }

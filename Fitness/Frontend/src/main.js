@@ -10,7 +10,7 @@ import { iconsSet as icons } from '@/assets/icons'
 import {LoadingPlugin} from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 
-import axios  from 'axios'
+import axios from 'axios'
 
 axios.interceptors.response.use(response => {
     return response;
