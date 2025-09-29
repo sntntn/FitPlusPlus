@@ -54,6 +54,21 @@ public class NotificationController : ControllerBase
         return Ok(await _repository.UpdateNotification(notification));
     }
     
+    // PUT api/notifications/{id}/read
+    [HttpPut("{id}/read")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MarkAsRead(string id)
+    {
+        var success = await _repository.MarkNotificationAsRead(id);
+
+        if (!success)
+            return NotFound();
+
+        return Ok(new { Message = "Notification marked as read" });
+    }
+
+    
     //[Authorize(Roles = "Admin")]
     [HttpDelete]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]

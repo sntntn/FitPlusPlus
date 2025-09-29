@@ -14,6 +14,8 @@ public interface IRepository
 
     Task<bool> UpdateNotification(Notification notification);
 
+    Task<bool> MarkNotificationAsRead(string notificationId);
+
     Task<bool> DeleteNotification(string id);
 
     Task<bool> DeleteNotificationsByUserId(string userId);

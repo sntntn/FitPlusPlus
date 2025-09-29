@@ -38,6 +38,18 @@ public class Repository : IRepository
         var result = await _context.Notifications.ReplaceOneAsync(n => n.Id == notification.Id, notification);
         return result.IsAcknowledged && result.ModifiedCount > 0;
     }
+    
+    public async Task<bool> MarkNotificationAsRead(string notificationId)
+    {
+        var filter = Builders<Notification>.Filter.Eq(n => n.Id, notificationId);
+
+        var update = Builders<Notification>.Update
+            .Set(n => n.NotificationRead, true);                 // menjaš polje IsRead
+
+        var result = await _context.Notifications.UpdateOneAsync(filter, update);
+
+        return result.IsAcknowledged && result.ModifiedCount > 0;
+    }
 
     public async Task<bool> DeleteNotification(string id)
     {
