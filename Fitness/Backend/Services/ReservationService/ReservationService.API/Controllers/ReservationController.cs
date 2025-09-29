@@ -24,7 +24,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservations()
     {
-        var reservations = await _reservationService.GetIndividualReservations();
+        var reservations = await _reservationService.GetIndividualReservationsAsync();
         return Ok(reservations);
     }
 
@@ -33,28 +33,28 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservations()
     {
-        var reservations = await _reservationService.GetGroupReservations();
+        var reservations = await _reservationService.GetGroupReservationsAsync();
         return Ok(reservations);
     }
     
     //[Authorize(Roles = "Admin")]
-    [HttpGet("individual/{id}")]
+    [HttpGet("individual/{id}", Name="GetIndividualReservation")]
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IndividualReservation>> GetIndividualReservation(string id)
     {
-        var reservation = await _reservationService.GetIndividualReservation(id);
+        var reservation = await _reservationService.GetIndividualReservationAsync(id);
         if (reservation == null) return NotFound();
         return Ok(reservation);
     }
     
     //[Authorize(Roles = "Admin")]
-    [HttpGet("group/{id}")]
+    [HttpGet("group/{id}", Name = "GetGroupReservation")]
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupReservation>> GetGroupReservation(string id)
     {
-        var reservation = await _reservationService.GetGroupReservation(id);
+        var reservation = await _reservationService.GetGroupReservationAsync(id);
         if (reservation == null) return NotFound();
         return Ok(reservation);
     }
@@ -64,7 +64,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservationsByClientId(string clientId)
     {
-        var reservations = await _reservationService.GetIndividualReservationsByClientId(clientId);
+        var reservations = await _reservationService.GetIndividualReservationsByClientIdAsync(clientId);
         return Ok(reservations);
     }
     
@@ -73,7 +73,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservationsByClientId(string clientId)
     {
-        var reservations = await _reservationService.GetGroupReservationsByClientId(clientId);
+        var reservations = await _reservationService.GetGroupReservationsByClientIdAsync(clientId);
         return Ok(reservations);
     }
 
@@ -82,7 +82,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservationsByTrainerId(string trainerId)
     {
-        var reservations = await _reservationService.GetIndividualReservationsByTrainerId(trainerId);
+        var reservations = await _reservationService.GetIndividualReservationsByTrainerIdAsync(trainerId);
         return Ok(reservations);
     }
     
@@ -91,7 +91,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservationsByTrainerId(string trainerId)
     {
-        var reservations = await _reservationService.GetGroupReservationsByTrainerId(trainerId);
+        var reservations = await _reservationService.GetGroupReservationsByTrainerIdAsync(trainerId);
         return Ok(reservations);
     }
     
@@ -100,7 +100,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<IndividualReservation>> CreateIndividualReservation([FromBody] IndividualReservation reservation)
     {
-        var created = await _reservationService.CreateIndividualReservation(reservation);
+        var created = await _reservationService.CreateIndividualReservationAsync(reservation);
         if (created)
         {
             return CreatedAtRoute(nameof(GetIndividualReservation), new { id = reservation.Id }, reservation);
@@ -116,10 +116,10 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<GroupReservation>> CreateGroupReservation([FromBody] GroupReservation reservation)
     {
-        var created = await _reservationService.CreateGroupReservation(reservation);
+        var created = await _reservationService.CreateGroupReservationAsync(reservation);
         if (created)
         {
-            return CreatedAtRoute(nameof(GetIndividualReservation), new { id = reservation.Id }, reservation);
+            return CreatedAtRoute(nameof(GetGroupReservation), new { id = reservation.Id }, reservation);
         }
         else
         {
@@ -132,7 +132,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateIndividualReservation([FromBody] IndividualReservation reservation)
     {
-        var updated = await _reservationService.UpdateIndividualReservation(reservation);
+        var updated = await _reservationService.UpdateIndividualReservationAsync(reservation);
         if (updated)
         {
             return Ok(reservation);
@@ -148,7 +148,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateGroupReservation([FromBody] GroupReservation reservation)
     {
-        var updated = await _reservationService.UpdateGroupReservation(reservation);
+        var updated = await _reservationService.UpdateGroupReservationAsync(reservation);
         if (updated)
         {
             return Ok(reservation);
@@ -164,7 +164,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteIndividualReservation(string id)
     {
-        var deleted =  await _reservationService.DeleteIndividualReservation(id);
+        var deleted =  await _reservationService.DeleteIndividualReservationAsync(id);
         if (deleted)
         {
             return NoContent();
@@ -180,7 +180,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteGroupReservation(string id)
     {
-        var deleted =  await _reservationService.DeleteGroupReservation(id);
+        var deleted =  await _reservationService.DeleteGroupReservationAsync(id);
         if (deleted)
         {
             return NoContent();
@@ -196,7 +196,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> BookGroupReservation(string id, [FromQuery] string clientId)
     {
-        var booked = await _reservationService.BookGroupReservation(id, clientId);
+        var booked = await _reservationService.BookGroupReservationAsync(id, clientId);
         if (booked)
         {
             return Ok();
@@ -212,7 +212,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelGroupReservation(string id, [FromQuery] string clientId)
     { 
-        var cancelled = await _reservationService.CancelGroupReservation(id, clientId);
+        var cancelled = await _reservationService.CancelGroupReservationAsync(id, clientId);
         if (cancelled)
         {
             return NoContent();

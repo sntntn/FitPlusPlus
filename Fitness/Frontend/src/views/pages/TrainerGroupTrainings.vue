@@ -52,9 +52,12 @@
           class="border-b"
         >
           <td class="py-2 px-4">
-            {{ getTrainingTypeName(training.typeId) }}
+            {{ getTrainingTypeName(training.trainingTypeId) }}
           </td>
-          <td class="py-2 px-4">{{ training.dateTime }}</td>
+          <td class="py-2 px-4">{{ training.date }}
+            <br>
+            {{ training.startTime }} - {{ training.endTime }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -84,21 +87,17 @@ export default {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
     this.trainerId = this.$route.params.id;
     console.log("id trenera: " + this.trainerId);
-
-    // hardcoded trainings
-    this.trainings = [
-      { id: 1, typeId: "1", dateTime: "2025-10-02T18:00" },
-      { id: 2, typeId: "2", dateTime: "2025-10-04T19:00" },
-    ];
-
-    // trainers trainingTypes
-    const id = this.trainerId;
-    dataServices.methods.get_trainer_by_id(id).then((response) => {
+  },
+  mounted() {
+    dataServices.methods.get_trainer_by_id(this.trainerId).then((response) => {
       this.trainer = response.data;
       console.log(response.data);
       console.log(this.trainer);
     });
 
+    reservationService.getGroupReservationsByTrainer(this.trainerId).then((response) => {
+      this.trainings = response.data
+    })
   },
   methods: {
     createTraining() {
@@ -106,19 +105,40 @@ export default {
         alert("Please select a training type and date/time.");
         return;
       }
+      
+      const [date, time] = this.newTraining.dateTime.split("T");
+      const timePlusOneHour = new Date(this.newTraining.dateTime)
+        .toTimeString()
+        .split(":")
+        .map((v, i) => i < 2 ? String((+v + (i === 0 ? 1 : 0)) % 24).padStart(2, "0") : "00")
+        .join(":");
 
       const newItem = {
-        id: Date.now(),
-        typeId: this.newTraining.typeId,
+        id: "",
+        name: "Name",
+        about: "About",
+        trainerId: this.trainerId,
+        trainingTypeId: this.newTraining.typeId,
+        capacity: 20,
+        clientIds: [],
+        date: date,
+        startTime: time + ":00",
+        endTime: timePlusOneHour,
         dateTime: this.newTraining.dateTime,
       };
-
-      this.trainings.push(newItem);
 
       // reset form
       this.newTraining = { typeId: "", dateTime: "" };
 
-      // later API (data_services.js)
+      reservationService.createGroupReservation(newItem)
+        .then(response => {
+          if (response.status === 201) {
+            alert("New group training added!")
+          } else {
+            console.warn("Booking failed with status:", response.status);
+            alert("Training not created!")
+          }
+        })
     },
 
     getTrainingTypeName(typeId) {

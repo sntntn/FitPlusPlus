@@ -16,55 +16,55 @@ public class ReservationService : IReservationService
         _notificationPublisher = notificationPublisher ?? throw new ArgumentNullException(nameof(notificationPublisher));
     }
     
-    public async Task<IEnumerable<IndividualReservation>> GetIndividualReservations()
+    public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsAsync()
     {
         var reservations = await _reservationRepository.GetIndividualReservationsAsync();
         return reservations;
     }
 
-    public async Task<IEnumerable<GroupReservation>> GetGroupReservations()
+    public async Task<IEnumerable<GroupReservation>> GetGroupReservationsAsync()
     {
         var reservations = await _reservationRepository.GetGroupReservationsAsync();
         return reservations;
     }
 
-    public async Task<IndividualReservation> GetIndividualReservation(string id)
+    public async Task<IndividualReservation> GetIndividualReservationAsync(string id)
     {
         var reservation = await _reservationRepository.GetIndividualReservationByIdAsync(id);
         return reservation;
     }
 
-    public async Task<GroupReservation> GetGroupReservation(string id)
+    public async Task<GroupReservation> GetGroupReservationAsync(string id)
     {
         var reservation = await _reservationRepository.GetGroupReservationByIdAsync(id);
         return reservation;
     }
 
-    public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByClientId(string clientId)
+    public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByClientIdAsync(string clientId)
     {
         var reservations = await _reservationRepository.GetIndividualReservationsByClientIdAsync(clientId);
         return reservations;
     }
 
-    public async Task<IEnumerable<GroupReservation>> GetGroupReservationsByClientId(string clientId)
+    public async Task<IEnumerable<GroupReservation>> GetGroupReservationsByClientIdAsync(string clientId)
     {
         var reservations = await _reservationRepository.GetGroupReservationsByClientIdAsync(clientId);
         return reservations;
     }
 
-    public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByTrainerId(string trainerId)
+    public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByTrainerIdAsync(string trainerId)
     {
         var reservations = await _reservationRepository.GetIndividualReservationsByTrainerIdAsync(trainerId);
         return reservations;
     }
 
-    public async Task<IEnumerable<GroupReservation>> GetGroupReservationsByTrainerId(string trainerId)
+    public async Task<IEnumerable<GroupReservation>> GetGroupReservationsByTrainerIdAsync(string trainerId)
     {
         var reservations = await _reservationRepository.GetGroupReservationsByTrainerIdAsync(trainerId);
         return reservations;
     }
 
-    public async Task<bool> CreateIndividualReservation(IndividualReservation individualReservation)
+    public async Task<bool> CreateIndividualReservationAsync(IndividualReservation individualReservation)
     {
         if (await IsClientFree(individualReservation.ClientId, individualReservation.Date,
                 individualReservation.StartTime, individualReservation.EndTime)
@@ -85,7 +85,7 @@ public class ReservationService : IReservationService
         return false;
     }
 
-    public async Task<bool> CreateGroupReservation(GroupReservation groupReservation)
+    public async Task<bool> CreateGroupReservationAsync(GroupReservation groupReservation)
     {
         if (await IsTrainerFree(groupReservation.TrainerId, groupReservation.Date,
                 groupReservation.StartTime, groupReservation.EndTime))
@@ -100,7 +100,7 @@ public class ReservationService : IReservationService
         return false;
     }
 
-    public async Task<bool> UpdateIndividualReservation(IndividualReservation individualReservation)
+    public async Task<bool> UpdateIndividualReservationAsync(IndividualReservation individualReservation)
     {
         var updated = await _reservationRepository.UpdateIndividualReservationAsync(individualReservation);
 
@@ -119,7 +119,7 @@ public class ReservationService : IReservationService
         return updated;
     }
 
-    public async Task<bool> UpdateGroupReservation(GroupReservation groupReservation)
+    public async Task<bool> UpdateGroupReservationAsync(GroupReservation groupReservation)
     {
         var updated = await _reservationRepository.UpdateGroupReservationAsync(groupReservation);
 
@@ -138,7 +138,7 @@ public class ReservationService : IReservationService
         return updated;
     }
 
-    public async Task<bool> DeleteIndividualReservation(string id)
+    public async Task<bool> DeleteIndividualReservationAsync(string id)
     {
         var reservation = await _reservationRepository.GetIndividualReservationByIdAsync(id);
         var deleted = await _reservationRepository.DeleteIndividualReservationAsync(id);
@@ -157,10 +157,10 @@ public class ReservationService : IReservationService
         return deleted;
     }
 
-    public async Task<bool> DeleteGroupReservation(string id)
+    public async Task<bool> DeleteGroupReservationAsync(string id)
     {
         var reservation = await _reservationRepository.GetGroupReservationByIdAsync(id);
-        var deleted = await _reservationRepository.UpdateGroupReservationAsync(reservation);
+        var deleted = await _reservationRepository.DeleteGroupReservationAsync(id);
 
         if (deleted)
         {
@@ -177,9 +177,9 @@ public class ReservationService : IReservationService
         return deleted;
     }
 
-    public async Task<bool> BookGroupReservation(string id, string clientId)
+    public async Task<bool> BookGroupReservationAsync(string id, string clientId)
     {
-        var groupReservation = await _reservationRepository.GetGroupReservationByIdAsync(id);
+        var groupReservation = await _reservationRepository.GetGroupReservationByIdAsync(id); 
         if (await IsClientFree(clientId, groupReservation.Date, groupReservation.StartTime, groupReservation.EndTime))
         {
             var booked = await _reservationRepository.BookGroupReservationAsync(id, clientId);
@@ -200,7 +200,7 @@ public class ReservationService : IReservationService
         return false;
     }
 
-    public async Task<bool> CancelGroupReservation(string id, string clientId)
+    public async Task<bool> CancelGroupReservationAsync(string id, string clientId)
     {
         var groupReservation = await _reservationRepository.GetGroupReservationByIdAsync(id);
         var cancelled = await _reservationRepository.CancelGroupReservationAsync(id, clientId);

@@ -19,7 +19,10 @@
         >
           <td class="py-2 px-4">{{ training.name }}</td>
           <td class="py-2 px-4">{{ training.trainer }}</td>
-          <td class="py-2 px-4">{{ training.date }}</td>
+          <td class="py-2 px-4">{{ training.date }}
+            <br>
+            {{  training.startTime }} - {{ training.endTime }}
+          </td>
           <td class="py-2 px-4 text-center">
             <button
               v-if="!training.booked"
@@ -43,40 +46,86 @@
 </template>
 
 <script>
+import data_services from '@/services/data_services';
+import {
+  getAllGroupReservations,
+  bookGroupReservation,
+  cancelGroupReservation
+} from '@/services/ReservationService'
+
 export default {
   name: "GroupTrainingsPage",
 
   data() {
     return {
-      trainings: []
+      trainings: [],
+      trainers: []
     };
   },
 
   created() {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
     console.log("Component created");
-    this.trainings = [
-      { id: 1, name: "Cardio", trainer: "Marko Marković", date: "2025-10-02 18:00", booked: false },
-      { id: 2, name: "Strength", trainer: "Jovan Jovanović", date: "2025-10-03 19:00", booked: true },
-      { id: 3, name: "Yoga", trainer: "Ana Anić", date: "2025-10-04 17:00", booked: false },
-    ];
   },
 
   mounted() {
-    console.log("Component mounted.");
+    this.fetchTrainings()
   },
 
   methods: {
     bookTraining(id) {
       const training = this.trainings.find(t => t.id === id);
-      if (training) training.booked = true;
-      // later API call for reservation
+
+      bookGroupReservation(id, this.$route.params.id)
+        .then(response => {
+          if (response.status === 200) {
+            training.booked = true;
+          } else {
+            console.warn("Booking failed with status:", response.status);
+            alert("Training not booked!")
+          }
+        })
+        .catch(error => {
+          console.error("Booking API call failed:", error);
+          alert("Communication failure!")
+        });
     },
 
     cancelBooking(id) {
       const training = this.trainings.find(t => t.id === id);
-      if (training) training.booked = false;
-      // later API for canceling
+
+      cancelGroupReservation(id, this.$route.params.id)
+        .then(response => {
+          if (response.status === 204) {
+            training.booked = false;
+          } else {
+            console.warn("Cancelling failed with status:", response.status);
+            alert("Training not cancelled!")
+          }
+        })
+        .catch(error => {
+          console.error("Booking API call failed:", error);
+          alert("Communication failure!")
+        });
+    },
+
+    fetchTrainings() {
+      getAllGroupReservations()
+        .then(response => {
+          this.trainings = response.data;
+          return data_services.methods.get_trainers();
+        })
+        .then(response => {
+          this.trainers = response.data;
+          this.trainings.forEach(training => {
+            const trainer = this.trainers.find(t => t.id === training.trainerId);
+            training.trainer = trainer ? trainer.fullName : "Unknown";
+            training.booked = training.clientIds.includes(this.$route.params.id)
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching trainings or trainers:", error);
+        });
     }
   }
 };
