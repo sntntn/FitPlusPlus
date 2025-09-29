@@ -43,12 +43,27 @@ export async function updateNotification(notification) {
     const response = await axios.put(`${NOTIFICATIONS}`, notification, {
       headers: { "Content-Type": "application/json" }
     });
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error updating notification:", error);
     throw error;
   }
 }
+
+export async function markNotificationAsRead(notificationId) {
+  return axios.put(
+    `${NOTIFICATIONS}/${notificationId}/read`, 
+    {}, 
+    { headers: { "Content-Type": "application/json" } }
+  )
+  .then(res => res.data)
+  .catch(err => {
+    console.error("Error marking notification as read:", err);
+    throw err;
+  });
+}
+
 
 export async function deleteAllNotifications() {
   try {

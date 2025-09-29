@@ -36,8 +36,8 @@
         <p><strong>Sadržaj:</strong> {{ selectedNotification.content }}</p>
         <p><strong>Email poslat:</strong> {{ selectedNotification.email ? "Da" : "Ne" }}</p>
         <p><strong>Status:</strong> 
-          <span v-if="selectedNotification.notificationRead">Pročitano</span>
-          <span v-else>Nepročitano</span>
+          <span v-if="selectedNotification.notificationRead">Otvoreno</span>
+          <span v-else>Neotvoreno</span>
         </p>
       </CModalBody>
       <CModalFooter>
@@ -51,6 +51,7 @@
 import {
   getNotificationsByUserId,
   getNotificationById,
+  markNotificationAsRead, // ⬅️ novi endpoint
 } from "@/services/NotificationService"
 
 export default {
@@ -64,7 +65,7 @@ export default {
     }
   },
   created() {
-    this.userId = this.$route.params.id
+    this.userId = this.$route.params.id;
     this.fetchNotifications()
   },
   methods: {
@@ -83,6 +84,17 @@ export default {
     async openNotification(id) {
       try {
         const notif = await getNotificationById(id)
+
+        if (!notif.notificationRead) {
+          await markNotificationAsRead(id)
+
+          notif.notificationRead = true
+          const index = this.notifications.findIndex(n => n.id === id)
+          if (index !== -1) {
+            this.notifications[index].notificationRead = true
+          }
+        }
+
         this.selectedNotification = notif
         this.showModal = true
       } catch (err) {
