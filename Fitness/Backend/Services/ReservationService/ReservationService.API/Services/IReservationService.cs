@@ -4,35 +4,35 @@ namespace ReservationService.API.Services;
 
 public interface IReservationService
 {
-    Task<IEnumerable<IndividualReservation>> GetIndividualReservations();
+    Task<IEnumerable<IndividualReservation>> GetIndividualReservationsAsync();
 
-    Task<IEnumerable<GroupReservation>> GetGroupReservations();
+    Task<IEnumerable<GroupReservation>> GetGroupReservationsAsync();
 
-    Task<IndividualReservation> GetIndividualReservation(string id);
+    Task<IndividualReservation> GetIndividualReservationAsync(string id);
 
-    Task<GroupReservation> GetGroupReservation(string id);
+    Task<GroupReservation> GetGroupReservationAsync(string id);
 
-    Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByClientId(string clientId);
+    Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByClientIdAsync(string clientId);
 
-    Task<IEnumerable<GroupReservation>> GetGroupReservationsByClientId(string clientId);
+    Task<IEnumerable<GroupReservation>> GetGroupReservationsByClientIdAsync(string clientId);
 
-    Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByTrainerId(string trainerId);
+    Task<IEnumerable<IndividualReservation>> GetIndividualReservationsByTrainerIdAsync(string trainerId);
 
-    Task<IEnumerable<GroupReservation>> GetGroupReservationsByTrainerId(string trainerId);
+    Task<IEnumerable<GroupReservation>> GetGroupReservationsByTrainerIdAsync(string trainerId);
 
-    Task<bool> CreateIndividualReservation(IndividualReservation individualReservation);
+    Task<bool> CreateIndividualReservationAsync(IndividualReservation individualReservation);
 
-    Task<bool> CreateGroupReservation(GroupReservation groupReservation);
+    Task<bool> CreateGroupReservationAsync(GroupReservation groupReservation);
 
-    Task<bool> UpdateIndividualReservation(IndividualReservation individualReservation);
+    Task<bool> UpdateIndividualReservationAsync(IndividualReservation individualReservation);
 
-    Task<bool> UpdateGroupReservation(GroupReservation groupReservation);
+    Task<bool> UpdateGroupReservationAsync(GroupReservation groupReservation);
 
-    Task<bool> DeleteIndividualReservation(string id);
+    Task<bool> DeleteIndividualReservationAsync(string id);
 
-    Task<bool> DeleteGroupReservation(string id);
+    Task<bool> DeleteGroupReservationAsync(string id);
 
-    Task<bool> BookGroupReservation(string id, string clientId);
+    Task<bool> BookGroupReservationAsync(string id, string clientId);
 
-    Task<bool> CancelGroupReservation(string id, string clientId);
+    Task<bool> CancelGroupReservationAsync(string id, string clientId);
 }
