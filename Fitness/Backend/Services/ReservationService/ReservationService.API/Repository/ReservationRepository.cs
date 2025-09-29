@@ -93,7 +93,7 @@ namespace ReservationService.API.Repository
         public async Task<bool> BookGroupReservationAsync(string id, string clientId)
         {
             var reservation = await GetGroupReservationByIdAsync(id);
-            if (reservation.Capacity >= reservation.ClientIds.Count)
+            if (reservation.Capacity <= reservation.ClientIds.Count || reservation.ClientIds.Contains(clientId))
                 return false;
             
             reservation.ClientIds.Add(clientId);
