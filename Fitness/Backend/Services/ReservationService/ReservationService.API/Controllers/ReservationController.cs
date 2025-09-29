@@ -1,10 +1,8 @@
-using AutoMapper;
-using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservationService.API.Entities;
-using ReservationService.API.Publishers;
-using ReservationService.API.Repository;
+using ReservationService.API.Services;
+
 // ReSharper disable All
 
 namespace ReservationService.API.Controllers;
@@ -14,13 +12,11 @@ namespace ReservationService.API.Controllers;
 [Route("api/v1/[controller]")]
 public class ReservationController : ControllerBase
 {
-    private readonly IReservationRepository _repository;
-    private readonly INotificationPublisher _notificationPublisher;
+    private readonly IReservationService _reservationService;
 
-    public ReservationController(IReservationRepository repository, INotificationPublisher notificationPublisher)
+    public ReservationController(IReservationService reservationService)
     {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _notificationPublisher = notificationPublisher ?? throw new ArgumentNullException(nameof(notificationPublisher));
+        _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService)); 
     }
 
     //[Authorize(Roles = "Admin")]
@@ -28,7 +24,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservations()
     {
-        var reservations = await _repository.GetIndividualReservationsAsync();
+        var reservations = await _reservationService.GetIndividualReservations();
         return Ok(reservations);
     }
 
@@ -37,7 +33,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservations()
     {
-        var reservations = await _repository.GetGroupReservationsAsync();
+        var reservations = await _reservationService.GetGroupReservations();
         return Ok(reservations);
     }
     
@@ -47,7 +43,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IndividualReservation>> GetIndividualReservation(string id)
     {
-        var reservation = await _repository.GetIndividualReservationByIdAsync(id);
+        var reservation = await _reservationService.GetIndividualReservation(id);
         if (reservation == null) return NotFound();
         return Ok(reservation);
     }
@@ -58,7 +54,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupReservation>> GetGroupReservation(string id)
     {
-        var reservation = await _repository.GetGroupReservationByIdAsync(id);
+        var reservation = await _reservationService.GetGroupReservation(id);
         if (reservation == null) return NotFound();
         return Ok(reservation);
     }
@@ -68,7 +64,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservationsByClientId(string clientId)
     {
-        var reservations = await _repository.GetIndividualReservationsByClientIdAsync(clientId);
+        var reservations = await _reservationService.GetIndividualReservationsByClientId(clientId);
         return Ok(reservations);
     }
     
@@ -77,7 +73,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservationsByClientId(string clientId)
     {
-        var reservations = await _repository.GetGroupReservationsByClientIdAsync(clientId);
+        var reservations = await _reservationService.GetGroupReservationsByClientId(clientId);
         return Ok(reservations);
     }
 
@@ -86,7 +82,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservationsByTrainerId(string trainerId)
     {
-        var reservations = await _repository.GetIndividualReservationsByTrainerIdAsync(trainerId);
+        var reservations = await _reservationService.GetIndividualReservationsByTrainerId(trainerId);
         return Ok(reservations);
     }
     
@@ -95,7 +91,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservationsByTrainerId(string trainerId)
     {
-        var reservations = await _repository.GetGroupReservationsByTrainerIdAsync(trainerId);
+        var reservations = await _reservationService.GetGroupReservationsByTrainerId(trainerId);
         return Ok(reservations);
     }
     
@@ -104,15 +100,15 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<IndividualReservation>> CreateIndividualReservation([FromBody] IndividualReservation reservation)
     {
-        // You need to check the availability of the client and the trainer!!!
-        await _repository.CreateIndividualReservationAsync(reservation);
-
-        var users = new Dictionary<string, string>();
-        users.Add(reservation.ClientId, "Client");
-        users.Add(reservation.TrainerId, "Trainer");
-        await _notificationPublisher.PublishNotification("Training reservation created", reservation.ToString(), "Information", true, users);
-        
-        return CreatedAtRoute(nameof(GetIndividualReservation), new { id = reservation.Id }, reservation);
+        var created = await _reservationService.CreateIndividualReservation(reservation);
+        if (created)
+        {
+            return CreatedAtRoute(nameof(GetIndividualReservation), new { id = reservation.Id }, reservation);
+        }
+        else
+        {
+            return BadRequest();
+        }
     }
     
     //[Authorize(Roles = "Trainer")]
@@ -120,9 +116,15 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<GroupReservation>> CreateGroupReservation([FromBody] GroupReservation reservation)
     {
-        // You need to check the availability of the trainer!!!
-        await _repository.CreateGroupReservationAsync(reservation);
-        return CreatedAtRoute(nameof(GetGroupReservation), new { id = reservation.Id }, reservation);
+        var created = await _reservationService.CreateGroupReservation(reservation);
+        if (created)
+        {
+            return CreatedAtRoute(nameof(GetIndividualReservation), new { id = reservation.Id }, reservation);
+        }
+        else
+        {
+            return BadRequest();
+        }
     }
     
     //[Authorize(Roles = "Client, Trainer")]
@@ -130,19 +132,15 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateIndividualReservation([FromBody] IndividualReservation reservation)
     {
-        // Also we need to check if the updated information make sense -- are the client and the trainer available
-        var updated = await _repository.UpdateIndividualReservationAsync(reservation);
-
+        var updated = await _reservationService.UpdateIndividualReservation(reservation);
         if (updated)
         {
-            var users = new Dictionary<string, string>();
-            users.Add(reservation.ClientId, "Client");
-            users.Add(reservation.TrainerId, "Trainer");
-            await _notificationPublisher.PublishNotification("Training reservation updated", reservation.ToString(),
-                "Information", true, users);
+            return Ok(reservation);
         }
-
-        return Ok(updated);
+        else
+        {
+            return BadRequest();
+        }
     }  
     
     //[Authorize(Roles = "Trainer")]
@@ -150,44 +148,31 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateGroupReservation([FromBody] GroupReservation reservation)
     {
-        // Also we need to check if the updated information make sense -- is the trainer available
-        var updated = await _repository.UpdateGroupReservationAsync(reservation);
-
+        var updated = await _reservationService.UpdateGroupReservation(reservation);
         if (updated)
         {
-            var users = new Dictionary<string, string>();
-            foreach (var clientId in reservation.ClientIds)
-            {
-                users.Add(clientId, "Client");
-            }
-            users.Add(reservation.TrainerId, "Trainer");
-            await _notificationPublisher.PublishNotification("Training reservation updated", reservation.ToString(),
-                "Information", true, users);
+            return Ok(reservation);
         }
-
-        return Ok(updated);
+        else
+        {
+            return  BadRequest();
+        }
     }
 
     //[Authorize(Roles = "Client, Trainer")]
     [HttpDelete("individual/{id}")]
-    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteIndividualReservation(string id)
     {
-        var reservation = await _repository.GetIndividualReservationByIdAsync(id);
-        var deleted = await _repository.DeleteIndividualReservationAsync(id);
-
+        var deleted =  await _reservationService.DeleteIndividualReservation(id);
         if (deleted)
         {
-            var users = new Dictionary<string, string>
-            {
-                { reservation.ClientId, "Client" },
-                { reservation.TrainerId, "Trainer" }
-            };
-            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
-                "Information", true, users);
+            return NoContent();
         }
-
-        return Ok(deleted);
+        else
+        {
+            return BadRequest();
+        }
     }
 
     //[Authorize(Roles = "Trainer")]
@@ -195,22 +180,15 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteGroupReservation(string id)
     {
-        var reservation = await _repository.GetGroupReservationByIdAsync(id);
-        var deleted = await _repository.UpdateGroupReservationAsync(reservation);
-
+        var deleted =  await _reservationService.DeleteGroupReservation(id);
         if (deleted)
         {
-            var users = new Dictionary<string, string>();
-            foreach (var clientId in reservation.ClientIds)
-            {
-                users.Add(clientId, "Client");
-            }
-            users.Add(reservation.TrainerId, "Trainer");
-            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
-                "Information", true, users);
+            return NoContent();
         }
-
-        return Ok(deleted);
+        else
+        {
+            return BadRequest();
+        }
     }
 
     //[Authorize(Roles = "Client")]
@@ -218,40 +196,30 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> BookGroupReservation(string id, [FromQuery] string clientId)
     {
-        var reservation = await _repository.GetGroupReservationByIdAsync(id);
-        var booked = await _repository.BookGroupReservationAsync(id, clientId);
-
+        var booked = await _reservationService.BookGroupReservation(id, clientId);
         if (booked)
         {
-            var users = new Dictionary<string, string>();
-            users.Add(clientId, "Client");
-            users.Add(reservation.TrainerId, "Trainer");
-            await _notificationPublisher.PublishNotification("Training reservation booked", reservation.ToString(),
-                "Information", true, users);
+            return Ok();
         }
-        
-        return Ok(booked);
+        else
+        {
+            return BadRequest();
+        }
     }
 
     //[Authorize(Roles = "Client")]
     [HttpPost("group/cancel/{id}")]
-    [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelGroupReservation(string id, [FromQuery] string clientId)
     { 
-        var reservation = await _repository.GetGroupReservationByIdAsync(id);
-        var cancelled = await _repository.CancelGroupReservationAsync(id, clientId);
-
+        var cancelled = await _reservationService.CancelGroupReservation(id, clientId);
         if (cancelled)
         {
-            var users = new Dictionary<string, string>
-            {
-                { clientId, "Client" },
-                { reservation.TrainerId, "Trainer" }
-            };
-            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
-                "Information", true, users);
+            return NoContent();
         }
-        
-        return Ok(cancelled);
+        else
+        {
+            return BadRequest();
+        }
     }
 }
