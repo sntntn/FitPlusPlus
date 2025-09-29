@@ -11,7 +11,7 @@ public class IndividualReservation
     public string ClientId { get; set; }
     public string TrainerId { get; set; }
     public string TrainingTypeId { get; set; }
-    public TimeSpan StartTime { get; set; }
-    public TimeSpan EndTime { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
     public DateOnly Date { get; set; }
 }

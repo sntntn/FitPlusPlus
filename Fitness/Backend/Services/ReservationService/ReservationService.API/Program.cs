@@ -4,12 +4,14 @@ using ReservationService.API.Data;
 using ReservationService.API.Entities;
 using ReservationService.API.Publishers;
 using ReservationService.API.Repository;
+using ReservationService.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IContext, Context>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<INotificationPublisher, NotificationPublisher>();
+builder.Services.AddScoped<IReservationService, ReservationService.API.Services.ReservationService>();
 
 builder.Services.AddControllers();
 // Add services to the container.
