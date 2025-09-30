@@ -114,6 +114,12 @@ export async function bookGroupReservation(id, clientId) {
   return response;
 }
 
+// Client - cancel individual reservation
+export async function cancelClientIndividualReservation(id) {
+  const response = await axios.put(`${RESERVATIONS}/individual/client/cancel/${id}`);
+  return response;
+}
+
 // Client - cancel group reservation
 export async function cancelGroupReservation(id, clientId) {
   const response = await axios.post(`${RESERVATIONS}/group/cancel/${id}`, null, {
