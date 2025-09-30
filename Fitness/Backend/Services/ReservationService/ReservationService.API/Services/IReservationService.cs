@@ -27,7 +27,7 @@ public interface IReservationService
     Task<bool> UpdateIndividualReservationAsync(IndividualReservation individualReservation);
 
     Task<bool> UpdateGroupReservationAsync(GroupReservation groupReservation);
-
+    
     Task<bool> DeleteIndividualReservationAsync(string id);
 
     Task<bool> DeleteGroupReservationAsync(string id);
