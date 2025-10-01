@@ -18,6 +18,7 @@ const TRAININGS = "http://localhost:8007";
 //const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
 //const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
 //const PAYMENT = "http://localhost:8003/api/v1/Payment";
+//const TRAININGS = `${GATEWAY_URL}/training`;
 
 export default {
     methods: {
@@ -214,7 +215,38 @@ export default {
 
         get_trainings_for_client(cli_id){
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${TRAININGS}/api/v1/Training/training/trainingClient/${cli_id}`);
+          return  axios.get(`${TRAININGS}/trainingClient/${cli_id}`);
+        },
+
+        get_trainings_for_trainer(trainer_id){
+        //axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          try{
+            const data =  axios.get(`${TRAININGS}/trainingTrainer/${trainer_id}`);
+          } catch (error) {
+            console.error("Error fetching trainings!", error);
+            throw error;
+          }
+        },
+
+        create_exercise(exercise) {
+            axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+            return axios.post(`${TRAININGS}/exercise`, exercise);
+        },
+
+        get_exercises_by_trainer(trainer_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/exercises/${trainer_id}`);
+        },
+
+        upload_video(file) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          const formData = new FormData();
+          formData.append("file", file);
+          const response = axios.post(`http://localhost:8004/api/v1/upload/video`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+
+          return response.data; // { fileName: "imeFajla.mp4" }
         }
     }
 }
