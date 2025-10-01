@@ -21,6 +21,12 @@ export function generateTrainerNav(id) {
     },
     {
       component: 'CNavItem',
+      name: 'Nutrition Plan',
+      to: `/trainer/${id}/nutrition-plan`,
+      icon: 'cil-pencil',  
+    },
+    {
+      component: 'CNavItem',
       name: 'Chat',
       to: `/trainer/${id}/chat`,
       icon: 'cil-speech',
@@ -61,6 +67,12 @@ export function generateClientNav(id) {
       name: 'Individual training',
       to: `/client/${id}/individualTrainings`,
       icon: 'cil-user-follow',
+    },
+    {
+      component: 'CNavItem',
+      name: 'Nutrition Plan',
+      to: `/client/${id}/nutrition-plan`,
+      icon: 'cil-pencil',
     },
     {
       component: 'CNavItem',
