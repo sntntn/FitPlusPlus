@@ -88,6 +88,19 @@ const routes = [
         name: 'Client Chat',
         component: () => import('@/views/pages/ClientChat.vue'),
       },
+      
+      {
+        path: '/client/:id/nutrition-plan',
+        name: 'Client Nutrition Plan',
+        component: () => import('@/views/pages/ClientNutritionPlan.vue'),
+      },
+      
+      {
+        path: '/trainer/:id/nutrition-plan',
+        name: 'Trainer Nutrition Plan',
+        component: () => import('@/views/pages/TrainerNutritionPlan.vue'),
+      },
+      
 
       {
         path: '/client/:id/pay-chat/:trainerId',
