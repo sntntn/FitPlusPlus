@@ -109,6 +109,8 @@ services:
       dockerfile: Services/videoTrainingService/videoTrainingService.API/Dockerfile
     depends_on:
       - videotrainingdb
+    volumes:
+      - ./uploads:/app/uploads
       
 volumes:
   trainermongo_data:
