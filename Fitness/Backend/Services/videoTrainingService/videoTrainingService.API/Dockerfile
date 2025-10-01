@@ -1,6 +1,10 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+
 WORKDIR /app
+RUN mkdir /app/uploads
+RUN chmod 777 /app/uploads
+RUN chown -R $APP_UID /app/uploads
+
 EXPOSE 8080
 EXPOSE 8081
 
