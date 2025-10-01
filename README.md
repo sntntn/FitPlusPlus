@@ -12,17 +12,16 @@ This project is an **extension of the previous FitPlusPlus application**, which 
 
 ### Current Development Team (2024):
 
-1. **Aleksandra Labović** – Student ID: 1025/2024&#x20;
-2. **Vukašin Marković** – Student ID: 1051/2024
-3. **Stefan Milenković** – Student ID: 1076/2024&#x20;
-4. **Milan Mitreski** – Student ID: 1073/2024
-5. **Natalija Filipović** – Student ID: 1013/2024
+1. **Marković Vukašin** – Student ID: 1051/2024
+2. **Milenković Stefan** – Student ID: 1076/2024;
+3. **Mitreski Milan** – Student ID: 1073/2024
+4. **Filipović Natalija** – Student ID: 1013/2024
 
 ### Previous Development Team (2023):
 
-1. **Lazar Stanojević** – Student ID: 1013/2023
-2. **Vasilije Todorović** – Student ID: 1015/2023
-3. **Nikola Belaković** – Student ID: 1023/2023
+3. **Belaković Nikola** – Student ID: 1023/2023
+1. **Stanojević Lazar** – Student ID: 1013/2023
+2. **Todorović Vasilije** – Student ID: 1015/2023
 
 GitHub Repository of the Previous Project: [FitPlusPlus](https://github.com/lazars01/FitPlusPlus)
 
@@ -77,19 +76,15 @@ The FitPlusPlus application consists of multiple microservices, some developed b
    - Enables **booking of individual and group training sessions**.
    - Supports **real-time scheduling, cancellation, and availability tracking**.
 
-4. **ManagerService**
-   - A service for **gym administrators**, providing tools for managing trainers, clients, and finances.
-   - Generates **performance reports and financial summaries**.
-
-5. **NotificationService**
+4. **NotificationService**
    - Sends **push and email notifications** to clients, trainers, and administrators.
    - Includes **reservation confirmations, training reminders, and membership renewal alerts**.
 
-6. **AnalyticsService**
+5. **AnalyticsService**
    - Creates **detailed statistics** on training sessions, client engagement, and trainer performance.
    - Provides insights into **popular training types and user activity trends**.
 
-7. **Gateway and Discovery Service**
+6. **Gateway and Discovery Service**
    - A **centralized API gateway** that directs requests to the correct microservice.
    - Facilitates **automatic detection and scaling** of microservices.
 
