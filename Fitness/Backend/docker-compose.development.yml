@@ -241,6 +241,7 @@ services:
       - "8007:8080"
       
   nutritionservice.api:
+    container_name: nutritionservice.api
     ports:
       - "8157:8080"
     #volumes:
