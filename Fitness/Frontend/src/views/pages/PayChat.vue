@@ -28,6 +28,9 @@
         <p>
           Secure your 30-day chat mentorship now!
         </p>
+        <button @click="redirectToPayPal" class="paypal-button">
+          Pay with PayPal
+        </button>
       </div>
     </div>
 </template>
@@ -37,7 +40,13 @@
     name: "PayChat",
     mounted() {
       this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
-     
+    },
+    methods: {
+      redirectToPayPal() {
+        const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=STAVITI_PAYPAL_MAIL&item_name=Chat Mentorship&amount=30.00&currency_code=USD`;
+        
+        window.location.href = paypalUrl;
+      }
     }
 
   };
@@ -115,6 +124,21 @@
   .payment h2 {
     color: #b90505;
   }
+
+  .paypal-button {
+    background-color: #0070ba;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .paypal-button:hover {
+    background-color: #005ea6;
+  }
+
 
 </style>
   

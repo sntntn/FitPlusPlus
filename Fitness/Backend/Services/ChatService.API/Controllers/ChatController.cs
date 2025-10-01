@@ -1,5 +1,7 @@
+using System.Text.Json;
 using ChatService.API.Models;
 using ChatService.API.Repositories;
+using ChatService.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -14,13 +16,17 @@ public class ChatController : ControllerBase
 {
     private readonly IChatRepository _chatRepository;
     private readonly IMongoClient _mongoClient;
+    private readonly WebSocketHandler _webSocketHandler;
 
-    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient)
+
+    public ChatController(IChatRepository chatRepository, IMongoClient mongoClient, WebSocketHandler webSocketHandler)
     {
         _chatRepository = chatRepository;
         _mongoClient = mongoClient;
+        _webSocketHandler = webSocketHandler;
+
     }
-    [HttpGet("sessions/{userId}/basic-info")]
+    [HttpGet("sessions/{userId}/my-sessions-summary")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
     {
         var basicInfo = await _chatRepository.GetBasicInfoForSessionsAsync(userId);
@@ -39,7 +45,7 @@ public class ChatController : ControllerBase
     {
         if (senderType != "trainer" && senderType != "client")
         {
-            return BadRequest(new { Message = "Invalid sender type. Must be either 'Trainer' or 'Client'." });
+            return BadRequest(new { Message = "Invalid sender type. Must be either 'trainer' or 'client'." });
         }
         var session = await _chatRepository.GetChatSessionAsync(trainerId, clientId);
 
@@ -60,8 +66,13 @@ public class ChatController : ControllerBase
             SenderType = senderType
         };
 
-        await _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage);
-
+        var sessionKey = _webSocketHandler.GetSessionKey(trainerId, clientId);
+        
+        await Task.WhenAll(
+            _webSocketHandler.BroadcastMessage(sessionKey, JsonSerializer.Serialize(newMessage)),
+            _chatRepository.AddMessageToChatSessionAsync(session.Id.ToString(), newMessage)
+        );
+        
         return CreatedAtAction(nameof(GetMessagesFromSession), new { trainerId, clientId }, newMessage);
     }
 
@@ -141,21 +152,5 @@ public class ChatController : ControllerBase
         
         return NoContent();
     }
-
-    // privremena metoda za testiranje
-    [HttpGet("test-mongo-connection")]
-    public IActionResult TestMongoConnection()
-    {
-        try
-        {
-            var databases = _mongoClient.ListDatabaseNames().ToList();
-            return Ok(new { Message = "MongoDB connection successful", Databases = databases });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { Message = "MongoDB connection failed", Error = ex.Message });
-        }
-    }
-
     
 }
