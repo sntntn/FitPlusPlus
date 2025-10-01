@@ -97,8 +97,14 @@ const routes = [
 
       {
         path: '/client/:id/videotrainings',
-        name: 'Video Trainings',
-        component: () => import('@/views/pages/VideoTrainings.vue')
+        name: 'Video Trainings Client',
+        component: () => import('@/views/pages/VideoTrainingsClient.vue')
+      },
+
+      {
+        path: '/trainer/:id/videotrainings',
+        name: 'Video Trainings Trainer',
+        component: () => import('@/views/pages/VideoTrainingsTrainer.vue')
       },
     ],
   },

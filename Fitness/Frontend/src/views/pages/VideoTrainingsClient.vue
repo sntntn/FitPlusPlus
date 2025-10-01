@@ -1,9 +1,4 @@
 <template>
-  <div>
-    <p v-if="isAvailable"> {{ message }} </p>
-    <p v-else> {{ message }} </p>
-  </div>
-
   <div id="wrapper">
     <h1> Available programs: </h1>
     <figure class="trainings" v-for="training in trainings" :style="{ backgroundImage: `url(${training.type})`}">
@@ -23,9 +18,8 @@ export default {
   name: "VideoTrainings",
 
   data(){
-    return{
+    return {
       isAvailable: false,
-      message: 'Probna verzija!',
       trainings: [
         { name: 'Prvi', type: require('@/assets/images/running.jpeg')},
         { name: 'Drugi', type: require('@/assets/images/strength.jpg')},
@@ -33,14 +27,11 @@ export default {
         { name: 'Cetvrti', type: require('@/assets/images/home.jpeg')},
         { name: 'Peti', type: require('@/assets/images/strength.jpg')},
         { name: 'Sesti', type: require('@/assets/images/running.jpeg')},
-      ]
+      ], 
     }
   },
 
   methods: {
-    async getTraining(){
-      this.message = 'Radim za klijenta!';
-    },
 
     buyProgram(){
         alert("Kupili ste program!");
@@ -49,21 +40,27 @@ export default {
   },
 
   beforeMount() {
-    this.getTraining();
   },
 
   mounted() {
-    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
+    const id = this.$route.params.id;
+
+    this.$parent.$parent.$parent.setUserData(id, "client");
+
+    /*dataServices.methods.get_trainings_for_client(id).then(response => {
+      if(response.data != null){
+        this.trainings = response.data;
+      }
+    }).catch(error => {
+      console.error('Error fetching trainers:', error);
+      loader.hide();
+    });*/
   }
 }
 
 </script>
 
 <style scoped>
-  body {
-    //background-image: url('../../assets/images/fitplusplus.jpeg');
-    //background-size: cover;
-  }
 
   figure {
     position: relative;

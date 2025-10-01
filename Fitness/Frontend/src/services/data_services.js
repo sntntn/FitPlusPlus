@@ -8,7 +8,8 @@ const CLIENT = `${GATEWAY_URL}/client`;
 const AUTH_URL = `${GATEWAY_URL}/authentication`;
 const MSSQL_USERS = `${GATEWAY_URL}/user`;
 const PAYMENT = `${GATEWAY_URL}/payment`;
-const TRAININGS = "http://localhost:8004/api/v1/Trainings";
+//const TRAININGS = `${GATEWAY_URL}/training`;
+const TRAININGS =`http://localhost:8004/api/v1/Training`;
 
 
 //const TRAINERS = "http://localhost:8000/api/v1/Trainer";
@@ -219,20 +220,40 @@ export default {
           return axios.get(`${CLIENT}/GetTrainerIdsFromClientSchedule/${cli_id}`);
         },
 
-        async get_trainings_for_client(cli_id){
+        get_trainings_for_client(cli_id){
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return await axios.get(`${TRAININGS}/training/trainingClient/${cli_id}`);
+          return  axios.get(`${TRAININGS}/trainingClient/${cli_id}`);
         },
 
-        async get_trainings_for_trainer(trainer_id){
+        get_trainings_for_trainer(trainer_id){
         //axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-        try{
-          const data = await axios.get(`${TRAININGS}/training/trainingTrainer/${trainer_id}`);
-        } catch (error) {
-          console.error("Error fetching trainings!", error);
-          throw error;
-        }
+          try{
+            const data =  axios.get(`${TRAININGS}/trainingTrainer/${trainer_id}`);
+          } catch (error) {
+            console.error("Error fetching trainings!", error);
+            throw error;
+          }
+        },
+        
+        create_exercise(exercise) {
+            axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+            return axios.post(`${TRAININGS}/exercise`, exercise);
+        },
 
-      }
+        get_exercises_by_trainer(trainer_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/exercises/${trainer_id}`);
+        },
+
+        upload_video(file) {
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          const formData = new FormData();
+          formData.append("file", file);
+          const response = axios.post(`http://localhost:8004/api/v1/upload/video`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+
+          return response.data; // { fileName: "imeFajla.mp4" }
+        }
     }
 }
