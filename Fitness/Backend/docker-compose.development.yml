@@ -84,6 +84,7 @@ services:
       - SA_PASSWORD=MATF12345678rs2
       - ACCEPT_EULA=Y
     restart: always
+    user: root
     ports:
       - "1433:1433"
     volumes:
