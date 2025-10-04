@@ -353,9 +353,10 @@ export default {
       let unavailableSlots = []
 
       getIndividualReservationsByTrainer(this.selectedTrainer.id)
-        .then(list => {
-          list.data.forEach(element => {
+        .then(response => {
+          response.data.forEach(element => {
             unavailableSlots.push({
+              title: "individual",
               date: element.date,
               start: element.startTime,
               end: element.endTime
@@ -363,9 +364,10 @@ export default {
           });
 
           getGroupReservationsByTrainer(this.selectedTrainer.id)
-            .then(list => {
-              list.data.forEach(element => {
+            .then(response => {
+              response.data.forEach(element => {
                 unavailableSlots.push({
+                  title: "group",
                   date: element.date,
                   start: element.startTime,
                   end: element.endTime
@@ -373,7 +375,7 @@ export default {
               });
 
               let unavailableEvents = unavailableSlots.map(t => ({
-                title: 'booked',
+                title: t.title,
                 start: `${t.date}T${t.start}`,
                 end: `${t.date}T${t.end}`,
                 display: 'background'
