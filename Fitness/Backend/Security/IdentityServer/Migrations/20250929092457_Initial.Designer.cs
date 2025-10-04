@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityServer.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241123074920_Initial")]
+    [Migration("20250929092457_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -150,19 +150,19 @@ namespace IdentityServer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ddcce0a9-75cc-4e5b-9b92-04e6ebb8432e",
+                            Id = "397573a6-fde1-4c71-a7ee-c3a475528ffb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "08a19f84-14c0-48c5-9cba-f13b9bd4bed2",
+                            Id = "a0c2a8b8-feaa-44f7-8b93-c391497d0ef9",
                             Name = "Trainer",
                             NormalizedName = "TRAINER"
                         },
                         new
                         {
-                            Id = "4ecf06ad-a066-4e44-a56d-e41b24e3f2cf",
+                            Id = "f9ad2c7c-4042-46c3-a039-b6c05a0b9c5a",
                             Name = "Client",
                             NormalizedName = "CLIENT"
                         });

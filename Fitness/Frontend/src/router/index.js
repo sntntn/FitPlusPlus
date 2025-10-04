@@ -46,23 +46,27 @@ const routes = [
         component: () => import('@/views/pages/Client.vue'),
       },
 
-
       {
-        path: '/client/:id/schedule',
-        name: 'Client Schedule',
-        component: () => import('@/views/pages/ClientSchedule.vue')
+        path: '/client/:id/groupTrainings',
+        name: 'Client Group Trainings',
+        component: () => import('@/views/pages/ClientGroupTrainings.vue')
       },
 
       {
-        path: '/client/:id/schedule/:trainerId',
-        name: 'Book Training',
-        component: () => import('@/views/pages/ClientSchedule.vue')
+        path: '/trainer/:id/groupTrainings',
+        name: 'Trainer Group Trainings',
+        component: () => import('@/views/pages/TrainerGroupTrainings.vue')
       },
+      // {
+      //   path: '/trainer/:id/groupTrainings',
+      //   name: 'Trainer Group Trainings',
+      //   component: () => import('@/views/pages/TrainerGroupTrainings.vue')
+      // },
 
       {
-        path: '/trainer/:id/schedule',
-        name: 'Trainer Schedule',
-        component: () => import('@/views/pages/TrainerSchedule.vue')
+        path: '/client/:id/individualTrainings',
+        name: 'Client Individual Trainings',
+        component: () => import('@/views/pages/ClientIndividualTrainings.vue')
       },
 
       {

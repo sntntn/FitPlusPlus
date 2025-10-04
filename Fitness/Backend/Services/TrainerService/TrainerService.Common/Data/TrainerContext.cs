@@ -12,11 +12,8 @@ namespace TrainerService.Common.Data
             var database = client.GetDatabase("TrainerDB");
 
             Trainers = database.GetCollection<Trainer>("Trainers");
-
-            TrainerSchedules = database.GetCollection<TrainerSchedule>("TrainerSchedules");
         }
 
         public IMongoCollection<Trainer> Trainers { get; }
-        public IMongoCollection<TrainerSchedule> TrainerSchedules { get; }
     }
 }

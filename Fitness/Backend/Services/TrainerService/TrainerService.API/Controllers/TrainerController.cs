@@ -18,14 +18,12 @@ namespace TrainerService.API.Controllers
         private readonly ITrainerRepository _repository;
         private readonly ReviewGrpcService _reviewGrpcService;
         private readonly IMapper _mapper;
-        private readonly IPublishEndpoint _publishEndpoint;
 
-        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper, IPublishEndpoint publishEndpoint)
+        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _reviewGrpcService = reviewGrpcService ?? throw new ArgumentNullException(nameof(reviewGrpcService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
 
@@ -170,54 +168,6 @@ namespace TrainerService.API.Controllers
         public async Task<ActionResult> DeleteTrainer(string id)
         {
             return Ok(await _repository.DeleteTrainer(id));
-        }
-
-        // [Authorize(Roles = "Trainer, Client")]
-        [Route("[action]/{id}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TrainerSchedule>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TrainerSchedule>> GetTrainerScheduleByTrainerId(string id)
-        {
-            var result = await _repository.GetTrainerScheduleByTrainerId(id);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-        // [Authorize(Roles = "Trainer, Client")]
-        [Route("[action]/{trainerId}/{weekId}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(WeeklySchedule), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<WeeklySchedule>> GetTrainerWeekSchedule(string trainerId, int weekId)
-        {
-            var result = await _repository.GetTrainerWeekSchedule(trainerId, weekId);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-        // [Authorize(Roles = "Trainer")]
-        [Route("[action]")]
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CancelTraining([FromBody] CancelTrainingInformation cti)
-        {
-            var result = await _repository.CancelTraining(cti);
-            if (result)
-            {
-                //send to client
-                var eventMessage = _mapper.Map<TrainerCancellingTrainingEvent>(cti);
-                await _publishEndpoint.Publish(eventMessage);
-                return Ok();
-            }
-            return BadRequest();
         }
     }
 }

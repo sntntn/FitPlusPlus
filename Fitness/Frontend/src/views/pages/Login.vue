@@ -86,9 +86,12 @@ export default {
 
           dataServices.methods.get_user(this.username)
             .then( (response) => {
+              console.log("ovo je 1. response koji smo dobili: ", response);
               this.email = response.data.email;
+              console.log("Ovo je mejl koji nas zanima: ", this.email);
               dataServices.methods.get_user_id(role, this.email)
                 .then( (response) => {
+                  console.log("ovo je 2. response koji smo dobili: ", response);
                   sessionStorage.setItem('userId', response.data.id);
                   const id = response.data.id;
                   if(role == 'Trainer') {
@@ -96,6 +99,7 @@ export default {
                   }
                   else {
                     this.$router.push('/client/' + id);
+                    console.log("ovo je Id koji zelimo: " + id);
                   }
 
                   loader.hide();

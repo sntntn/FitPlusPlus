@@ -10,13 +10,11 @@ namespace ClientService.Common.Data
         {
 
             var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-            var database = client.GetDatabase("ClientsAndSchedules");
+            var database = client.GetDatabase("ClientDB");
 
             Clients = database.GetCollection<Client>("Clients");
-            ClientSchedules = database.GetCollection<ClientSchedule>("ClientSchedules");
         }
 
         public IMongoCollection<Client> Clients { get; }
-        public IMongoCollection<ClientSchedule> ClientSchedules { get; }
     }
 }

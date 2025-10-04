@@ -16,7 +16,6 @@ namespace TrainerService.API.GrpcServices
             var getReviewsRequest = new GetReviewsRequest();
             getReviewsRequest.TrainerId = trainerId;
             return await _reviewProtoServiceClient.GetReviewsAsync(getReviewsRequest);
-
         }
     }
 }

@@ -14,11 +14,5 @@ namespace ClientService.Common.Repositories
         Task<bool> UpdateClient(Client client);
         Task<bool> DeleteClient(string id);
         Task DeleteAllClients();
-        Task<ClientSchedule> GetClientScheduleByClientId(string id);
-        Task<WeeklySchedule> GetClientWeekSchedule(string clientId, int weekId);
-        Task<IEnumerable<string>> GetTrainerIdsFromClientSchedule(string clientId);
-        Task<bool> UpdateClientSchedule(ClientSchedule clientSchedule);
-        Task<bool> BookTraining(BookTrainingInformation bti);
-        Task CancelledTrainingByTrainer(CancelTrainingInformation cti);
     }
 }
