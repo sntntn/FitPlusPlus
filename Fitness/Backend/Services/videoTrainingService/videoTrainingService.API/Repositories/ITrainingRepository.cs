@@ -9,7 +9,7 @@ namespace videoTrainingService.API.Repositories
         Task CreateExercise(Exercise exercise);
         Task<bool> UpdateExercise(Exercise exercise);
         Task<bool> DeleteExercise(string id);
-        Task<IEnumerable<Training>> GetTrainingsForClient(string clientId);
+        Task<IEnumerable<Training>> GetTrainingsForClient();
         Task<IEnumerable<Training>> GetTrainingsForTrainer(string trainerId);
         Task<Training> GetTraining(string id);
         Task CreateTraining(Training training);
@@ -19,7 +19,7 @@ namespace videoTrainingService.API.Repositories
         Task<TrainingExercise> GetTrainingExercise(string id);
         Task CreateTrainingExercise(TrainingExercise trainingExercise);
         Task<bool> UpdateTrainingExercise(TrainingExercise trainingExercise);
-        Task<bool> DeleteTrainingExercise(string id);
+        Task<bool> DeleteTrainingExercises(string trainingId);
         
     }
 }
