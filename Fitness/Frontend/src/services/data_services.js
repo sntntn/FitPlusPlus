@@ -213,24 +213,14 @@ export default {
           return axios.post(`${REVIEW}/trainer/${request.trainerId}`, request);
         },
 
-        get_trainings_for_client(cli_id){
-          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return  axios.get(`${TRAININGS}/trainingClient/${cli_id}`);
-        },
-
-        get_trainings_for_trainer(trainer_id){
-        //axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          try{
-            const data =  axios.get(`${TRAININGS}/trainingTrainer/${trainer_id}`);
-          } catch (error) {
-            console.error("Error fetching trainings!", error);
-            throw error;
-          }
-        },
-
         create_exercise(exercise) {
             axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
             return axios.post(`${TRAININGS}/exercise`, exercise);
+        },
+
+        delete_exercise(exercise_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.delete(`${TRAININGS}/exercise/${exercise_id}`);
         },
 
         get_exercises_by_trainer(trainer_id){
@@ -246,7 +236,48 @@ export default {
             headers: { "Content-Type": "multipart/form-data" },
           });
 
-          return response.data; // { fileName: "imeFajla.mp4" }
+          return response.data;
+        },
+
+        delete_video(fileName){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          const response = axios.delete(`http://localhost:8004/api/v1/upload/video/delete/${fileName}`);
+        },
+
+        create_training(training){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${TRAININGS}/training`, training);
+        },
+
+        delete_training(training_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.delete(`${TRAININGS}/training/${training_id}`);
+        },
+
+        create_exercises_for_training(trainingExercise){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${TRAININGS}/trainingExercise`, trainingExercise);
+        },
+
+        get_trainings_trainer(trainer_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/training/trainingTrainer/${trainer_id}`);
+        },
+
+        get_trainings_client(){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/training/trainingClient`);
+        },
+
+        get_training_exercises(trainer_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/trainingExercises/${trainer_id}`);
+        },
+
+        delete_training_exercises(training_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.delete(`${TRAININGS}/trainingExercise/${training_id}`);
         }
+
     }
 }

@@ -40,14 +40,14 @@ namespace videoTrainingService.API.Repositories
             return res.IsAcknowledged && res.DeletedCount > 0;
         }
 
-        public async Task<IEnumerable<Training>> GetTrainingsForClient(string clientId)
+        public async Task<IEnumerable<Training>> GetTrainingsForClient()
         {
-            return await _context.Trainings.Find(p => p.ClientId == clientId).ToListAsync();
+            return await _context.Trainings.Find(_ => true).ToListAsync();
         }
 
         public async Task<IEnumerable<Training>> GetTrainingsForTrainer(string trainerId)
         {
-            return await _context.Trainings.Find(p => p.ClientId == trainerId).ToListAsync();
+            return await _context.Trainings.Find(p => p.TrainerId == trainerId).ToListAsync();
         }
 
         public async Task<Training> GetTraining(string id)
@@ -94,9 +94,9 @@ namespace videoTrainingService.API.Repositories
             return res.IsAcknowledged && res.ModifiedCount > 0;
         }
 
-        public async Task<bool> DeleteTrainingExercise(string id)
+        public async Task<bool> DeleteTrainingExercises(string trainingId)
         {
-            var res = await _context.TrainingExercises.DeleteOneAsync(p => p.Id == id);
+            var res = await _context.TrainingExercises.DeleteManyAsync(p => p.TrainingId == trainingId);
             return res.IsAcknowledged && res.DeletedCount > 0;
         }
     }
