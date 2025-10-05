@@ -61,11 +61,11 @@ namespace videoTrainingService.API.Controllers
             return Ok(result);
         }
         
-        [HttpGet("training/trainingClient/{clientId}", Name = "GetTrainingsForClient")]
+        [HttpGet("training/trainingClient", Name = "GetTrainingsForClient")]
         [ProducesResponseType(typeof(IEnumerable<Training>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Training>>> GetTrainingsForClient(string clientId)
+        public async Task<ActionResult<IEnumerable<Training>>> GetTrainingsForClient()
         {
-            var trainings = await _repository.GetTrainingsForClient(clientId);
+            var trainings = await _repository.GetTrainingsForClient();
             return Ok(trainings);
         }
         
@@ -151,11 +151,11 @@ namespace videoTrainingService.API.Controllers
             return Ok(result);
         }
         
-        [HttpDelete("trainingExercise/{id}")]
+        [HttpDelete("trainingExercise/{trainingId}")]
         [ProducesResponseType(typeof(TrainingExercise), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteTrainingExercise(string id)
+        public async Task<IActionResult> DeleteTrainingExercises(string trainingId)
         {
-            var result = await _repository.DeleteTrainingExercise(id);
+            var result = await _repository.DeleteTrainingExercises(trainingId);
             return Ok(result);
         }
     }
