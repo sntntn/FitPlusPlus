@@ -1,61 +1,5 @@
 <template>
   <div class="page">
-    <!-- Booking Form -->
-    <div class="booking-form">
-      <h2>Book a Training</h2>
-
-      <label>Choose Trainer</label>
-      <select v-model="selectedTrainer">
-        <option disabled value="">-- select trainer --</option>
-        <option v-for="trainer in this.trainers" :key="trainer.id" :value="trainer">
-          {{ trainer.fullName }}
-        </option>
-      </select>
-
-      <div class="button-row">
-        <button :disabled="!selectedTrainer" @click="getAvailability = true">Get Availability</button>
-        <button :disabled="!selectedTrainer" @click="showTrainerInfo = true">Trainer Info</button>
-      </div>
-
-      <div v-if="getAvailability" class="modal-overlay" @click.self="getAvailability = false">
-        <div class="modal-content">
-          <button class="close-btn" @click="getAvailability = false">×</button>
-          <FullCalendar :options="calendarOptions"/>
-        </div>
-      </div>
-
-      <div v-if="showTrainerInfo" class="modal-overlay" @click.self="showTrainerInfo = false">
-        <div class="modal-content">
-          <button class="close-btn" @click="showTrainerInfo = false">×</button>
-          <h2>{{ selectedTrainer.fullName }}</h2>
-          <p><strong>Bio:</strong> {{ selectedTrainer.bio }}</p>
-          <p><strong>Email:</strong> <a :href="`mailto:${selectedTrainer.contactEmail}`">{{ selectedTrainer.contactEmail }}</a></p>
-          <p><strong>Contact phone:</strong> {{ selectedTrainer.contactPhone }}</p>
-          <p><strong>Average rating:</strong> {{ selectedTrainer.averageRating }} / 10</p>
-          <p><strong>Trainings offered:</strong> {{ selectedTrainer.trainingTypes.map(t => t.name).join(', ') }}</p>
-        </div>
-      </div>
-
-      <label>Training Date</label>
-      <input type="date" v-model="trainingDate" :min="today"/>
-
-      <label>Training Type</label>
-      <select v-model="selectedTrainingType">
-        <option disabled value="">-- select type --</option>
-        <option v-for="type in availableTrainingTypes" :key="type" :value="type">
-          {{ `${type.name} (${type.price} USD)` }}
-        </option>
-      </select>
-
-      <label>Start Time</label>
-      <input type="time" v-model="startTime" />
-
-      <label>End Time</label>
-      <label>{{ endTime }}</label>
-
-      <button class="book-btn" @click="bookTraining">Book Training</button>
-    </div>
-
     <!-- Tables -->
     <div class="tables">
       <!-- Reserved Trainings -->
@@ -64,7 +8,7 @@
         <table>
           <thead>
             <tr>
-              <th>Trainer</th>
+              <th>Client</th>
               <th>Training Type</th>
               <th>Date</th>
               <th>Time</th>
@@ -73,7 +17,7 @@
           </thead>
           <tbody>
             <tr v-for="res in reservedTrainings" :key="res.id">
-              <td>{{ res.trainer }}</td>
+              <td>{{ res.client }}</td>
               <td>{{ res.trainingType }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
@@ -91,7 +35,6 @@
         <table>
           <thead>
             <tr>
-              <th>Trainer</th>
               <th>Training Type</th>
               <th>Date</th>
               <th>Time</th>
@@ -101,8 +44,7 @@
           </thead>
           <tbody>
             <tr v-for="res in completedOrCancelled" :key="res.id">
-              <td>{{ res.trainer }}</td>
-              <td>{{ res.trainingType }}</td>
+              <td>{{ res.client }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
               <td>{{ res.status }}</td>
@@ -152,104 +94,32 @@
 <script>
 import dataServices from '@/services/data_services';
 import {
-  getIndividualReservationsByClient,
-  cancelClientIndividualReservation,
-  getGroupReservationsByTrainer,
-  getIndividualReservationsByTrainer,
-  createIndividualReservation
+  cancelTrainerIndividualReservation,
+  getIndividualReservationsByTrainer
 } from '@/services/ReservationService'
-import FullCalendar from '@fullcalendar/vue3'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
 
 export default {
-  components: { FullCalendar },
-
   data() {
     return {
       trainers: [],
+      clients: [],
       reservations: [],
-      selectedTrainer: "",
-      getAvailability: false,
-      showTrainerInfo: false,
       showReview: false,
-      selectedTrainingType: "",
-      trainingDate: "",
       trainingRating: null,
-      currentReservationId: "",
-      today: new Date().toISOString().split("T")[0], // e.g. "2025-09-30"
-      startTime: "",
-      calendarOptions: {
-        plugins: [ timeGridPlugin, interactionPlugin ],
-        initialView: 'timeGridWeek',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: ''
-        },
-        editable: false,
-        selectible: false,
-        allDaySlot: false,
-        firstDay: 1,
-        businessHours: {
-          daysOfWeek: [1,2,3,4,5], 
-          startTime: "08:00",
-          endTime: "23:00"
-        },
-        validRange: {
-          start: new Date() // blocks past *days* automatically
-        },
-        eventConstraint: {
-          start: new Date() // blocks past *times* as well
-        },
-        events: []
-      }
+      currentReservationId: ""
     };
   },
 
   methods: {
-    bookTraining() {
-      if (!this.selectedTrainer || !this.trainingDate || !this.selectedTrainingType || !this.startTime) {
-        alert("Please fill in all fields before booking.");
-        return;
-      }
-
-      const payload = {
-        id: "",
-        trainerId: this.selectedTrainer.id,
-        clientId: this.$route.params.id,
-        trainingTypeId: this.selectedTrainingType.id,
-        date: this.trainingDate,
-        startTime: this.startTime + ":00",
-        endTime: this.endTime
-      };
-
-      console.log("Booking training with payload:", payload);
-
-      createIndividualReservation(payload)
-        .then(response => {
-          if (response.status === 201) {
-            alert("Training booked successfully!");
-            location.reload();
-          } else {
-            alert(`Booking failed. Status: ${response.status}`);
-          }
-        })
-        .catch(error => {
-          console.error("Booking error:", error);
-          alert("An error occurred while booking the training.");
-        });
-    },
-
     cancelTraining(res_id) {
       if (confirm("Are you sure you want to cancel the training?")) {
-        cancelClientIndividualReservation(res_id)
+        cancelTrainerIndividualReservation(res_id)
           .then(response => {
             location.reload();
           })
           .catch(error => {
             console.error("Cancelling error:", error);
-            alert("An error occurred while cancelling a reservation from the client side.");
+            alert("An error occurred while cancelling a reservation from the trainer side.");
           });
       }
     },
@@ -258,9 +128,9 @@ export default {
       // TODO: Connect review submission with the backend
     },
 
-    findTrainerName(tra_id) {
-      let trainer = this.trainers.find(t => t.id == tra_id);
-      return trainer !== undefined ? trainer.fullName : "";
+    findClientName(cli_id) {
+      let client = this.clients.find(t => t.id == cli_id);
+      return client !== undefined ? client.name + " " + client.surname : "";
     },
 
     findTrainingType(type_id) {
@@ -269,7 +139,6 @@ export default {
       return trainingType !== undefined ? trainingType.name : "";
     },
 
-    // Fetch list of trainers
     fetchTrainers() {
       dataServices.methods.get_trainers()
         .then(response => {
@@ -280,9 +149,19 @@ export default {
         });
     },
 
+    fetchClients() {
+      dataServices.methods.get_clients()
+        .then(response => {
+          this.clients = response.data;
+        })
+        .catch(error => {
+          console.error("Failed to fetch clients:", error);
+        });
+    },
+
     fetchReservations() {
-      let clientId = this.$route.params.id;
-      getIndividualReservationsByClient(clientId)
+      let trainerId = this.$route.params.id;
+      getIndividualReservationsByTrainer(trainerId)
         .then(response => {
           this.reservations = response.data;
         })
@@ -293,27 +172,6 @@ export default {
   },
 
   computed: {
-    availableTrainingTypes() {
-      return this.selectedTrainer ? this.selectedTrainer.trainingTypes : [];
-    },
-
-    endTime() {
-      let start = this.startTime;
-      let duration = this.selectedTrainingType.duration; 
-
-      if (!start || !duration) return null;
-
-      // Split the duration string
-      const [h1, m1] = start.split(':').map(Number)
-      const [h2, m2, s2] = duration.split(':').map(Number);
-
-      let numMinutes = (60 * (h1 + h2) + m1 + m2) % (24 * 60);
-      const hours = Math.floor(numMinutes / 60).toString().padStart(2, '0');
-      const minutes = (numMinutes % 60).toString().padStart(2, '0');
-      const seconds = s2.toString().padStart(2, '0');
-      return `${hours}:${minutes}:${seconds}`;
-    },
-
     reservedTrainings() {
       return this.reservations
         .filter(r => {
@@ -323,7 +181,7 @@ export default {
         })
         .map(r => ({
           id: r.id,
-          trainer: this.findTrainerName(r.trainerId),
+          client: this.findClientName(r.clientId),
           trainingType: this.findTrainingType(r.trainingTypeId),
           date: r.date,
           time: `${r.startTime} - ${r.endTime}`
@@ -339,64 +197,23 @@ export default {
         })
         .map(r => ({
           id: r.id,
-          trainer: this.findTrainerName(r.trainerId),
+          client: this.findClientName(r.clientId),
           trainingType: this.findTrainingType(r.trainingTypeId),
           date: r.date,
           time: `${r.startTime} - ${r.endTime}`,
-          status: r.status == 0 ? "Active" : (r.status == 1 ? "Cancelled by me" : "Cancelled by trainer")
+          status: r.status == 0 ? "Active" : (r.status == 1 ? "Cancelled by client" : "Cancelled by me")
         }));
     }
   },
 
-  watch: {
-    selectedTrainer() {
-      let unavailableSlots = []
-
-      getIndividualReservationsByTrainer(this.selectedTrainer.id)
-        .then(response => {
-          response.data.forEach(element => {
-            unavailableSlots.push({
-              title: "individual",
-              date: element.date,
-              start: element.startTime,
-              end: element.endTime
-            });
-          });
-
-          getGroupReservationsByTrainer(this.selectedTrainer.id)
-            .then(response => {
-              response.data.forEach(element => {
-                unavailableSlots.push({
-                  title: "group",
-                  date: element.date,
-                  start: element.startTime,
-                  end: element.endTime
-                });
-              });
-
-              let unavailableEvents = unavailableSlots.map(t => ({
-                title: t.title,
-                start: `${t.date}T${t.start}`,
-                end: `${t.date}T${t.end}`,
-                display: 'background'
-              }));
-
-              this.calendarOptions.events = unavailableEvents;
-            })
-            .catch(error => {
-              console.error("Error fetching group reservations:", error);
-            });
-        })
-        .catch(error => {
-          console.error("Error fetching individual reservations:", error);
-        });
-    }
+  created() {
+    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
   },
 
   mounted() {
     this.fetchTrainers();
+    this.fetchClients();
     this.fetchReservations();
-    this.$parent.$parent.$parent.setUserData(this.$route.params.id, "client");
   }
 };
 </script>
