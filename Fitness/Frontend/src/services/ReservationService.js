@@ -127,3 +127,9 @@ export async function cancelGroupReservation(id, clientId) {
   });
   return response;
 }
+
+// Trainer - cancel individual reservation
+export async function cancelTrainerIndividualReservation(id) {
+  const response = await axios.put(`${RESERVATIONS}/individual/trainer/cancel/${id}`);
+  return response;
+}
