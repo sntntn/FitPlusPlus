@@ -7,11 +7,24 @@
       <button class="trainerBtn" @click="currentView = 'addVideo'">Dodaj vežbu</button>
     </div>
 
-    <!-- Ovde se prikazuje sadržaj -->
     <div class="content">
       <div v-if="currentView === 'trainings'">
         <h3>Lista treninga</h3>
-        <p>Ovde ide sadržaj za treninge...</p>
+        
+        <figure v-if="trainingExercises && trainingExercises.length > 0" class="trainings" v-for="training in trainings">
+          <figcaption> {{ training.type }}</figcaption>
+          <p :style="{ fontSize: '20px', fontColor: 'black' }"> {{ training.description }}
+          </p>
+
+          <div v-for="(exercise, index) in trainingExercises.filter(e => e.trainingId === training.trainingId)" :key="index" class="exercise-item">
+            <span>{{ index + 1 }}.{{ getExerciseName(exercise.exerciseId) }} - {{ exercise.exerciseReps }} ponavljanja, {{ exercise.setReps }} setova</span>
+          </div>
+
+          <button class="delete-btn" @click="deleteTraining(training.trainingId)">
+            Obriši trening
+          </button>
+        </figure>
+
       </div>
 
       <div v-if="currentView === 'videos'" class="videos-container">
@@ -26,14 +39,18 @@
           <div v-for="exercise in exercises" :key="exercise.Id" class="exercise-card">
             <h5>{{ exercise.name }}</h5>
             <div class="video-box">
-              <!-- ako Path čuva samo ime fajla -->
+
               <video 
                 v-if="exercise.path" 
                 :src="`http://localhost:8004/uploads/${exercise.path}`" 
                 controls>
               </video>
-              <!-- ako nema video, prikaži samo placeholder -->
+
               <p v-else>Video nije dostupan {{exercise.path}}</p>
+            </div>
+
+            <div class="exercise-actions">
+              <button @click="deleteVideoExercise(exercise.id)" class="delete-btn">Obriši</button>
             </div>
           </div>
         </div>
@@ -43,7 +60,7 @@
         <h3>Dodaj novi trening</h3>
         <br>
 
-        <form @submit.prevent="submitForm">
+        <form @submit.prevent="saveTraining">
           <div class="training-form">
 
             <div class="header">
@@ -56,14 +73,14 @@
                   placeholder="Unesite tip treninga"
                 />
               </div>
-              <!-- Dugme za dodavanje nove vezbe -->
+
               <button @click="addNewExercise" :disabled="isFormActive" class="add-button">
                 Dodaj novu vežbu
               </button>
 
               <div class="form-actions">
-                <button type="submit">Sačuvaj ceo trening</button>
-               </div>
+                <button type="submit" :disabled="!trainingExercises.length || isFormActive">Sačuvaj ceo trening</button>
+              </div>
             </div>
 
             <div class="note-container">
@@ -76,7 +93,6 @@
               ></textarea>
             </div>
 
-            <!-- Lista vežbi koje su dodane -->
             <div v-if="trainingExercises.length">
               <h3>Dodate vežbe:</h3>
               <div v-for="(exercise, index) in trainingExercises" :key="index" class="exercise-item">
@@ -84,7 +100,7 @@
                   <div>
                     <label for="exercise">Vežba:</label>
                     <select v-model="exercise.selectedExercise">
-                      <option v-for="ex in availableTrainingExercises" :key="ex" :value="ex">{{ ex }}</option>
+                      <option v-for="ex in exercises" :key="ex" :value="ex.id">{{ ex.name }}</option>
                     </select>
                   </div>
 
@@ -105,21 +121,21 @@
                   <button @click="saveExercise(index)">Sačuvaj</button>
                   <button @click="cancelEdit(index)">Otkaži</button>
 
-                  </div>
-                  <div v-else>
-                    <span>{{ exercise.selectedExercise }} - {{ exercise.reps }} ponavljanja, {{ exercise.sets }} setova</span>
-                    <button @click="editExercise(index)">Izmeni</button>
-                    <button @click="deleteExercise(index)">Obriši</button>
-                  </div>
+                </div>
+                  
+                <div v-else>
+                  <span>{{ getExerciseName(exercise.selectedExercise) }} - {{ exercise.reps }} ponavljanja, {{ exercise.sets }} setova</span>
+                  <button @click="editExercise(index)" type="button">Izmeni</button>
+                  <button @click="deleteExercise(index)" type="button">Obriši</button>
+                </div>
               </div>
             </div>
 
-              <!-- Novi unos za vezbe -->
               <div v-if="isAddingNewExercise">
                 <div>
                   <label for="exercise">Vežba:</label>
-                  <select v-model="newExercise.selectedExercise">
-                    <option v-for="ex in availableTrainingExercises" :key="ex" :value="ex">{{ ex }}</option>
+                  <select v-model="newExercise.selectedExercise"> 
+                    <option v-for="ex in exercises" :key="ex" :value="ex.id">{{ ex.name }}</option>
                   </select>
                 </div>
                 <div>
@@ -134,8 +150,9 @@
                     <option v-for="n in setsOptions" :key="n" :value="n">{{ n }}</option>
                   </select>
                 </div>
-                <button @click="saveNewExercise">Sačuvaj</button>
-                <button @click="cancelNewExercise">Otkaži</button>
+                <button @click="saveNewExercise" type="button" 
+                    :disabled="!newExercise.selectedExercise || !newExercise.reps || !newExercise.sets">Sačuvaj</button>
+                <button @click="cancelNewExercise" type="button">Otkaži</button>
               </div>
           </div>
           
@@ -146,10 +163,9 @@
         
         <h3>Dodaj novi video</h3>
 
-        <form @submit="videoSaved">
+        <form @submit="videoSaved" class="videoForma">
           <input type="text" v-model="exerciseName" placeholder="Naziv vežbe" />
 
-          <!-- Skriveni input za upload -->
           <input 
             type="file" 
             id="videoUpload" 
@@ -158,7 +174,6 @@
             hidden
           />
 
-          <!-- Vidljiva siva kockica -->
           <label for="videoUpload" class="upload-box">
             <div class="upload-content">
               ⬆️
@@ -166,7 +181,6 @@
             </div>
           </label>
 
-          <!-- Prikaz fajla ako je izabran -->
           <div v-if="selectedFile" class="file-info">
               <p>Izabran file: {{ selectedFile.name }}</p>
           </div>
@@ -177,12 +191,11 @@
         
     </div>
 
-
 </template>
 
 <script>
+
 import dataServices from "@/services/data_services";
-import axios from 'axios';
 
 export default {
   name: "VideoTrainings",
@@ -196,23 +209,16 @@ export default {
       exerciseName: "",
       
       trainings: [],
-      exercises: [], // Lista svih vežbi koje su dodate
-      availableExercises: [
-        { Id: 1, Name: 'Sklekovi', Path: 'file_example_MP4_480_1_5MG.mp4'},
-        { Id: 2, Name: 'Čučnjevi', Path: 'file_example_MP4_480_1_5MG.mp4'},
-        { Id: 3, Name: 'Mrtvo dizanje', Path: 'file_example_MP4_480_1_5MG.mp4'},
-        { Id: 4, Name: 'Benč pres', Path: 'file_example_MP4_480_1_5MG.mp4'},
-      ],
+      exercises: [],
 
       trainingType: '',
-      trainingExercises: [], // Lista dodanih vežbi
-      isAddingNewExercise: false, // Da li je forma za novu vežbu otvorena
-      isFormActive: false, // Da li je neka forma aktivna za editovanje
+      trainingExercises: [],
+      isAddingNewExercise: false, 
+      isFormActive: false, 
       originalExerciseData: {} ,
       note: '',
-      availableTrainingExercises: ["Čučanj", "Sklek", "Mrtvo dizanje", "Benč pres", "Iskorak"], // Primer dostupnih vežbi
-      repsOptions: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], // Opcije za broj ponavljanja
-      setsOptions: [1,2,3,4,5,6,7,8,9,10], // Opcije za broj setova
+      repsOptions: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], 
+      setsOptions: [1,2,3,4,5,6,7,8,9,10], 
       newExercise: {
         selectedExercise: '',
         reps: 0,
@@ -224,13 +230,24 @@ export default {
 
   methods: {
 
-    buyProgram(){
-        alert("Kupili ste program!");
+    async loadExercises() {
+
+      try {
+        const id = this.$route.params.id;
+        dataServices.methods.get_exercises_by_trainer(id).then(response => {
+            if(response.data != null){
+              this.exercises = response.data;
+            }
+          }
+        );
+      } catch (error) {
+        console.error("Greška pri dohvatanju vežbi:", error);
+      }
     },
 
     handleFileUpload(event) {
       this.selectedFile = event.target.files[0];
-      console.log(this.selectedFile)
+      console.log(this.selectedFile);
     },
 
     async videoSaved(e){
@@ -244,7 +261,7 @@ export default {
         Id: "",
         Name: this.exerciseName,
         TrainerId: id,
-        Path: this.selectedFile.name // za sad šalješ samo ime fajla
+        Path: this.selectedFile.name
       };
 
       try {
@@ -261,22 +278,8 @@ export default {
       if (fileInput) {
         fileInput.value = "";
       }
-      
-    },
 
-    async loadExercises() {
-
-      try {
-        const id = this.$route.params.id; // ako želiš samo vežbe jednog trenera
-        dataServices.methods.get_exercises_by_trainer(id).then(response => {
-            if(response.data != null){
-              this.exercises = response.data;
-            }
-          }
-        );
-      } catch (error) {
-        console.error("Greška pri dohvatanju vežbi:", error);
-      }
+      this.loadExercises();
     },
 
     addNewExercise() {
@@ -285,6 +288,7 @@ export default {
         this.isFormActive = true;
       }
     },
+
     saveNewExercise() {
       this.trainingExercises.push({
         ...this.newExercise,
@@ -294,60 +298,176 @@ export default {
       this.isFormActive = false;
       this.resetNewExercise();
     },
+
     cancelNewExercise() {
       this.isAddingNewExercise = false;
       this.isFormActive = false;
       this.resetNewExercise();
     },
+
     editExercise(index) {
       if (!this.isFormActive) {
-        this.originalExerciseData = { ...this.exercises[index] };
+        this.originalExerciseData = { ...this.trainingExercises[index] };
         this.trainingExercises[index].isEditing = true;
         this.isFormActive = true;
       }
     },
+
     saveExercise(index) {
       this.trainingExercises[index].isEditing = false;
       this.isFormActive = false;
     },
+
     cancelEdit(index) {
-      this.exercises[index] = { ...this.originalExerciseData };
+      this.trainingExercises[index] = { ...this.originalExerciseData };
       this.trainingExercises[index].isEditing = false;
       this.isFormActive = false;
     },
+
     deleteExercise(index) {
       this.trainingExercises.splice(index, 1);
     },
+
     resetNewExercise() {
-      this.trainingExercises = {};
-      this.note = '';
       this.newExercise = {
         selectedExercise: '',
-        reps: 10,
-        sets: 3
+        reps: 0,
+        sets: 0
       };
     },
 
-    submitForm() {
-      // Ovde možete poslati podatke na server ili ih obraditi lokalno
+    async saveTraining() {
+      
+      const trainerId = this.$route.params.id;
+
+      const training = {
+        TrainingId: "",
+        TrainerId: trainerId,
+        Type: this.trainingType,
+        Description: this.note
+      }
+
+      const response = await dataServices.methods.create_training(training);
+      const trainingId = response.data.trainingId;
+      
+      try {
+        for (let i = 0; i < this.trainingExercises.length; i++) {
+          const ex = this.trainingExercises[i];
+
+          const trainingExercise = {
+            Id: "",
+            TrainerId: trainerId,
+            TrainingId: trainingId,
+            ExerciseId: ex.selectedExercise,
+            ExerciseReps: Number(ex.reps),
+            SetReps: Number(ex.sets),
+            Set: Number(i + 1)
+          };
+
+          const response = dataServices.methods.create_exercises_for_training(trainingExercise).then(res => {
+              console.log("Sačuvano:", res.data);
+            })
+            .catch(err => {
+              console.error("Greška pri čuvanju vežbe:", err);
+            });
+        }
+      } catch (err) {
+        console.error("Greška pri čuvanju vezbe:", err);
+      }
+
+      console.log(this.trainingExercises);
       alert("Trening sačuvan!");
 
-      // Resetovanje forme nakon submit-a
       this.resetForm();
     },
 
     resetForm() {
       this.trainingType = '';
       this.note = '';
-      this.exercises = [];
+      this.trainingExercises = [];
       this.resetNewExercise();
+    },
+
+    async loadTrainings(){
+       try {
+        const trainerId = this.$route.params.id; 
+
+        const response = await dataServices.methods.get_trainings_trainer(trainerId);
+        if (response.data) {
+          this.trainings = response.data;
+        }
+      } catch (error) {
+        console.error("Greška pri dohvatanju treninga:", error);
+      }
+
+      this.trainingExercises = [];
+      
+      for (const training of this.trainings) {
+        try {
+          const exercisesResponse = await dataServices.methods.get_training_exercises(training.trainingId);
+          if (exercisesResponse.data) {
+            this.trainingExercises.push(...exercisesResponse.data);
+          }
+        } catch (error) {
+          console.error("Greška pri dohvatanju vezbi iz treninga: ", training.trainingId , " ", error);
+        }
+      }
+    },
+
+    async deleteTraining(trainingId){
+
+      try{
+        const response = await dataServices.methods.delete_training(trainingId);
+      } catch {
+        console.error("Greška pri brisanju treninga: ", trainingId);
+      }
+
+      try{
+        const response = await dataServices.methods.delete_training_exercises(trainingId);
+      } catch {
+        console.error("Greška pri brisanju vezbi treninga: ", trainingId);
+      }
+
+      alert('Obrisali ste trening!');
+      this.exercises = this.trainingExercises.filter(tr => tr.Id !== trainingId);
+    },
+
+    getExerciseName(id) {
+      const ex = this.exercises.find(e => e.id === id);
+      return ex ? ex.name : '';
+    },
+
+    deleteVideoExercise(exerciseId) {
+      const exPath = this.exercises.find(e => e.id === exerciseId).path;
+
+      try{
+        const response = dataServices.methods.delete_exercise(exerciseId);
+      }catch{
+        console.error("Greška pri brisanju vezbe: ", exerciseId);
+      }
+
+      try{
+        const response = dataServices.methods.delete_video(exPath);
+        this.exercises = this.exercises.filter(ex => ex.path !== exPath)
+      }catch{
+        console.error("Greška pri brisanju vezbe: ", exerciseId);
+      }
+
+    },
+
+    getTrainingImage(trainingType) {
+      const pic = this.trainingPics.find(p => p.name === trainingType);
+      return pic ? pic.type : '';
     }
   },
 
   watch: {
     currentView(newVal) {
-      if (newVal === "videos") {
-        this.loadExercises();
+      
+      this.trainingExercises = [];
+
+      if(newVal === "trainings"){
+        this.loadTrainings();
       }
     }
   },
@@ -357,6 +477,7 @@ export default {
 
   mounted() {
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+    this.loadExercises();
   }
 }
 
@@ -378,22 +499,16 @@ button {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  
-  /* Pozadina i boje */
   background-color: #fff;
   color: #333;
-
-  /* Ivice i senka */
-  border: 2px solid #e67e22; /* narandžasta ivica */
+  border: 2px solid #e67e22;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-  /* Glatke tranzicije */
   transition: background 0.3s, color 0.3s, transform 0.2s;
 }
 
 button:hover {
-  background-color: #e67e22;       /* unutrašnjost postaje narandžasta */
-  color: #fff;                           /* tekst se okreće u belo */
+  background-color: #e67e22;       
+  color: #fff;                           
   transform: translateY(-2px);
 }
 
@@ -415,9 +530,9 @@ button:hover {
 .upload-box {
   width: 220px;
   height: 220px;
-  border: 2px dashed #e67e22;      /* narandžasta ivica */
+  border: 2px dashed #e67e22;     
   border-radius: 12px;
-  background-color: #fff;                /* bela unutrašnjost */
+  background-color: #fff;              
   display: flex;
   justify-content: center;
   align-items: center;
@@ -427,9 +542,9 @@ button:hover {
 }
 
 .upload-box:hover {
-  border-color: #d35400;     /* tamnija narandžasta */
+  border-color: #d35400;     
   background: #fafafa;
-  transform: translateY(-3px);           /* blagi lift */
+  transform: translateY(-3px);           
 }
 
 .upload-content {
@@ -457,12 +572,13 @@ button:hover {
 }
 
 .training-form {
-  max-width: 600px;
+  width: 80%;
 }
 
 .header {
+  width: 80%;
   display: flex;
-  align-items: center;   /* poravnaj sve po visini */
+  align-items: center;   
   gap: 20px;
   flex-wrap: nowrap
 }
@@ -477,13 +593,13 @@ input, select {
 
 .exercise-list {
   display: flex;
-  flex-wrap: wrap;        /* da prelazi u novi red */
-  justify-content: center; /* centriraj po ekranu */
-  gap: 20px;               /* razmak između kartica */
+  flex-wrap: wrap;       
+  justify-content: center; 
+  gap: 20px;               
 }
 
 .exercise-card {
-  flex: 0 1 45%;           /* svaka zauzima ~45% širine ekrana */
+  flex: 0 1 45%;           
   background: #f8f8f8;
   padding: 15px;
   border-radius: 10px;
@@ -492,7 +608,7 @@ input, select {
   text-align: center;
   
   /* Ivice i senka */
-  border: 2px solid #e67e22;     /* naglašena ivica u narandžastoj */
+  border: 2px solid #e67e22;     
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   
   text-align: center;
@@ -500,9 +616,9 @@ input, select {
 }
 
 .exercise-card:hover {
-  transform: translateY(-4px);                           /* blagi lift efekat */
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);               /* jača senka */
-  border-color: #d35400;                     /* tamnija narandžasta ivica */
+  transform: translateY(-4px);                          
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);             
+  border-color: #d35400;                     
 }
 
 .video-box video {
@@ -521,26 +637,75 @@ input, select {
 }
 
 input[type="text"], .note-textarea {
-  width: 100%;
-  max-width: 400px;
+  width: 80%;
   padding: 10px 14px;
   margin: 10px 0;
   font-size: 16px;
   color: #333;
   background: #fff;
   
-  border: 2px solid #ccc;          /* osnovna siva ivica */
-  border-radius: 8px;              /* blago zaobljene ivice */
+  border: 2px solid #ccc;          
+  border-radius: 8px;              
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Efekat kad je u fokusu */
 input[type="text"]:focus, .note-textarea{
+  width: 80%;
   outline: none;
-  border-color: #d35400;     /* narandžasta ivica */
-  box-shadow: 0 0 6px rgba(230, 126, 34, 0.4); /* narandžasti glow */
+  border-color: #d35400;     
+  box-shadow: 0 0 6px rgba(230, 126, 34, 0.4); 
+}
+
+.videoForma {
+  width: 50%;
+}
+
+figure.trainings {
+    position: relative;
+    width: 80%;
+    padding: 15px;
+    margin: 15px;
+    display: block;
+    vertical-align: top;
+    background-size: cover;
+    opacity: 0.9;
+    border-radius: 10px;
+    border: 2px solid #d35400        
+}
+
+figure.trainings figcaption {
+    font-size: 22px;
+    font-weight: bold;
+    color: black;
+    margin-bottom: 5px;
+}
+
+.exercise-item {
+    font-size: 18px;
+    color: #222;
+    margin-left: 10px;
+    padding: 3px 0;
+    border-bottom: 1px solid #ccc; 
+}
+
+.exercise-item:last-child {
+    border-bottom: none;
+}
+
+.delete-btn {
+  display: block;        
+  margin-left: auto;     
+  right: 10px;           
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #c1121f;
 }
 
 </style>

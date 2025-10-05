@@ -8,6 +8,7 @@ namespace videoTrainingService.API.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        public string TrainerId { get; set; }
         public string TrainingId { get; set; }
         public string ExerciseId { get; set; }
         public int ExerciseReps { get; set; }

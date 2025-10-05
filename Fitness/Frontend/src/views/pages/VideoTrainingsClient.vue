@@ -1,13 +1,25 @@
 <template>
   <div id="wrapper">
-    <h1> Available programs: </h1>
-    <figure class="trainings" v-for="training in trainings" :style="{ backgroundImage: `url(${training.type})`}">
-      <figcaption> {{ training.name }}</figcaption>
-      <p :style="{ fontSize: '20px', fontColor: 'black' }">Svi imaju za sad isti opis.<br>
-          Kao nesto pise.<br>
-      </p>
-      <button class="overlay" @click="buyProgram">See more</button>
+    <h3> Dostupni treninzi: </h3>
+
+    <figure v-if="trainers && trainers.length > 0" class="trainings" v-for="training in trainings" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
+        <figcaption :style="{background: 'rgba(255, 255, 255, 0.5)', 'border-radius': '5px'}"> {{ training.type }}</figcaption>
+
+        <div class="training-desc">
+          <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
+          </p>
+        </div>
+
+        <div class="trainer-info">
+          <p :style="{ fontSize: '20px', color: 'black' }"> Trener: {{ getTrainerName(training.trainerId) }}
+          </p>
+          <p :style="{ fontSize: '20px', color: 'black' }"> Ocena: {{ getAverageRating(training.trainerId) }}
+          </p>
+        </div>
+
+        <button class="overlay" @click="buyProgram">See more</button>
     </figure>
+
   </div>
 </template>
 
@@ -20,21 +32,64 @@ export default {
   data(){
     return {
       isAvailable: false,
-      trainings: [
-        { name: 'Prvi', type: require('@/assets/images/running.jpeg')},
-        { name: 'Drugi', type: require('@/assets/images/strength.jpg')},
-        { name: 'Treci', type: require('@/assets/images/yoga.jpg')},
-        { name: 'Cetvrti', type: require('@/assets/images/home.jpeg')},
-        { name: 'Peti', type: require('@/assets/images/strength.jpg')},
-        { name: 'Sesti', type: require('@/assets/images/running.jpeg')},
-      ], 
-    }
+      trainers: [],
+      trainings: [], 
+      trainingPics: [ { name: 'Kardio', type: require('@/assets/images/running.jpeg')}, 
+        { name: 'Snaga', type: require('@/assets/images/strength.jpg')}, 
+        { name: 'Pilates', type: require('@/assets/images/yoga.jpg')}, 
+        {name: 'Mix', type: require('@/assets/images/mix.jpg')} ],
+      }
   },
 
   methods: {
 
     buyProgram(){
         alert("Kupili ste program!");
+    },
+
+    async loadTrainings(){
+       try {
+
+        const response = await dataServices.methods.get_trainings_client();
+        if (response.data) {
+          this.trainings = response.data;
+        }
+      } catch (error) {
+        console.error("Greška pri dohvatanju treninga:", error);
+      }
+
+      try{
+        const response2 = await dataServices.methods.get_trainers();
+        if( response2 != null){
+          this.trainers = response2.data;
+        }
+      } catch (error) {
+        console.error("Greška pri dohvatanju treninga:", error);
+      }
+    
+    },
+
+    getTrainingImage(trainingType) {
+      const pic = this.trainingPics.find(p => p.name === trainingType);
+      return pic ? pic.type : '';
+    },
+
+    getTrainerName(trainerId){
+      if (!this.trainers || this.trainers.length === 0) {
+        return "Učitavanje...";
+      }
+
+      const trainer = this.trainers.find(p => p.id === trainerId);
+      return trainer.fullName;
+    },
+
+    getAverageRating(trainerId){
+      if (!this.trainers || this.trainers.length === 0) {
+        return "Učitavanje...";
+      }
+
+      const trainer = this.trainers.find(p => p.id === trainerId);
+      return trainer.averageRating;
     }
 
   },
@@ -43,18 +98,13 @@ export default {
   },
 
   mounted() {
+
     const id = this.$route.params.id;
 
     this.$parent.$parent.$parent.setUserData(id, "client");
 
-    /*dataServices.methods.get_trainings_for_client(id).then(response => {
-      if(response.data != null){
-        this.trainings = response.data;
-      }
-    }).catch(error => {
-      console.error('Error fetching trainers:', error);
-      loader.hide();
-    });*/
+    this.loadTrainings();
+
   }
 }
 
@@ -95,6 +145,25 @@ export default {
   figcaption {
     font-size: 30px;
     color: black;
+  }
+
+  .trainer-info {
+    position: absolute;
+    bottom: 10px;     
+    left: 10px;     
+    right: 10px;
+    background: rgba(255, 255, 255, 0.7); 
+    border-radius: 5px;
+    padding: 5px;
+  }
+  
+  .training-desc {
+    bottom: 10px;  
+    left: 10px;        
+    right: 10px;
+    background: rgba(255, 255, 255, 0.5); 
+    border-radius: 5px;
+    padding: 5px;
   }
 
 </style>
