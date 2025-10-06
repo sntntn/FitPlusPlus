@@ -41,26 +41,26 @@ namespace videoTrainingService.API.Controllers
         }
 
         [HttpDelete("video/delete/{fileName}")]
-    public IActionResult DeleteVideo(string fileName)
-    {
-        try
+        public IActionResult DeleteVideo(string fileName)
         {
-            if (string.IsNullOrEmpty(fileName))
-                return BadRequest("Invalid file name.");
+            try
+            {
+                if (string.IsNullOrEmpty(fileName))
+                    return BadRequest("Invalid file name.");
 
-            var filePath = Path.Combine(_uploadsPath, fileName);
+                var filePath = Path.Combine(_uploadsPath, fileName);
 
-            if (!System.IO.File.Exists(filePath))
-                return NotFound("File not found.");
+                if (!System.IO.File.Exists(filePath))
+                    return NotFound("File not found.");
 
-            System.IO.File.Delete(filePath);
+                System.IO.File.Delete(filePath);
 
-            return Ok(new { message = $"File '{fileName}' successfully deleted." });
+                return Ok(new { message = $"File '{fileName}' successfully deleted." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting file: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Error deleting file: {ex.Message}");
-        }
-    }
     }
 }
