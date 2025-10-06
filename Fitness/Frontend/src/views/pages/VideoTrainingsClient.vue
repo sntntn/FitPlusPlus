@@ -2,8 +2,8 @@
   <div id="wrapper">
     <h3> Dostupni treninzi: </h3>
 
-    <figure v-if="trainers && trainers.length > 0" class="trainings" v-for="training in trainings" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
-        <figcaption :style="{background: 'rgba(255, 255, 255, 0.5)', 'border-radius': '5px'}"> {{ training.type }}</figcaption>
+    <figure v-if="trainings && trainings.length > 0" class="trainings" v-for="training in trainings" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
+        <figcaption > {{ training.type }}</figcaption>
 
         <div class="training-desc">
           <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
@@ -112,58 +112,87 @@ export default {
 
 <style scoped>
 
-  figure {
-    position: relative;
-    height: 300px;
-    width: 45%;
-    padding: 10px;
-    margin: 10px;
-    display: inline-block;
-    background-size: cover;
-    opacity: 0.75;
-    border-radius: 5px;
-  }
+.trainings {
+  position: relative;
+  width: 45%; 
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  display: inline-block;
+  vertical-align: top; 
+  margin: 15px; 
+  flex-direction: column;
+  justify-content: space-between; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  opacity: 0.9;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-  figure:hover .overlay{
-    opacity: 0.5;
-  }
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0;
-    transition: 0.5s ease;
-    background-color: lightcoral;
-    border-color: black;
-    align-items: center;
-    font-size: 20px;
-    color: black;
-  }
+.trainings:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
 
-  figcaption {
-    font-size: 30px;
-    color: black;
-  }
+.trainings::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.5); 
+  z-index: 0;
+}
 
-  .trainer-info {
-    position: absolute;
-    bottom: 10px;     
-    left: 10px;     
-    right: 10px;
-    background: rgba(255, 255, 255, 0.7); 
-    border-radius: 5px;
-    padding: 5px;
-  }
-  
-  .training-desc {
-    bottom: 10px;  
-    left: 10px;        
-    right: 10px;
-    background: rgba(255, 255, 255, 0.5); 
-    border-radius: 5px;
-    padding: 5px;
-  }
+.trainings * {
+  position: relative;
+  z-index: 1;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  align-self: center;
+  width: fit-content;
+}
+
+.training-desc {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 0 10px;
+}
+
+.trainer-info {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 0 10px 10px 10px;
+}
+
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.trainings:hover .overlay {
+  opacity: 1;
+  pointer-events: all;
+}
 
 </style>
