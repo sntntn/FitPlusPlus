@@ -154,8 +154,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://paymentdb:27017"
-      - PAYPAL_CLIENT_ID="PayPalSettings:ClientId"
-      - PAYPAL_CLIENT_SECRET="PayPalSettings:ClientSecret"
+    env_file:
+      - ./Services/PaymentService/PaymentService.API/.env
     ports:
       - "8003:8080"
         
