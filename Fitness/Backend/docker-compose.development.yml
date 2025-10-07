@@ -199,6 +199,9 @@ services:
       
   nutritionservice.api:
     container_name: nutritionservice.api
+    build:
+      context: .
+      dockerfile: Services/NutritionService/NutritionService.API/Dockerfile
     ports:
       - "8103:8080"
     environment:
@@ -207,6 +210,8 @@ services:
       - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - "DatabaseSettings:ConnectionString=mongodb://nutritiondb:27017"
+      - "DatabaseSettings:DatabaseName=NutritionDb"
     depends_on:
       - nutritiondb
       - consul

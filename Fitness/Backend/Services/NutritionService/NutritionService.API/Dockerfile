@@ -5,10 +5,10 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Kopiraj csproj fajlove
 COPY ["Services/NutritionService/NutritionService.API/NutritionService.API.csproj", "Services/NutritionService/NutritionService.API/"]
 COPY ["Common/ConsulConfig.Settings/ConsulConfig.Settings.csproj", "Common/ConsulConfig.Settings/"]
 COPY ["Common/EventBus.Messages/EventBus.Messages.csproj", "Common/EventBus.Messages/"]
+
 
 RUN dotnet restore "Services/NutritionService/NutritionService.API/NutritionService.API.csproj"
 
