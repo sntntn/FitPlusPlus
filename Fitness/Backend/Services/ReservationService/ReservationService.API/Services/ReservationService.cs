@@ -226,7 +226,7 @@ public class ReservationService : IReservationService
 
         foreach (var individualReservation in individualReservations)
         {
-            if (individualReservation.Date == date && IntervalsOverlap(individualReservation.StartTime,
+            if (individualReservation.Status == IndividualReservationStatus.Active && individualReservation.Date == date && IntervalsOverlap(individualReservation.StartTime,
                     individualReservation.EndTime, start, end))
             {
                 return false;
@@ -252,7 +252,7 @@ public class ReservationService : IReservationService
 
         foreach (var individualReservation in individualReservations)
         {
-            if (individualReservation.Date == date && IntervalsOverlap(individualReservation.StartTime,
+            if (individualReservation.Status == IndividualReservationStatus.Active && individualReservation.Date == date && IntervalsOverlap(individualReservation.StartTime,
                     individualReservation.EndTime, start, end))
             {
                 return false;

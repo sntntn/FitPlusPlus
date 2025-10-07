@@ -57,11 +57,23 @@ namespace ChatService.API.Repositories
         public async Task<bool> ExtendChatSessionAsync(string sessionId)
         {
             var filter = Builders<ChatSession>.Filter.Eq(s => s.Id, new ObjectId(sessionId));
-            var update = Builders<ChatSession>.Update
-                .Set(s => s.IsUnlocked, true)
-                .Set(s => s.ExpirationDate, DateTime.UtcNow.AddDays(30));
+            var updatePipeline = new PipelineUpdateDefinition<ChatSession>(
+                new[]
+                {
+                    new BsonDocument("$set", new BsonDocument
+                    {
+                        { "IsUnlocked", true },
+                        {
+                            "ExpirationDate", new BsonDocument("$add", new BsonArray
+                            {
+                                new BsonDocument("$max", new BsonArray { "$ExpirationDate", DateTime.UtcNow }),
+                                (long)TimeSpan.FromDays(30).TotalMilliseconds
+                            })
+                        }
+                    })
+                });
             
-            var result = await _chatSessions.UpdateOneAsync(filter, update);
+            var result = await _chatSessions.UpdateOneAsync(filter, updatePipeline);
             
             return result.ModifiedCount > 0;
         }

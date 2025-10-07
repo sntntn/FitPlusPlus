@@ -208,36 +208,68 @@ export default {
   },
 
   methods: {
+    initiatePayment(bookData, price) {
+      return dataServices.methods
+        .get_trainer_by_id(bookData.trainerId)
+        .then((trainerResponse) => {
+          const request = {
+            id: "",
+            userId: bookData.clientId,
+            amount: price,
+            currency: "USD",
+            trainerPayPalEmail: trainerResponse.data.contactEmail,
+          };
+
+          return dataServices.methods.create_payment(request);
+        })
+        .then((response) => {
+          const paymentId = response.data.payment.id;
+          const approvalUrl = response.data.paymentLink;
+
+          console.log("Payment initiated with ID:", paymentId);
+          window.location.href = approvalUrl;
+        })
+        .catch((error) => {
+          console.error("Error initiating payment:", error);
+          alert("Failed to initiate payment.");
+          return false;
+        });
+    },
+
     bookTraining() {
-      if (!this.selectedTrainer || !this.trainingDate || !this.selectedTrainingType || !this.startTime) {
+      if (
+        !this.selectedTrainer ||
+        !this.trainingDate ||
+        !this.selectedTrainingType ||
+        !this.startTime
+      ) {
         alert("Please fill in all fields before booking.");
         return;
       }
 
-      const payload = {
+      // TODO: Check if the trainer is free (maybe client has overseen the trainer availabilty)
+
+      const bookData = {
         id: "",
         trainerId: this.selectedTrainer.id,
         clientId: this.$route.params.id,
         trainingTypeId: this.selectedTrainingType.id,
         date: this.trainingDate,
         startTime: this.startTime + ":00",
-        endTime: this.endTime
+        endTime: this.endTime,
       };
 
-      console.log("Booking training with payload:", payload);
+      const price = this.selectedTrainingType.price;
 
-      createIndividualReservation(payload)
-        .then(response => {
-          if (response.status === 201) {
-            alert("Training booked successfully!");
-            location.reload();
-          } else {
-            alert(`Booking failed. Status: ${response.status}`);
-          }
+      sessionStorage.setItem("bookData", JSON.stringify(bookData));
+
+      this.initiatePayment(bookData, price)
+        .then(() => {
+          console.log("Payment process initiated.");
         })
-        .catch(error => {
-          console.error("Booking error:", error);
-          alert("An error occurred while booking the training.");
+        .catch((error) => {
+          console.error("Payment initiation error:", error);
+          alert("Could not start payment process. Please try again.");
         });
     },
 
@@ -355,12 +387,15 @@ export default {
       getIndividualReservationsByTrainer(this.selectedTrainer.id)
         .then(response => {
           response.data.forEach(element => {
-            unavailableSlots.push({
-              title: "individual",
-              date: element.date,
-              start: element.startTime,
-              end: element.endTime
-            });
+            console.log(element);
+            if(element.status == 0) {
+              unavailableSlots.push({
+                title: "individual",
+                date: element.date,
+                start: element.startTime,
+                end: element.endTime
+              });
+            }
           });
 
           getGroupReservationsByTrainer(this.selectedTrainer.id)
