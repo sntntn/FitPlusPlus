@@ -28,28 +28,6 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     
-    //[Authorize(Roles = "Client")]
-    [HttpPut("individual/client/cancel/{id}")]
-    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> CancelClientIndividualReservation(string id)
-    {
-        var reservation = await _reservationService.GetIndividualReservationAsync(id);
-        reservation.Status = IndividualReservationStatus.ClientCancelled;
-        var cancelled = await _reservationService.UpdateIndividualReservationAsync(reservation);
-        return cancelled ? Ok(cancelled) : BadRequest();
-    }
-
-    //[Authorize(Roles = "Trainer")]
-    [HttpPut("individual/trainer/cancel/{id}")]
-    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> CancelTrainerIndividualReservation(string id)
-    {
-        var reservation = await _reservationService.GetIndividualReservationAsync(id);
-        reservation.Status = IndividualReservationStatus.TrainerCancelled;
-        var cancelled = await _reservationService.UpdateIndividualReservationAsync(reservation);
-        return cancelled ? Ok(cancelled) : BadRequest();
-    }
-    
     //[Authorize(Roles = "Admin")]
     [HttpGet("group")]
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
@@ -211,6 +189,28 @@ public class ReservationController : ControllerBase
         {
             return BadRequest();
         }
+    }
+    
+    //[Authorize(Roles = "Client")]
+    [HttpPut("individual/client/cancel/{id}")]
+    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> CancelClientIndividualReservation(string id)
+    {
+        var reservation = await _reservationService.GetIndividualReservationAsync(id);
+        reservation.Status = IndividualReservationStatus.ClientCancelled;
+        var cancelled = await _reservationService.UpdateIndividualReservationAsync(reservation);
+        return cancelled ? Ok(cancelled) : BadRequest();
+    }
+
+    //[Authorize(Roles = "Trainer")]
+    [HttpPut("individual/trainer/cancel/{id}")]
+    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> CancelTrainerIndividualReservation(string id)
+    {
+        var reservation = await _reservationService.GetIndividualReservationAsync(id);
+        reservation.Status = IndividualReservationStatus.TrainerCancelled;
+        var cancelled = await _reservationService.UpdateIndividualReservationAsync(reservation);
+        return cancelled ? Ok(cancelled) : BadRequest();
     }
 
     //[Authorize(Roles = "Client")]

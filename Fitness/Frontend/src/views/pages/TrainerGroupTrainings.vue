@@ -239,13 +239,14 @@ export default {
           getIndividualReservationsByTrainer(this.trainer.id)
             .then(response => {
               response.data.forEach(element => {
-                unavailableSlots.push({
-                  title: "individual",
-                  date: element.date,
-                  start: element.startTime,
-                  end: element.endTime
-                });
-
+                if(element.status == 0) {
+                  unavailableSlots.push({
+                    title: "individual",
+                    date: element.date,
+                    start: element.startTime,
+                    end: element.endTime
+                  });
+                }
               });
 
               let unavailableEvents = unavailableSlots.map(t => ({
