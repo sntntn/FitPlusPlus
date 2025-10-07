@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using NutritionService.API.Models;
-using NutritionService.API.Repositories;
 
 namespace NutritionService.API.Controllers
 {
@@ -8,22 +8,29 @@ namespace NutritionService.API.Controllers
     [Route("api/[controller]")]
     public class FoodController : ControllerBase
     {
-        private readonly IFoodRepository _repository;
+        private readonly IMongoCollection<Food> _foods;
 
-        public FoodController(IFoodRepository repository)
+        public FoodController(IMongoDatabase db)
         {
-            _repository = repository;
+            _foods = db.GetCollection<Food>("Food");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFood([FromBody] Food food)
+        {
+            if (string.IsNullOrWhiteSpace(food.Name))
+                return BadRequest("Name is required");
+
+            await _foods.InsertOneAsync(food);
+            return Ok(food);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            Ok(await _repository.GetAllAsync());
-
-        [HttpPost]
-        public async Task<IActionResult> Create(Food food)
+        public async Task<IActionResult> GetAllFoods()
         {
-            await _repository.CreateAsync(food);
-            return CreatedAtAction(nameof(GetAll), food);
+            var foods = await _foods.Find(_ => true).ToListAsync();
+            return Ok(foods);
         }
     }
 }
+
