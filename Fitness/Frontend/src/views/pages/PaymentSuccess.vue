@@ -9,58 +9,137 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import dataServices from '../../services/data_services';
+import dataServices from "@/services/data_services";
+import { createChatSession, extendChatSession } from "@/services/ChatService";
+import { createIndividualReservation, cancelClientIndividualReservation, cancelTrainerIndividualReservation } from "@/services/ReservationService";
 
-  export default {
-    async created() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      const paymentId = urlParams.get('paymentId');
+export default {
+  created() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    const paymentId = urlParams.get("paymentId");
 
-      if (token && paymentId) {
-        try {
-          const request = {
-            token: token,
-            paymentId: paymentId
-          };
-
-          await dataServices.methods.capture_payment(request);
-
-          const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
-          
-          if (bookingData.isBooking) {
-            try {
-              const response = await dataServices.methods.booking(bookingData);
-            } catch (error) {
-              console.error('Error during booking:', error);
-              alert('Failed to book the training.');
-            }
-            setTimeout(() => {
-              this.$router.push(`/client/${bookingData.clientId}/schedule/${bookingData.trainerId}`);
-            }, 2000);
-          }
-          else {
-            try {
-              const response = await dataServices.methods.cancelBooking(bookingData);
-            } catch (error) {
-              console.error('Error during cancel booking:', error);
-              alert('Failed to cancel the training.');
-            }
-            setTimeout(() => {
-              this.$router.push(`/trainer/${bookingData.trainerId}/schedule`);
-            }, 2000);
-          }
-
-        } catch (error) {
-          console.error('Error capturing payment:', error);
-          alert('Failed to finalize your booking. Please try again.');
-        }
-      } else {
-        alert('Payment details are missing. Please try again.');
-      }
+    if (!token || !paymentId) {
+      alert("Payment details are missing. Please try again.");
+      return;
     }
-  }
+
+    const request = { token, paymentId };
+
+    dataServices.methods
+      .capture_payment(request)
+      .then(() => {
+        this.handlePostPaymentActions();
+      })
+      .catch((error) => {
+        console.error("Error capturing payment:", error);
+        alert("Failed to finalize your booking. Please try again.");
+      });
+  },
+
+  methods: {
+    handlePostPaymentActions() {
+      const bookData = sessionStorage.getItem("bookData");
+      const cancelData = sessionStorage.getItem("cancelData");
+      const chatData = sessionStorage.getItem("chatData");
+      const extendData = sessionStorage.getItem("extendData");
+
+      if (bookData) {
+        this.processBooking(JSON.parse(bookData));
+        sessionStorage.removeItem("bookData");
+      } else if (chatData) {
+        this.processChat(JSON.parse(chatData));
+        sessionStorage.removeItem("chatData");
+      } else if (extendData) {
+        this.processExtend(JSON.parse(extendData));
+        sessionStorage.removeItem("extendData");
+      } else if(cancelData) {
+        this.processCancel(JSON.parse(cancelData));
+        sessionStorage.removeItem("cancelData");
+      } else {
+        console.log("No data found in session.");
+      }
+    },
+
+    processBooking(bookData) {
+      createIndividualReservation(bookData)
+        .then((response) => {
+          if (response.status === 201) {
+            alert("Training booked successfully!");
+            this.$router.push(
+              `/client/${bookData.clientId}/individualTrainings`
+            );
+          } else {
+            alert(`Booking failed. Status: ${response.status}`);
+          }
+        })
+        .catch((error) => {
+          console.error("Booking error:", error);
+          alert("An error occurred while booking the training.");
+        });
+    },
+
+    processCancel(cancelData) {
+      cancelTrainerIndividualReservation(cancelData.reservationId)
+        .then((response) => {
+          if (response.status === 200) {
+            alert("Training cancelled successfully!");
+            this.$router.push(
+              `/trainer/${cancelData.trainerId}/individualTrainings`
+            );
+          } else {
+            alert(`Cancellation failed. Status: ${response.status}`);
+          }
+        })
+        .catch((error) => {
+          console.error("Cancellation error:", error);
+          alert("An error occurred while cancelling the training.");
+        });
+    },
+
+    processChat(chatData) {
+      console.log("Creating chat session...");
+
+      createChatSession(chatData.trainerId, chatData.clientId)
+        .then((response) => {
+          if (response.status === 200) {
+            alert("Chat session created successfully!");
+          } else {
+            alert("Failed to create chat session.");
+          }
+
+          setTimeout(() => {
+            this.$router.push(`/client/${chatData.clientId}/chat`);
+          }, 2000);
+        })
+        .catch((error) => {
+          console.error("Chat creation error:", error);
+          alert("An error occurred while creating the chat session.");
+        });
+    },
+
+    processExtend(extendData) {
+      console.log("Extending chat session...");
+
+      extendChatSession(extendData.trainerId, extendData.clientId)
+        .then((response) => {
+          if (response.status === 204) {
+            alert("Chat session extended successfully!");
+          } else {
+            alert("Failed to extend chat session.");
+          }
+
+          setTimeout(() => {
+            this.$router.push(`/client/${extendData.clientId}/chat`);
+          }, 2000);
+        })
+        .catch((error) => {
+          console.error("Chat extension error:", error);
+          alert("An error occurred while extending the chat session.");
+        });
+    },
+  },
+};
 </script>
 
 <style scoped>

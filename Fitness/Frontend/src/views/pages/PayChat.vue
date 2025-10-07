@@ -28,22 +28,21 @@
         <p>
           Secure your 30-day chat mentorship now!
         </p>
-        <button @click="redirectToPayPal" class="paypal-button">
+        <button @click="payChatSession" class="paypal-button">
           Pay with PayPal
         </button>
-        <button @click="payChatSession" class="apply-button">
-          Apply Your 30 Days
-        </button>
+        <!-- TODO: Resolve chat extension logic -->
       </div>
     </div>
 </template>
   
 <script>
-
+import data_services from "@/services/data_services";
 import { 
   createChatSession,
-  extendChatSession
-} from "../../services/ChatService";
+  extendChatSession,
+  getChatSession
+} from "@/services/ChatService";
 
 export default {
   name: "PayChat",
@@ -53,48 +52,75 @@ export default {
     this.clientId = pathParts[2];
     this.trainerId = pathParts[4];
   },
-  methods: {
-  
-    async payChatSession() {
-      try {
-        if (!this.trainerId || !this.clientId) {
-          alert("Trainer ID or Client ID is missing.");
-          console.log(this.clientId, this.trainerId);
-          return;
-        }
+  methods: {    
+    initiatePayment(chatData, price) {
+      return data_services.methods
+        .get_trainer_by_id(chatData.trainerId)
+        .then((trainerResponse) => {
+          const request = {
+            id: "",
+            userId: chatData.clientId,
+            amount: price,
+            currency: "USD",
+            trainerPayPalEmail: trainerResponse.data.contactEmail,
+          };
 
-        const extendResponse = await extendChatSession(this.trainerId,this.clientId);
+          return data_services.methods.create_payment(request);
+        })
+        .then((response) => {
+          const paymentId = response.data.payment.id;
+          const approvalUrl = response.data.paymentLink;
 
-        if (extendResponse.status === 204) {
-          alert("Chat session extended successfully!");
-          return;
-        }
+          console.log("Chat payment initiated with ID:", paymentId);
 
-        if (extendResponse.status === 404) {
-          console.log("Chat session not found, creating a new one...");
-
-          const createResponse = await createChatSession(this.trainerId, this.clientId);
-
-          if (createResponse.status === 200) {
-            alert("Chat session created successfully!");
-          } else {
-            alert("Failed to create chat session.");
-          }
-        }
-      } catch (error) {
-        alert("Failed to process chat session. Please try again.");
-        console.error("Error:", error);
-      }
+          window.location.href = approvalUrl;
+        })
+        .catch((error) => {
+          console.error("Error initiating chat payment:", error);
+          alert("Failed to initiate payment.");
+          return false;
+        });
     },
 
+    payChatSession() {
+      if (!this.trainerId || !this.clientId) {
+        alert("Trainer ID or Client ID is missing.");
+        console.log("Client ID:", this.clientId, "Trainer ID:", this.trainerId);
+        return;
+      }
 
-    redirectToPayPal() {
-      const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=STAVITI_PAYPAL_MAIL&item_name=Chat Mentorship&amount=30.00&currency_code=USD`;
-      
-      window.location.href = paypalUrl;
+      const chatData = {
+        clientId: this.clientId,
+        trainerId: this.trainerId,
+      };
+      const price = 30; // TODO: Consider making dynamic
+
+      getChatSession(this.trainerId, this.clientId)
+        .then((response) => {
+          let storageKey;
+          console.log(response);
+          if (response.status === 200) {
+            console.log("Chat session already exists! Extending chat session");
+            storageKey = "extendData";
+            // TODO: Optionally ask user with confirm() before extending
+          } else if (response.status === 404) {
+            console.log("Chat session not found. Creating a new one...");
+            storageKey = "chatData";
+          }
+
+          sessionStorage.setItem(storageKey, JSON.stringify(chatData));
+
+          return this.initiatePayment(chatData, price);
+        })
+        .then(() => {
+          console.log("Payment process initiated successfully.");
+        })
+        .catch((error) => {
+          console.error("Error processing chat session:", error);
+          alert("Failed to process chat session. Please try again.");
+        });
     }
   }
-
 };
 
 </script>

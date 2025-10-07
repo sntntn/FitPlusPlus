@@ -22,7 +22,7 @@
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
               <td>
-                <button class="danger" @click="cancelTraining(res.id)">Cancel</button>
+                <button class="danger" @click="cancelTraining(res)">Cancel</button>
               </td>
             </tr>
           </tbody>
@@ -35,6 +35,7 @@
         <table>
           <thead>
             <tr>
+              <th>Client</th>
               <th>Training Type</th>
               <th>Date</th>
               <th>Time</th>
@@ -45,6 +46,7 @@
           <tbody>
             <tr v-for="res in completedOrCancelled" :key="res.id">
               <td>{{ res.client }}</td>
+              <td>{{ res.trainingType }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
               <td>{{ res.status }}</td>
@@ -111,15 +113,51 @@ export default {
   },
 
   methods: {
-    cancelTraining(res_id) {
+    async initiatePayment(cancelData, price) {
+      return dataServices.methods
+        .get_client_by_id(cancelData.clientId)
+        .then((clientResponse) => {
+          const request = {
+            id: "",
+            userId: cancelData.trainerId,
+            amount: price,
+            currency: "USD",
+            trainerPayPalEmail: clientResponse.data.email,
+          };
+
+          return dataServices.methods.create_payment(request);
+        })
+        .then((response) => {
+          const paymentId = response.data.payment.id;
+          const approvalUrl = response.data.paymentLink;
+
+          console.log("Payment initiated with ID:", paymentId);
+          window.location.href = approvalUrl;
+        })
+        .catch((error) => {
+          console.error("Error initiating payment:", error);
+          alert("Failed to initiate payment.");
+          return false;
+        });
+    },
+    cancelTraining(res) {
       if (confirm("Are you sure you want to cancel the training?")) {
-        cancelTrainerIndividualReservation(res_id)
-          .then(response => {
-            location.reload();
+        const cancelData = {
+          reservationId: res.id,
+          clientId: res.clientId,
+          trainerId: this.$route.params.id
+        };
+        const price = res.price;
+
+        sessionStorage.setItem("cancelData", JSON.stringify(cancelData));
+
+        this.initiatePayment(cancelData, price)
+          .then(() => {
+            console.log("Payment process initiated.");
           })
-          .catch(error => {
-            console.error("Cancelling error:", error);
-            alert("An error occurred while cancelling a reservation from the trainer side.");
+          .catch((error) => {
+            console.error("Payment initiation error:", error);
+            alert("Could not start payment process. Please try again.");
           });
       }
     },
@@ -137,6 +175,12 @@ export default {
       let trainingTypes = this.trainers.map(t => t.trainingTypes).flat();
       let trainingType = trainingTypes.find(t => t.id == type_id);
       return trainingType !== undefined ? trainingType.name : "";
+    },
+
+    findPrice(type_id) {
+      let trainingTypes = this.trainers.map(t => t.trainingTypes).flat();
+      let trainingType = trainingTypes.find(t => t.id == type_id);
+      return trainingType !== undefined ? trainingType.price : 0;
     },
 
     fetchTrainers() {
@@ -182,7 +226,9 @@ export default {
         .map(r => ({
           id: r.id,
           client: this.findClientName(r.clientId),
+          clientId: r.clientId,
           trainingType: this.findTrainingType(r.trainingTypeId),
+          price: this.findPrice(r.trainingTypeId),
           date: r.date,
           time: `${r.startTime} - ${r.endTime}`
         }));

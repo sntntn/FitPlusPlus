@@ -88,6 +88,16 @@ export async function createChatSession(trainerId, clientId) {
   }
 }
 
+export async function getChatSession(trainerId, clientId) {
+  try {
+    const response = await axios.get(`${CHAT}/sessions?trainerId=${trainerId}&clientId=${clientId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching chat session:", error);
+    throw error;
+  }
+}
+
 export async function extendChatSession(trainerId, clientId) {
   try {
     const response = await axios.post(
