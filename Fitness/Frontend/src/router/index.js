@@ -109,6 +109,11 @@ const routes = [
         path: '/client/:id/analytics',
         name: 'ClientAnalytics',
         component: () => import('@/views/pages/ClientAnalytics.vue')
+      },
+      {
+        path: '/trainer/:id/analytics',
+        name: 'TrainerAnalytics',
+        component: () => import('@/views/pages/ClientAnalytics.vue')
       }
     ],
   },

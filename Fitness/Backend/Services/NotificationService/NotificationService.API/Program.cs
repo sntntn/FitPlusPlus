@@ -50,7 +50,6 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_PASSWORD"));
 var options = new SmtpClientOptions
 {
     Server = emailSettings["SmtpHost"]!,
