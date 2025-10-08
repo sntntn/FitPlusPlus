@@ -8,6 +8,6 @@ public class TrainingHeldProfile : Profile
 {
     public TrainingHeldProfile()
     {
-        CreateMap<TrainingHeldEvent, Training>().ReverseMap();
+        CreateMap<IndividualReservationEvent, Training>().ReverseMap();
     }
 }

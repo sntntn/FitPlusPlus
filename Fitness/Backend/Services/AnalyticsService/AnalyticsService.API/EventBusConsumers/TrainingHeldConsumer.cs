@@ -6,7 +6,7 @@ using MassTransit;
 
 namespace AnalyticsService.API.EventBusConsumers;
 
-public class TrainingHeldConsumer : IConsumer<TrainingHeldEvent>
+public class TrainingHeldConsumer : IConsumer<IndividualReservationEvent>
 {
     private readonly IAnalyticsRepository _repository;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ public class TrainingHeldConsumer : IConsumer<TrainingHeldEvent>
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task Consume(ConsumeContext<TrainingHeldEvent> context)
+    public async Task Consume(ConsumeContext<IndividualReservationEvent> context)
     {
         var training = _mapper.Map<Training>(context.Message);
         await _repository.CreateTraining(training);
