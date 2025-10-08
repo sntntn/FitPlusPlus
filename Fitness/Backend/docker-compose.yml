@@ -109,6 +109,8 @@ services:
     build:
       context: .
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
+    depends_on:
+      - consul
       
   reservationservice.api:
     image: ${DOCKER_REGISTRY-}reservationserviceapi
@@ -126,6 +128,7 @@ services:
       dockerfile: Services/AnalyticsService/AnalyticsService.API/Dockerfile
     depends_on:
       - analyticsdb
+      - consul
       - reviewservice.grpc
       - rabbitmq
       
@@ -135,6 +138,7 @@ services:
       context: .
       dockerfile: Services/NotificationService/NotificationService.API/Dockerfile
     depends_on:
+      - consul
       - notificationdb
       - rabbitmq
       
@@ -147,16 +151,6 @@ services:
       - chatdb
       - rabbitmq
       - consul
-      
-  reservationservice.api:
-    image: ${DOCKER_REGISTRY-}reservationserviceapi
-    build:
-      context: .
-      dockerfile: Services/ReservationService/ReservationService.API/Dockerfile
-    depends_on:
-      - reservationdb
-      - rabbitmq
-      - consul
 
 volumes:
   trainermongo_data:
@@ -165,7 +159,6 @@ volumes:
   paymentmongo_data:
   analyticsmongo_data:
   notificationmongo_data:
-  analyticsmongo_data:
   chatmongo_data:
   reservationmongo_data:
   mssql_data:
