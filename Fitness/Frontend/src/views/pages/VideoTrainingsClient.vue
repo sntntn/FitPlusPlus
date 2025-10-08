@@ -1,26 +1,44 @@
 <template>
-  <div id="wrapper">
-    <h3> Dostupni treninzi: </h3>
 
-    <figure v-if="trainings && trainings.length > 0" class="trainings" v-for="training in trainings" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
-        <figcaption > {{ training.type }}</figcaption>
+  <h3>Dostupni treninzi: </h3>
+  
+  <div class="content">
+  
+    <figure v-if="trainings && trainings.length > 0" class="trainings" v-for="training in trainings"  :key="training.trainingId" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
+      <figcaption > {{ training.type }}</figcaption>
 
-        <div class="training-desc">
-          <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
-          </p>
-        </div>
+      <div class="training-desc">
+        <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
+        </p>
+      </div>
 
-        <div class="trainer-info">
-          <p :style="{ fontSize: '20px', color: 'black' }"> Trener: {{ getTrainerName(training.trainerId) }}
-          </p>
-          <p :style="{ fontSize: '20px', color: 'black' }"> Ocena: {{ getAverageRating(training.trainerId) }}
-          </p>
-        </div>
+      <div class="trainer-info">
+        <p :style="{ fontSize: '20px', color: 'black' }"> Trener: {{ getTrainerName(training.trainerId) }}
+        </p>
+        <p :style="{ fontSize: '20px', color: 'black' }"> Ocena: {{ getAverageRating(training.trainerId) }}
+        </p>
+      </div>
 
-        <button class="overlay" @click="buyProgram">See more</button>
+      <button class="overlay" @click="handleTrainingClick(training.trainingId)">
+      {{ isPurchased(training.trainingId) ? 'View training' : 'Buy training' }}
+      </button>
     </figure>
-
   </div>
+
+  <div v-if="expandedTrainingId !== null" class="content" @click.self="closeModal">
+    <div class="training-exercise">
+      <h3>Trening: {{ expandedTraining.type }}</h3>
+
+      <p :style="{ fontSize: '20px', fontColor: 'black' }"> {{ expandedTraining.description }}
+      </p>
+
+      <div v-for="(exercise, index) in getExercisesForTraining(expandedTrainingId)" :key="exercise.exerciseId" class="exercise-item">
+        <span>{{ index + 1 }}.{{ getExerciseName(exercise.exerciseId) }} - {{ exercise.exerciseReps }} ponavljanja, {{ exercise.setReps }} setova</span>
+      </div>
+      <button @click="expandedTrainingId = null" class="close-btn">Zatvori</button>
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -38,13 +56,20 @@ export default {
         { name: 'Snaga', type: require('@/assets/images/strength.jpg')}, 
         { name: 'Pilates', type: require('@/assets/images/yoga.jpg')}, 
         {name: 'Mix', type: require('@/assets/images/mix.jpg')} ],
-      }
+
+      purchasedTrainings: [],
+      expandedTrainingId: null,
+      expandedTraining: null,
+      trainingExercises: [],
+      exerciseNames: [] 
+    }
   },
 
   methods: {
 
     buyProgram(){
         alert("Kupili ste program!");
+
     },
 
     async loadTrainings(){
@@ -90,7 +115,44 @@ export default {
 
       const trainer = this.trainers.find(p => p.id === trainerId);
       return trainer.averageRating;
-    }
+    },
+
+    async handleTrainingClick(trainingId) {
+
+      if (!this.isPurchased(trainingId)) {
+        if (confirm(`Da li želiš da kupiš trening?`)) {
+          this.purchasedTrainings.push(trainingId); 
+
+          try{
+            const exercisesResponse = await dataServices.methods.get_training_exercises(trainingId);
+            if (exercisesResponse.data) {
+              this.trainingExercises.push(...exercisesResponse.data);
+            }
+          } catch (error) {
+            console.error("Greška pri dohvatanju vezbi iz treninga: ", trainingId , " ", error);
+          }
+        }
+      } else {
+        this.expandedTrainingId = trainingId;
+        this.expandedTraining = this.trainings.find(e => e.trainingId === trainingId);
+      }
+
+    },
+
+    isPurchased(trainingId) {
+      return this.purchasedTrainings.includes(trainingId);
+    },
+
+    getExercisesForTraining(trainingId) {
+      console.log(this.trainingExercises);
+      return this.trainingExercises.filter(
+        (exercise) => exercise.trainingId === trainingId);
+    },
+
+    getExerciseName(exerciseId) {
+      const ex = this.exerciseNames.find(e => e.id === exerciseId);
+      return ex ? ex.name : '';
+    },
 
   },
 
@@ -112,87 +174,154 @@ export default {
 
 <style scoped>
 
-.trainings {
-  position: relative;
-  width: 45%; 
-  height: 350px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 10px;
-  display: inline-block;
-  vertical-align: top; 
-  margin: 15px; 
-  flex-direction: column;
-  justify-content: space-between; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  opacity: 0.9;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+  .content {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
 
-.trainings:hover {
-  transform: scale(1.02);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    justify-items: center;
+    align-items: start; 
+    gap: 25px; 
+  }
+  
+  h3 {
+    text-align: left;
+  }
 
-.trainings::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.5); 
-  z-index: 0;
-}
+  .trainings {
+    position: relative;
+    width: 100%; 
+    height: 350px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: top; 
+    margin: 5px; 
+    flex-direction: column;
+    justify-content: space-between; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    opacity: 0.9;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
 
-.trainings * {
-  position: relative;
-  z-index: 1;
-}
+  .trainings:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
 
-figcaption {
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  align-self: center;
-  width: fit-content;
-}
+  .trainings::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.5); 
+    z-index: 0;
+  }
 
-.training-desc {
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 6px;
-  padding: 10px;
-  margin: 0 10px;
-}
+  .trainings * {
+    position: relative;
+    z-index: 1;
+  }
 
-.trainer-info {
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 6px;
-  padding: 10px;
-  margin: 0 10px 10px 10px;
-}
+  figcaption {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    align-self: center;
+    width: fit-content;
+  }
 
-.overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 12px 22px;
-  border: none;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
+  .training-desc {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 0 10px;
+  }
 
-.trainings:hover .overlay {
-  opacity: 1;
-  pointer-events: all;
-}
+  .trainer-info {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 0 10px 10px 10px;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .trainings:hover .overlay {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .exercises-section {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+
+  .training-exercise {
+      position: relative;
+      width: 95%;
+      padding: 15px;
+      margin: 15px;
+      display: block;
+      vertical-align: top;
+      background-size: cover;
+      opacity: 0.9;
+      border-radius: 10px;
+      border: 2px solid #d35400        
+  }
+
+  .exercise-item {
+      font-size: 18px;
+      color: #222;
+      margin-left: 10px;
+      padding: 3px 0;
+      border-bottom: 1px solid #ccc; 
+  }
+
+  .exercise-item:last-child {
+      border-bottom: none;
+  }
+
+  .close-btn{
+    display: block;        
+    margin-left: auto;     
+    right: 10px;   
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
+    border: 2px solid #e67e22;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
 
 </style>
