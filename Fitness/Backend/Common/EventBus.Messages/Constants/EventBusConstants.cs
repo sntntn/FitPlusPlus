@@ -9,6 +9,8 @@ namespace EventBus.Messages.Constants
     public static class EventBusConstants
     {
         public const string NotificationQueue = "notification-queue";
-        public const string TrainingHeldQueue = "training-held-queue";
+        public const string IndividualReservationQueue = "individual-reservation-queue";
+        public const string GroupReservationQueue = "group-reservation-queue";
+        public const string ReviewQueue = "review-queue";
     }
 }
