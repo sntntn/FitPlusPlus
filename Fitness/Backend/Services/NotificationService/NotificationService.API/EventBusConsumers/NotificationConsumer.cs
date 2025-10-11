@@ -37,7 +37,6 @@ public class NotificationConsumer : IConsumer<NotificationEvent>
             var subject = "[FitPlusPlus Gym] " + notification.Title;
             var body = "You have a new notification from your FitPlusPlus Gym Account:\n\n" + notification.Content +
                        "\n\nTime: " + notification.CreationDate;
-            Console.WriteLine(notification.UserIdToUserType.Count);
             foreach (var (key, value) in notification.UserIdToUserType)
             {
                 if (value.Equals("Client"))

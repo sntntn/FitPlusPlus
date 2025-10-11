@@ -2,7 +2,6 @@ using AutoMapper;
 using ChatService.API.Models;
 using EventBus.Messages.Events;
 using MassTransit;
-using MongoDB.Bson;
 
 namespace ChatService.API.Publishers;
 
