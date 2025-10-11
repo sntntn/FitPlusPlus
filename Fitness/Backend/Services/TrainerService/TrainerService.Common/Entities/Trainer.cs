@@ -15,7 +15,7 @@ namespace TrainerService.Common.Entities
         public List<TrainingType> TrainingTypes { get; set; } = new List<TrainingType>();
         public List<ReviewType> Reviews { get; set; } = new List<ReviewType>();
         [BsonIgnore]
-        public double AverageRating => Reviews.Any() ? Reviews.Average(r => r.Rating) : 0.0;
+        public double AverageRating => Reviews.Any() ? Reviews.Average(r => r.ClientRating) : 0.0;
 
 
     }

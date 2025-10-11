@@ -190,24 +190,24 @@ export default {
         // ====================
         // Reviews
         // ====================
-        add_review(request) {
+        get_reviews_client(cli_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.post(`${REVIEW}`, request);
+          return axios.get(`${REVIEW}/client/${cli_id}`);
         },
 
-        get_reviews(tra_id) {
+        get_reviews_trainer(tra_id) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.get(`${REVIEW}/${tra_id}`);
+          return axios.get(`${REVIEW}/trainer/${tra_id}`);
         },
 
-        update_review(request) {
+        submit_review_client(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.put(`${REVIEW}`, request);
+          return axios.post(`${REVIEW}/client/${request.clientId}`, request);
         },
 
-        delete_review(rev_id) {
+        submit_review_trainer(request) {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          return axios.delete(`${REVIEW}/${rev_id}`);
+          return axios.post(`${REVIEW}/trainer/${request.trainerId}`, request);
         },
     }
 }

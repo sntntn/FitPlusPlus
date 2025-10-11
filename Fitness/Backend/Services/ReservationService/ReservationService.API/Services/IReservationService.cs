@@ -24,15 +24,13 @@ public interface IReservationService
 
     Task<bool> CreateGroupReservationAsync(GroupReservation groupReservation);
 
-    Task<bool> UpdateIndividualReservationAsync(IndividualReservation individualReservation);
-
-    Task<bool> UpdateGroupReservationAsync(GroupReservation groupReservation);
-    
-    Task<bool> DeleteIndividualReservationAsync(string id);
-
     Task<bool> DeleteGroupReservationAsync(string id);
 
     Task<bool> BookGroupReservationAsync(string id, string clientId);
 
     Task<bool> CancelGroupReservationAsync(string id, string clientId);
+    
+    Task<bool> ClientCancelIndividualReservationAsync(string id);
+    
+    Task<bool> TrainerCancelIndividualReservationAsync(string id);
 }

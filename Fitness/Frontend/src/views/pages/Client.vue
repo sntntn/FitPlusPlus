@@ -46,12 +46,6 @@
           </CTableDataCell>
           <CTableDataCell class="test action-column">
             <div class="action-buttons">
-              <CButton class="px-3 btn" color="light" @click="showReviews(trainer.id, trainer.fullName, trainer.reviews)">
-                View reviews
-              </CButton>
-              <CButton class="px-3 btn" color="light" @click="bookTraining(trainer.id)">
-                Book training
-              </CButton>
               <CButton class="px-3 btn" color="light" @click="payChat(trainer.id)">
                 Pay chat
               </CButton>
@@ -60,19 +54,14 @@
         </CTableRow>
       </CTableBody>
     </CTable>
-    <ClientModal :modalData="modalData" @review-added="fetchTrainers" @review-updated="fetchTrainers" @review-deleted="fetchTrainers" />
-  </div>
+    </div>
 </template>
 
 <script>
 import dataServices from '@/services/data_services';
-import ClientModal from '@/components/ClientModal.vue';
 
 export default {
   name: "Client",
-  components: {
-    ClientModal
-  },
   data() {
     return {
       trainers: [],
@@ -81,15 +70,6 @@ export default {
       trainingTypes: [],
       selectedType: '',
       minRating: 0.0,
-      modalData: {
-        isvisible: false,
-        title: "Trainer Reviews",
-        trainerId: '',
-        trainerName: '',
-        reviews: [],
-        resolve: null,
-        reject: null
-      }
     };
   },
   methods: {
@@ -138,16 +118,6 @@ export default {
     resetFilter() {
       this.minRating = 0.0;
       this.applyTrainingTypeFilter();
-    },
-    showReviews(id, name, reviews) {
-      this.modalData.trainerId = id;
-      this.modalData.trainerName = name;
-      this.modalData.reviews = reviews;
-      this.modalData.isvisible = true;
-      return new Promise((resolve, reject) => {
-        this.modalData.resolve = resolve;
-        this.modalData.reject = reject;
-      });
     }
   },
   mounted() {
