@@ -189,6 +189,23 @@ export default {
       }
     },
 
+    submitReview(reservationId, rating, comment) {
+      let request = {
+        reservationId: reservationId,
+        clientId: this.$route.params.id,
+        clientComment: comment,
+        clientRating: rating,
+      }
+      data_services.methods.submit_review_client(request)
+        .then(response => {
+            location.reload();
+          })
+          .catch(error => {
+            console.error("Reviewing error:", error);
+            alert("An error occurred while reviewing a reservation from the trainer side.");
+          });
+    },
+
     fetchGroupReservations() {
       getAllGroupReservations()
         .then(response => {

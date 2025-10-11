@@ -1,6 +1,6 @@
-namespace EventBus.Messages.Events;
+namespace ReservationService.API.Entities;
 
-public class IndividualReservationEvent : IntegrationBaseEvent
+public class IndividualReservationEvent
 {
     public string ReservationId { get; set; }
     public string? ClientId { get; set; }

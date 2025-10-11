@@ -34,13 +34,23 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 //EventBus
 builder.Services.AddMassTransit(config =>
 {
-    config.AddConsumer<TrainingHeldConsumer>();
+    config.AddConsumer<IndividualReservationConsumer>();
+    config.AddConsumer<GroupReservationConsumer>();
+    config.AddConsumer<ReviewConsumer>();
     config.UsingRabbitMq((ctx, cfg) =>
     {
         cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
         cfg.ReceiveEndpoint(EventBusConstants.IndividualReservationQueue, c =>
         {
-            c.ConfigureConsumer<TrainingHeldConsumer>(ctx);
+            c.ConfigureConsumer<IndividualReservationConsumer>(ctx);
+        });
+        cfg.ReceiveEndpoint(EventBusConstants.GroupReservationQueue, c =>
+        {
+            c.ConfigureConsumer<GroupReservationConsumer>(ctx);
+        });
+        cfg.ReceiveEndpoint(EventBusConstants.ReviewQueue, c =>
+        {
+            c.ConfigureConsumer<ReviewConsumer>(ctx);
         });
     });
 });

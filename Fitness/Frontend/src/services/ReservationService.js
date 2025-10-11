@@ -42,20 +42,6 @@ export async function createIndividualReservation(reservation) {
   return response;
 }
 
-// Client/Trainer - update individual reservation
-export async function updateIndividualReservation(reservation) {
-  const response = await axios.put(`${RESERVATIONS}/individual`, reservation, {
-    headers: { "Content-Type": "application/json" },
-  });
-  return response;
-}
-
-// Client/Trainer - delete individual reservation
-export async function deleteIndividualReservation(id) {
-  const response = await axios.delete(`${RESERVATIONS}/individual/${id}`);
-  return response;
-}
-
 // ---------------------- GROUP RESERVATIONS ----------------------
 
 // Admin - get all group
@@ -85,14 +71,6 @@ export async function getGroupReservationsByTrainer(trainerId) {
 // Trainer - create group reservation
 export async function createGroupReservation(reservation) {
   const response = await axios.post(`${RESERVATIONS}/group`, reservation, {
-    headers: { "Content-Type": "application/json" },
-  });
-  return response;
-}
-
-// Trainer - update group reservation
-export async function updateGroupReservation(reservation) {
-  const response = await axios.put(`${RESERVATIONS}/group`, reservation, {
     headers: { "Content-Type": "application/json" },
   });
   return response;
