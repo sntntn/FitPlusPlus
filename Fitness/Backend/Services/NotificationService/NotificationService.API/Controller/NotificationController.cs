@@ -1,6 +1,4 @@
-using System.Collections;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.API.Entities;
 using NotificationService.API.Repositories;
@@ -33,7 +31,9 @@ public class NotificationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Notification>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserId(string userId)
     {
+        Console.WriteLine(userId);
         var notifications = await _repository.GetNotificationsByUserId(userId);
+        Console.WriteLine(notifications);
         return Ok(notifications);
     }
 

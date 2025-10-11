@@ -11,7 +11,6 @@ using ConsulConfig.Settings;
 using EventBus.Messages.Events;
 using MassTransit;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulConfiguration>()!;
@@ -70,8 +69,6 @@ builder.Services.AddMassTransit(config =>
         cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
     });
 });
-
-
 
 var app = builder.Build();
 

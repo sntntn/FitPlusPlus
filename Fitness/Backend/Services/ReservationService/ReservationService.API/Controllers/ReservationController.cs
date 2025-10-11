@@ -126,54 +126,6 @@ public class ReservationController : ControllerBase
             return BadRequest();
         }
     }
-    
-    //[Authorize(Roles = "Client, Trainer")]
-    [HttpPut("individual")]
-    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateIndividualReservation([FromBody] IndividualReservation reservation)
-    {
-        var updated = await _reservationService.UpdateIndividualReservationAsync(reservation);
-        if (updated)
-        {
-            return Ok(reservation);
-        }
-        else
-        {
-            return BadRequest();
-        }
-    }  
-    
-    //[Authorize(Roles = "Trainer")]
-    [HttpPut("group")]
-    [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateGroupReservation([FromBody] GroupReservation reservation)
-    {
-        var updated = await _reservationService.UpdateGroupReservationAsync(reservation);
-        if (updated)
-        {
-            return Ok(reservation);
-        }
-        else
-        {
-            return  BadRequest();
-        }
-    }
-
-    //[Authorize(Roles = "Client, Trainer")]
-    [HttpDelete("individual/{id}")]
-    [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> DeleteIndividualReservation(string id)
-    {
-        var deleted =  await _reservationService.DeleteIndividualReservationAsync(id);
-        if (deleted)
-        {
-            return NoContent();
-        }
-        else
-        {
-            return BadRequest();
-        }
-    }
 
     //[Authorize(Roles = "Trainer")]
     [HttpDelete("group/{id}")]
@@ -196,9 +148,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelClientIndividualReservation(string id)
     {
-        var reservation = await _reservationService.GetIndividualReservationAsync(id);
-        reservation.Status = IndividualReservationStatus.ClientCancelled;
-        var cancelled = await _reservationService.UpdateIndividualReservationAsync(reservation);
+        var cancelled = await _reservationService.ClientCancelIndividualReservationAsync(id);
         return cancelled ? Ok(cancelled) : BadRequest();
     }
 
@@ -207,9 +157,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelTrainerIndividualReservation(string id)
     {
-        var reservation = await _reservationService.GetIndividualReservationAsync(id);
-        reservation.Status = IndividualReservationStatus.TrainerCancelled;
-        var cancelled = await _reservationService.UpdateIndividualReservationAsync(reservation);
+       var cancelled = await _reservationService.TrainerCancelIndividualReservationAsync(id);
         return cancelled ? Ok(cancelled) : BadRequest();
     }
 

@@ -9,11 +9,15 @@ public class ReservationService : IReservationService
 {
     private readonly IReservationRepository _reservationRepository;
     private readonly INotificationPublisher _notificationPublisher;
-
-    public ReservationService(IReservationRepository reservationRepository, INotificationPublisher notificationPublisher)
+    private readonly IIndividualReservationPublisher _individualReservationPublisher;
+    private readonly IGroupReservationPublisher _groupReservationPublisher;
+    public ReservationService(IReservationRepository reservationRepository, INotificationPublisher notificationPublisher,
+        IIndividualReservationPublisher individualReservationPublisher, IGroupReservationPublisher groupReservationPublisher)
     {
         _reservationRepository = reservationRepository ?? throw new ArgumentNullException(nameof(reservationRepository));
         _notificationPublisher = notificationPublisher ?? throw new ArgumentNullException(nameof(notificationPublisher));
+        _individualReservationPublisher = individualReservationPublisher ?? throw new ArgumentNullException(nameof(individualReservationPublisher));
+        _groupReservationPublisher = groupReservationPublisher ?? throw new ArgumentNullException(nameof(groupReservationPublisher));
     }
     
     public async Task<IEnumerable<IndividualReservation>> GetIndividualReservationsAsync()
@@ -78,7 +82,8 @@ public class ReservationService : IReservationService
                 { individualReservation.TrainerId, "Trainer" }
             };
             await _notificationPublisher.PublishNotification("Training reservation created", individualReservation.ToString(), "Information", true, users);
-
+            await _individualReservationPublisher.PublishBooked(individualReservation);
+            
             return true;
         }
 
@@ -93,68 +98,12 @@ public class ReservationService : IReservationService
             await _reservationRepository.CreateGroupReservationAsync(groupReservation);
             var users = new Dictionary<string, string> { { groupReservation.TrainerId, "Trainer" } };
             await _notificationPublisher.PublishNotification("Training reservation created", groupReservation.ToString(), "Information", true, users);
-
+            await _groupReservationPublisher.PublishAdded(groupReservation);
+            
             return true;
         }
 
         return false;
-    }
-
-    public async Task<bool> UpdateIndividualReservationAsync(IndividualReservation individualReservation)
-    {
-        var updated = await _reservationRepository.UpdateIndividualReservationAsync(individualReservation);
-
-        if (updated)
-        {
-            var users = new Dictionary<string, string>
-            {
-                { individualReservation.ClientId, "Client" },
-                { individualReservation.TrainerId, "Trainer" }
-            };
-            await _notificationPublisher.PublishNotification("Training reservation updated", individualReservation.ToString(),
-                "Information", true, users);
-            
-        }
-        
-        return updated;
-    }
-
-    public async Task<bool> UpdateGroupReservationAsync(GroupReservation groupReservation)
-    {
-        var updated = await _reservationRepository.UpdateGroupReservationAsync(groupReservation);
-
-        if (updated)
-        {
-            var users = new Dictionary<string, string>();
-            foreach (var clientId in groupReservation.ClientIds)
-            {
-                users.Add(clientId, "Client");
-            }
-            users.Add(groupReservation.TrainerId, "Trainer");
-            await _notificationPublisher.PublishNotification("Training reservation updated", groupReservation.ToString(),
-                "Information", true, users);
-        }
-
-        return updated;
-    }
-
-    public async Task<bool> DeleteIndividualReservationAsync(string id)
-    {
-        var reservation = await _reservationRepository.GetIndividualReservationByIdAsync(id);
-        var deleted = await _reservationRepository.DeleteIndividualReservationAsync(id);
-
-        if (deleted)
-        {
-            var users = new Dictionary<string, string>
-            {
-                { reservation.ClientId, "Client" },
-                { reservation.TrainerId, "Trainer" }
-            };
-            await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
-                "Information", true, users);
-        }
-
-        return deleted;
     }
 
     public async Task<bool> DeleteGroupReservationAsync(string id)
@@ -172,6 +121,7 @@ public class ReservationService : IReservationService
             users.Add(reservation.TrainerId, "Trainer");
             await _notificationPublisher.PublishNotification("Training reservation cancelled", reservation.ToString(),
                 "Information", true, users);
+            await _groupReservationPublisher.PublishRemoved(reservation);
         }
 
         return deleted;
@@ -192,6 +142,7 @@ public class ReservationService : IReservationService
                 };
                 await _notificationPublisher.PublishNotification("Training reservation booked", groupReservation.ToString(),
                     "Information", true, users);
+                await _groupReservationPublisher.PublishBooked(groupReservation, clientId);
             }
 
             return booked;
@@ -214,6 +165,49 @@ public class ReservationService : IReservationService
             };
             await _notificationPublisher.PublishNotification("Training reservation cancelled", groupReservation.ToString(),
                 "Information", true, users);
+            await _groupReservationPublisher.PublishCancelled(groupReservation, clientId);
+        }
+        
+        return cancelled;
+    }
+
+    public async Task<bool> ClientCancelIndividualReservationAsync(string id)
+    {
+        var reservation = await _reservationRepository.GetIndividualReservationByIdAsync(id);
+        reservation.Status = IndividualReservationStatus.ClientCancelled;
+        var cancelled = await _reservationRepository.UpdateIndividualReservationAsync(reservation);
+        
+        if (cancelled)
+        {
+            var users = new Dictionary<string, string>
+            {
+                { reservation.ClientId, "Client" },
+                { reservation.TrainerId, "Trainer" }
+            };
+            await _notificationPublisher.PublishNotification("Training reservation cancelled by client", reservation.ToString(),
+                "Information", true, users);
+            await _individualReservationPublisher.PublishClientCancelled(reservation);
+        }
+        
+        return cancelled;
+    }
+
+    public async Task<bool> TrainerCancelIndividualReservationAsync(string id)
+    {
+        var reservation = await _reservationRepository.GetIndividualReservationByIdAsync(id);
+        reservation.Status = IndividualReservationStatus.TrainerCancelled;
+        var cancelled = await _reservationRepository.UpdateIndividualReservationAsync(reservation);
+        
+        if (cancelled)
+        {
+            var users = new Dictionary<string, string>
+            {
+                { reservation.ClientId, "Client" },
+                { reservation.TrainerId, "Trainer" }
+            };
+            await _notificationPublisher.PublishNotification("Training reservation cancelled by trainer", reservation.ToString(),
+                "Information", true, users);
+            await _individualReservationPublisher.PublishTrainerCancelled(reservation);       
         }
         
         return cancelled;
