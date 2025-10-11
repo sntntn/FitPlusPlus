@@ -31,9 +31,7 @@ public class NotificationController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Notification>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserId(string userId)
     {
-        Console.WriteLine(userId);
         var notifications = await _repository.GetNotificationsByUserId(userId);
-        Console.WriteLine(notifications);
         return Ok(notifications);
     }
 
