@@ -16,8 +16,7 @@ namespace ReviewService.Common.Extensions
             services.AddAutoMapper(configuration =>
             {
                 configuration.CreateMap<ReviewDTO, Review>().ReverseMap();
-                configuration.CreateMap<CreateReviewDTO, Review>().ReverseMap();
-                configuration.CreateMap<UpdateReviewDTO, Review>().ReverseMap();
+                configuration.CreateMap<SubmitReviewDTO, Review>().ReverseMap();
             });
         }
     }
