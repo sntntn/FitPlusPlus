@@ -1,6 +1,6 @@
-namespace EventBus.Messages.Events;
+namespace ReviewService.Common.Entities;
 
-public class ReviewEvent : IntegrationBaseEvent
+public class ReviewEvent
 {
     public string ReservationId { get; set; }
     public string? UserId { get; set; }

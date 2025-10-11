@@ -163,7 +163,20 @@ export default {
     },
 
     submitReview(reservationId, rating, comment) {
-      // TODO: Connect review submission with the backend
+      let request = {
+        reservationId: reservationId,
+        trainerId: this.$route.params.id,
+        trainerComment: comment,
+        trainerRating: rating,
+      }
+      dataServices.methods.submit_review_trainer(request)
+        .then(response => {
+            location.reload();
+          })
+          .catch(error => {
+            console.error("Reviewing error:", error);
+            alert("An error occurred while reviewing a reservation from the client side.");
+          });
     },
 
     findClientName(cli_id) {

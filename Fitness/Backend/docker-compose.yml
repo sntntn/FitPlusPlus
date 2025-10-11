@@ -129,7 +129,6 @@ services:
     depends_on:
       - analyticsdb
       - consul
-      - reviewservice.grpc
       - rabbitmq
       
   notificationservice.api:

@@ -16,3 +16,10 @@ public class IndividualReservation
     public DateOnly Date { get; set; }
     public IndividualReservationStatus Status { get; set; } = IndividualReservationStatus.Active;
 }
+
+public enum IndividualReservationStatus
+{
+    Active,
+    ClientCancelled,
+    TrainerCancelled
+}

@@ -1,6 +1,3 @@
-using System.Net;
-using System.Net.Mail;
-using System.Text;
 using ClientService.GRPC.Protos;
 using Consul;
 using ConsulConfig.Settings;
@@ -8,8 +5,6 @@ using EventBus.Messages.Constants;
 using EventBus.Messages.Events;
 using FluentEmail.MailKitSmtp;
 using MassTransit;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using NotificationService.API.Data;
 using NotificationService.API.Email;
 using NotificationService.API.Entities;

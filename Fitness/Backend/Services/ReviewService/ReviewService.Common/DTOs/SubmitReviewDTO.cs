@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReviewService.Common.DTOs
 {
-    public class CreateReviewDTO : BaseReviewDTO
+    public class SubmitReviewDTO : BaseReviewDTO
     {
 
     }
