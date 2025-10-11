@@ -95,7 +95,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
-      - "GrpcSettings:ReviewUrl=http://host.docker.internal:8002"
+      - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
     ports:
       - "8000:8080"
