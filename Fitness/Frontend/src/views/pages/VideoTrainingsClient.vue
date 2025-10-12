@@ -1,31 +1,59 @@
 <template>
 
-  <h3>Dostupni treninzi: </h3>
+  <div class="buttons-grid">
+    <button class="clientBtn" @click="currentView = 'available'">Dostupni treninzi</button>
+    <button class="clientBtn" @click="currentView = 'bought'">Kupljeni treninzi</button>
+  </div>
   
   <div class="content">
+
+    <div v-if="currentView === 'available'">
   
-    <figure v-if="trainings && trainings.length > 0" class="trainings" v-for="training in trainings"  :key="training.trainingId" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
-      <figcaption > {{ training.type }}</figcaption>
+      <figure v-if="trainings && trainings.length > 0" class="trainings" v-for="training in trainings"  :key="training.trainingId" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
+        <figcaption > {{ training.type }}</figcaption>
 
-      <div class="training-desc">
-        <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
-        </p>
-      </div>
+        <div class="training-desc">
+          <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
+          </p>
+        </div>
 
-      <div class="trainer-info">
-        <p :style="{ fontSize: '20px', color: 'black' }"> Trener: {{ getTrainerName(training.trainerId) }}
-        </p>
-        <p :style="{ fontSize: '20px', color: 'black' }"> Ocena: {{ getAverageRating(training.trainerId) }}
-        </p>
-      </div>
+        <div class="trainer-info">
+          <p :style="{ fontSize: '20px', color: 'black' }"> Trener: {{ getTrainerName(training.trainerId) }}
+          </p>
+          <p :style="{ fontSize: '20px', color: 'black' }"> Ocena: {{ getAverageRating(training.trainerId) }}
+          </p>
+        </div>
 
-      <button class="overlay" @click="handleTrainingClick(training.trainingId)">
-      {{ isPurchased(training.trainingId) ? 'View training' : 'Buy training' }}
-      </button>
-    </figure>
+        <button class="overlay" @click="handleTrainingClick(training)"> Buy training </button>
+      </figure>
+
+    </div>
+
+    <div v-if="currentView === 'bought'">
+
+      <figure v-if="purchasedTrainings && purchasedTrainings.length > 0" class="trainings" v-for="training in purchasedTrainings"  :key="training.trainingId" :style="{ backgroundImage: 'url(' + getTrainingImage(training.type) + ')' }">
+        <figcaption > {{ training.type }}</figcaption>
+
+        <div class="training-desc">
+          <p :style="{ fontSize: '20px', color: 'black' }"> {{ training.description }}
+          </p>
+        </div>
+
+        <div class="trainer-info">
+          <p :style="{ fontSize: '20px', color: 'black' }"> Trener: {{ getTrainerName(training.trainerId) }}
+          </p>
+          <p :style="{ fontSize: '20px', color: 'black' }"> Ocena: {{ getAverageRating(training.trainerId) }}
+          </p>
+        </div>
+
+        <button class="overlay" @click="handleTrainingClick(training)"> View training </button>
+      </figure>
+    </div>
+
   </div>
 
-  <div v-if="expandedTrainingId !== null" class="content" @click.self="closeModal">
+
+  <div v-if="currentView === 'bought' && expandedTrainingId !== null" class="content" @click.self="closeModal">
     <div class="training-exercise">
       <h3>Trening: {{ expandedTraining.type }}</h3>
 
@@ -49,6 +77,8 @@ export default {
 
   data(){
     return {
+      currentView: null,
+
       isAvailable: false,
       trainers: [],
       trainings: [], 
@@ -73,7 +103,9 @@ export default {
     },
 
     async loadTrainings(){
-       try {
+      const clientId = this.$route.params.id;
+
+      try {
 
         const response = await dataServices.methods.get_trainings_client();
         if (response.data) {
@@ -91,7 +123,22 @@ export default {
       } catch (error) {
         console.error("Greška pri dohvatanju treninga:", error);
       }
+
+      this.trainings = this.trainings.filter(t => !t.clientIds || !t.clientIds.includes(clientId));
     
+    },
+
+    async loadPurchased(){
+      const clientId = this.$route.params.id;
+
+      try {
+        const response = await dataServices.methods.get_purchased_trainings(clientId);
+        if (response.data) {
+          this.purchasedTrainings = response.data;
+        }
+      } catch (error) {
+        console.error("Greška pri dohvatanju treninga za klijenta:", error);
+      }
     },
 
     getTrainingImage(trainingType) {
@@ -117,30 +164,40 @@ export default {
       return trainer.averageRating;
     },
 
-    async handleTrainingClick(trainingId) {
+    async handleTrainingClick(training) {
 
-      if (!this.isPurchased(trainingId)) {
+      const clientId = this.$route.params.id;
+
+      if (!this.isPurchased(training)) {
         if (confirm(`Da li želiš da kupiš trening?`)) {
-          this.purchasedTrainings.push(trainingId); 
 
           try{
-            const exercisesResponse = await dataServices.methods.get_training_exercises(trainingId);
+            const exercisesResponse = await dataServices.methods.buy_training(training.trainingId, clientId);
+          } catch (error) {
+            console.error("Greška pri kupovini treninga: ", training.trainingId , " ", error);
+          }
+
+          try{
+            const exercisesResponse = await dataServices.methods.get_training_exercises(training.trainingId);
             if (exercisesResponse.data) {
               this.trainingExercises.push(...exercisesResponse.data);
             }
           } catch (error) {
-            console.error("Greška pri dohvatanju vezbi iz treninga: ", trainingId , " ", error);
+            console.error("Greška pri dohvatanju vezbi iz treninga: ", training.trainingId , " ", error);
           }
+
+          this.trainings = this.trainings.filter(t => t.trainingId !== training.trainingId);
+          this.loadPurchased();
         }
       } else {
-        this.expandedTrainingId = trainingId;
-        this.expandedTraining = this.trainings.find(e => e.trainingId === trainingId);
+        this.expandedTrainingId = training.trainingId;
+        this.expandedTraining = this.purchasedTrainings.find(e => e.trainingId === training.trainingId);
       }
 
     },
 
-    isPurchased(trainingId) {
-      return this.purchasedTrainings.includes(trainingId);
+    isPurchased(training) {
+      return this.purchasedTrainings.some(t => t.trainingId === training.trainingId);
     },
 
     getExercisesForTraining(trainingId) {
@@ -166,8 +223,10 @@ export default {
     this.$parent.$parent.$parent.setUserData(id, "client");
 
     this.loadTrainings();
+    this.loadPurchased();
 
   }
+
 }
 
 </script>
@@ -313,6 +372,27 @@ export default {
     margin-left: auto;     
     right: 10px;   
     padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #fff;
+    color: #333;
+    border: 2px solid #e67e22;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+
+  .buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .clientBtn {
+    margin: 5px;
+    padding: 10px 18px;
     border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
