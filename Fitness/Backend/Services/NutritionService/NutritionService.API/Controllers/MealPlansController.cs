@@ -20,6 +20,9 @@ namespace NutritionService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePlan([FromBody] MealPlan plan)
         {
+            if (string.IsNullOrEmpty(plan.TrainerId) || string.IsNullOrEmpty(plan.TrainerName))
+                return BadRequest(new { message = "TrainerId and TrainerName are required." });
+
             if (string.IsNullOrEmpty(plan.GoalType))
                 return BadRequest(new { message = "GoalType is required." });
 
@@ -39,22 +42,32 @@ namespace NutritionService.API.Controllers
             plan.Lunch = await FillFoodsAsync(plan.Lunch);
             plan.Dinner = await FillFoodsAsync(plan.Dinner);
             plan.Snacks = await FillFoodsAsync(plan.Snacks);
-
             plan.CreatedAt = DateTime.UtcNow;
+
+            
+            var existing = await _plans
+                .Find(p => p.TrainerId == plan.TrainerId && p.GoalType == plan.GoalType)
+                .FirstOrDefaultAsync();
+
+            if (existing != null)
+            {
+                await _plans.DeleteOneAsync(p => p.Id == existing.Id);
+            }
+
             await _plans.InsertOneAsync(plan);
             return Ok(plan);
         }
 
-        [HttpGet("{goalType}")]
-        public async Task<IActionResult> GetPlanByGoalType(string goalType)
+        [HttpGet("trainer/{trainerId}/goal/{goalType}")]
+        public async Task<IActionResult> GetPlanByTrainerAndGoal(string trainerId, string goalType)
         {
             var plan = await _plans
-                .Find(p => p.GoalType == goalType)
+                .Find(p => p.TrainerId == trainerId && p.GoalType == goalType)
                 .SortByDescending(p => p.CreatedAt)
                 .FirstOrDefaultAsync();
 
             if (plan == null)
-                return NotFound(new { message = "No plan found for this goal type." });
+                return NotFound(new { message = "No plan found for this trainer and goal type." });
 
             return Ok(plan);
         }
@@ -66,15 +79,38 @@ namespace NutritionService.API.Controllers
             return Ok(plans);
         }
 
-        [HttpDelete("{goalType}")]
-        public async Task<IActionResult> DeletePlan(string goalType)
+        [HttpGet("trainer/{trainerId}")]
+        public async Task<IActionResult> GetPlansForTrainer(string trainerId)
         {
-            var result = await _plans.DeleteOneAsync(p => p.GoalType == goalType);
+            var trainerPlans = await _plans.Find(p => p.TrainerId == trainerId).ToListAsync();
+
+            if (!trainerPlans.Any())
+                return NotFound(new { message = "No plans found for this trainer." });
+
+            return Ok(trainerPlans);
+        }
+
+        [HttpDelete("trainer/{trainerId}/goal/{goalType}")]
+        public async Task<IActionResult> DeletePlan(string trainerId, string goalType)
+        {
+            var result = await _plans.DeleteOneAsync(p =>
+                p.TrainerId == trainerId && p.GoalType == goalType
+            );
 
             if (result.DeletedCount == 0)
-                return NotFound(new { message = $"No plan found for goal type '{goalType}'." });
+                return NotFound(
+                    new
+                    {
+                        message = $"No plan found for trainer '{trainerId}' and goal '{goalType}'.",
+                    }
+                );
 
-            return Ok(new { message = $"Plan for goal type '{goalType}' deleted successfully." });
+            return Ok(
+                new
+                {
+                    message = $"Plan for trainer '{trainerId}' and goal '{goalType}' deleted successfully.",
+                }
+            );
         }
     }
 }
