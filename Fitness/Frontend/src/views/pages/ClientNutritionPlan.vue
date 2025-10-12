@@ -1,7 +1,6 @@
 <template>
   <div class="client-container container py-4">
     <div class="row">
-
       <div class="col-md-6">
         <div class="card p-3 shadow-sm mb-3">
           <h4 class="mb-3 text-center">Goal Calculator</h4>
@@ -74,7 +73,6 @@
         </div>
       </div>
 
-
       <div class="col-md-6">
         <div class="card p-3 shadow-sm">
           <h4 class="mb-3 text-center">Your Nutrition Plan</h4>
@@ -116,7 +114,6 @@
                 </ul>
               </div>
 
-            
               <div class="mt-4">
                 <h5 class="text-center mb-3">Calorie Intake Tracker</h5>
                 <p class="text-center text-muted">
@@ -159,87 +156,123 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+<script>
+import axios from "axios";
 
-const goal = ref({
-  clientId: '',
-  sex: '',
-  age: null,
-  height: null,
-  currentWeight: null,
-  activityLevel: '',
-  goalType: '',
-  intensity: ''
-})
+export default {
+  data() {
+    return {
+      clientId: null,
+      goal: {
+        clientId: "",
+        sex: "",
+        age: null,
+        height: null,
+        currentWeight: null,
+        activityLevel: "",
+        goalType: "",
+        intensity: "",
+      },
+      calculatedGoal: null,
+      plan: null,
+      trainers: [],
+      selectedTrainerName: "",
+      mealTypes: ["breakfast", "lunch", "dinner", "snacks"],
+      consumedCalories: 0,
+      foodQuantities: {},
+    };
+  },
 
-const calculatedGoal = ref(null)
-const plan = ref(null)
-const trainers = ref([]) 
-const selectedTrainerName = ref('')
-const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks']
+  created() {
+    const routeId = this.$route.params.id || "";
+    this.$parent.$parent.$parent.setUserData(routeId, "client");
+    this.clientId = routeId;
+    this.goal.clientId = routeId;
+    this.loadTrainers();
 
-const consumedCalories = ref(0)
-const foodQuantities = ref({})
-
-
-onMounted(async () => {
-  try {
-    const res = await axios.get('http://localhost:8157/api/mealplans')
-    const seen = new Map()
-    for (const p of res.data) {
-      if (!seen.has(p.trainerId)) {
-        seen.set(p.trainerId, { id: p.trainerId, name: p.trainerName })
+    this.$watch(
+      () => this.$route.params.id,
+      (newId, oldId) => {
+        if (newId !== oldId) {
+          const safeId = newId || "";
+          console.log(`Client ID changed from ${oldId} to ${safeId}`);
+          this.$parent.$parent.$parent.setUserData(safeId, "client");
+          this.clientId = safeId;
+          this.goal.clientId = safeId;
+          this.loadTrainers();
+        }
       }
-    }
-    trainers.value = Array.from(seen.values())
-  } catch (err) {
-    console.error('Error loading trainers:', err)
-  }
-})
+    );
+  },
 
-const calculateConsumed = () => {
-  if (!plan.value) return
-  let total = 0
-  for (const mealType of mealTypes) {
-    for (const food of plan.value[mealType]) {
-      const qty = parseFloat(foodQuantities.value[food.name]) || 0
-      total += (food.calories || 0) * (qty / 100)
-    }
-  }
-  consumedCalories.value = Math.round(total)
-}
+  mounted() {
+    console.log("ClientNutritionPlan mounted");
+  },
 
-const calculateGoal = async () => {
-  try {
-    const res = await axios.post('http://localhost:8157/api/goals', goal.value)
-    calculatedGoal.value = res.data
-  } catch (error) {
-    console.error(error)
-    alert('Error calculating goal.')
-  }
-}
+  beforeDestroy() {
+    console.log("ClientNutritionPlan destroyed");
+  },
 
+  methods: {
+    async loadTrainers() {
+      try {
+        const res = await axios.get("http://localhost:8157/api/mealplans");
+        const seen = new Map();
+        for (const p of res.data) {
+          if (!seen.has(p.trainerId)) {
+            seen.set(p.trainerId, { id: p.trainerId, name: p.trainerName });
+          }
+        }
+        this.trainers = Array.from(seen.values());
+      } catch (err) {
+        console.error("Error loading trainers:", err);
+      }
+    },
 
-const fetchPlan = async () => {
-  try {
-    const trainer = trainers.value.find(t => t.name === selectedTrainerName.value)
-    if (!trainer) return
+    async calculateGoal() {
+      try {
+        console.log("Calculating goal for client:", this.goal);
+        const res = await axios.post("http://localhost:8157/api/goals", this.goal);
+        this.calculatedGoal = res.data;
+      } catch (error) {
+        console.error("Error calculating goal:", error);
+        alert("Error calculating goal.");
+      }
+    },
 
-    const res = await axios.get(
-      `http://localhost:8157/api/mealplans/trainer/${trainer.id}/goal/${goal.value.goalType}`
-    )
-    plan.value = res.data
-  } catch (error) {
-    console.error(error)
-    plan.value = null
-  }
-}
+    async fetchPlan() {
+      try {
+        const trainer = this.trainers.find((t) => t.name === this.selectedTrainerName);
+        if (!trainer) return;
 
-const refreshPlan = async () => {
-  await fetchPlan()
-}
+        console.log("Fetching plan for:", trainer.id, this.goal.goalType);
+        const res = await axios.get(
+          `http://localhost:8157/api/MealPlans/trainer/${trainer.id}/goal/${this.goal.goalType}`
+        );
+        this.plan = res.data;
+      } catch (error) {
+        console.error("Error fetching plan:", error);
+        this.plan = null;
+      }
+    },
+
+    async refreshPlan() {
+      await this.fetchPlan();
+    },
+
+    calculateConsumed() {
+      if (!this.plan) return;
+      let total = 0;
+      for (const mealType of this.mealTypes) {
+        for (const food of this.plan[mealType]) {
+          const qty = parseFloat(this.foodQuantities[food.name]) || 0;
+          total += (food.calories || 0) * (qty / 100);
+        }
+      }
+      this.consumedCalories = Math.round(total);
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -256,8 +289,3 @@ input[type="number"] {
   text-align: center;
 }
 </style>
-
-
-
-
-
