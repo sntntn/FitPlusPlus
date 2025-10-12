@@ -42,7 +42,7 @@
 
             <video 
               v-if="exercise.path" 
-              :src="`http://localhost:8004/uploads/${exercise.path}`" 
+              :src="`http://localhost:8007/uploads/${exercise.path}`" 
               controls>
             </video>
 
@@ -345,7 +345,8 @@ export default {
         TrainingId: "",
         TrainerId: trainerId,
         Type: this.trainingType,
-        Description: this.note
+        Description: this.note,
+        ClientIds: []
       }
 
       const response = await dataServices.methods.create_training(training);
