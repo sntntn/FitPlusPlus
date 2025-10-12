@@ -7,10 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Services/ChatService.API/ChatService.API.csproj", "Services/ChatService.API/"]
-RUN dotnet restore "Services/ChatService.API/ChatService.API.csproj"
+COPY ["Services/ChatService/ChatService.API/ChatService.API.csproj", "Services/ChatService/ChatService.API/"]
+RUN dotnet restore "Services/ChatService/ChatService.API/ChatService.API.csproj"
 COPY . .
-WORKDIR "/src/Services/ChatService.API"
+WORKDIR "/src/Services/ChatService/ChatService.API"
 RUN dotnet build "ChatService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

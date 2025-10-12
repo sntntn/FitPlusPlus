@@ -2,7 +2,7 @@ import axios from "axios";
 
 const GATEWAY_URL = "http://localhost:8005";
 
-//const CHAT = "http://localhost:8082/api/Chat";
+//const CHAT = "http://localhost:8082/api/v1/Chat";
 //const CLIENT = "http://localhost:8100/api/v1/Client";
 //const TRAINERS = "http://localhost:8000/api/v1/Trainer";
 
