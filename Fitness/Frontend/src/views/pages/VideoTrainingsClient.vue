@@ -96,12 +96,6 @@ export default {
   },
 
   methods: {
-
-    buyProgram(){
-        alert("Kupili ste program!");
-
-    },
-
     async loadTrainings(){
       const clientId = this.$route.params.id;
 
@@ -130,11 +124,20 @@ export default {
 
     async loadPurchased(){
       const clientId = this.$route.params.id;
-
       try {
         const response = await dataServices.methods.get_purchased_trainings(clientId);
         if (response.data) {
           this.purchasedTrainings = response.data;
+          this.purchasedTrainings.forEach(async training => {
+            try {
+              const exercisesResponse = await dataServices.methods.get_training_exercises(training.trainingId);
+              if (exercisesResponse.data) {
+                this.trainingExercises.push(...exercisesResponse.data);
+              }
+            } catch (error) {
+              console.error("Greška pri dohvatanju vezbi iz treninga: ", training.trainingId , " ", error);
+            }
+          })
         }
       } catch (error) {
         console.error("Greška pri dohvatanju treninga za klijenta:", error);
@@ -164,30 +167,46 @@ export default {
       return trainer.averageRating;
     },
 
+    async initiatePayment(videoData, price) {
+      try {
+        let trainer = await dataServices.methods.get_trainer_by_id(videoData.trainerId)
+        const request = {
+          id: "",
+          userId: videoData.clientId,
+          amount: price,
+          currency: "USD",
+          trainerPayPalEmail: trainer.data.contactEmail
+        };
+        let response = await dataServices.methods.create_payment(request);
+
+        const paymentId = response.data.payment.id;
+        const approvalUrl = response.data.paymentLink;
+
+        console.log("Payment initiated with ID:", paymentId);
+        window.location.href = approvalUrl;
+      } catch(error) {
+        console.error("Error initiating payment:", error);
+        alert("Failed to initiate payment.");
+        return false;
+      }
+    },
+
     async handleTrainingClick(training) {
 
       const clientId = this.$route.params.id;
 
       if (!this.isPurchased(training)) {
         if (confirm(`Da li želiš da kupiš trening?`)) {
+          const videoData = {
+            trainingId: training.trainingId,
+            trainerId: training.trainerId,
+            clientId: clientId
+          };
+          const price = 60; // USD
+          
+          sessionStorage.setItem("videoData", JSON.stringify(videoData));
 
-          try{
-            const exercisesResponse = await dataServices.methods.buy_training(training.trainingId, clientId);
-          } catch (error) {
-            console.error("Greška pri kupovini treninga: ", training.trainingId , " ", error);
-          }
-
-          try{
-            const exercisesResponse = await dataServices.methods.get_training_exercises(training.trainingId);
-            if (exercisesResponse.data) {
-              this.trainingExercises.push(...exercisesResponse.data);
-            }
-          } catch (error) {
-            console.error("Greška pri dohvatanju vezbi iz treninga: ", training.trainingId , " ", error);
-          }
-
-          this.trainings = this.trainings.filter(t => t.trainingId !== training.trainingId);
-          this.loadPurchased();
+          return this.initiatePayment(videoData, price);
         }
       } else {
         this.expandedTrainingId = training.trainingId;
@@ -217,14 +236,10 @@ export default {
   },
 
   mounted() {
-
     const id = this.$route.params.id;
-
     this.$parent.$parent.$parent.setUserData(id, "client");
-
     this.loadTrainings();
     this.loadPurchased();
-
   }
 
 }

@@ -43,7 +43,8 @@ export default {
       const cancelData = sessionStorage.getItem("cancelData");
       const chatData = sessionStorage.getItem("chatData");
       const extendData = sessionStorage.getItem("extendData");
-    
+      const videoData = sessionStorage.getItem("videoData")
+      
       if (bookData) {
         this.processBooking(JSON.parse(bookData));
         sessionStorage.removeItem("bookData");
@@ -56,6 +57,9 @@ export default {
       } else if(cancelData) {
         this.processCancel(JSON.parse(cancelData));
         sessionStorage.removeItem("cancelData");
+      } else if(videoData) {
+        this.processVideo(JSON.parse(videoData));
+        sessionStorage.removeItem("videoData");
       } else {
         console.log("No data found in session.");
       }
@@ -134,6 +138,26 @@ export default {
         })
         .then(() => {
           this.$router.push(`/client/${extendData.clientId}/chat`);
+        });
+    },
+
+    processVideo(videoData) {
+      console.log("Paying video data...");
+
+      dataServices.methods.buy_training(videoData.trainingId, videoData.clientId)
+        .then((response) => {
+          if (response.status === 200) {
+            alert("Video training bought successfully");
+          } else {
+            alert("Failed to buy video training.");
+          }
+        })
+        .catch((error) => {
+          console.error("Video training buying error:", error);
+          alert("An error occurred while buyinh the video training.");
+        })
+        .then(() => {
+          this.$router.push(`/client/${videoData.clientId}/videotrainings`);
         });
     },
   },
