@@ -43,7 +43,7 @@
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     },
     {
-      "DownstreamPathTemplate": "/api/chat/{everything}",
+      "DownstreamPathTemplate": "/api/v1/chat/{everything}",
       "DownstreamScheme": "http",
       "ServiceName": "ChatService.API",
       "UpstreamPathTemplate": "/chat/{everything}",
