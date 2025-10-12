@@ -193,21 +193,21 @@ export default {
     },
 
     submitReview(reservationId, trainerId, clientId, rating, comment) {
-      console.log("Client Group Trainings SUBMIT REVIEW:", trainerId, clientId);
-      // let request = {
-      //   reservationId: reservationId,
-      //   clientId: clientId,
-      //   clientComment: comment,
-      //   clientRating: rating,
-      // }
-      // data_services.methods.submit_review_client(request)
-      //   .then(response => {
-      //       location.reload();
-      //     })
-      //     .catch(error => {
-      //       console.error("Reviewing error:", error);
-      //       alert("An error occurred while reviewing a reservation from the trainer side.");
-      //     });
+      let request = {
+        reservationId: reservationId,
+        trainerId: trainerId,
+        clientId: clientId,
+        clientComment: comment,
+        clientRating: rating,
+      }
+      data_services.methods.submit_review_client(request)
+        .then(response => {
+            location.reload();
+          })
+          .catch(error => {
+            console.error("Reviewing error:", error);
+            alert("An error occurred while reviewing a reservation from the trainer side.");
+          });
     },
 
     fetchGroupReservations() {

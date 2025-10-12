@@ -17,9 +17,9 @@ namespace ReviewService.Common.Repositories
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<ReviewDTO?> GetReviewByReservationId(string resetvationId)
+        public async Task<ReviewDTO?> GetReviewByReservationId(string reservationId)
         {
-            var review = await _context.Reviews.Find(r => r.ReservationId == resetvationId).FirstOrDefaultAsync();
+            var review = await _context.Reviews.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
             return _mapper.Map<ReviewDTO>(review);
         }
 
@@ -35,9 +35,9 @@ namespace ReviewService.Common.Repositories
             return _mapper.Map<IEnumerable<ReviewDTO>>(reviews);
         }
 
-        public async Task CreateReview(string reservationId)
+        public async Task CreateReview(string reservationId, string clientId, string trainerId)
         {
-            var review = new ReviewDTO { ReservationId = reservationId };
+            var review = new ReviewDTO { ReservationId = reservationId, ClientId = clientId, TrainerId = trainerId};
             await _context.Reviews.InsertOneAsync(_mapper.Map<Review>(review));
         }
 
