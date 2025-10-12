@@ -17,7 +17,7 @@
           </thead>
           <tbody>
             <tr v-for="res in reservedTrainings" :key="res.id">
-              <td>{{ res.client }}</td>
+              <td>{{ this.findClientName(res.clientId) }}</td>
               <td>{{ res.trainingType }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
@@ -45,13 +45,13 @@
           </thead>
           <tbody>
             <tr v-for="res in completedOrCancelled" :key="res.id">
-              <td>{{ res.client }}</td>
+              <td>{{ this.findClientName(res.clientId) }}</td>
               <td>{{ res.trainingType }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
               <td>{{ res.status }}</td>
               <td>
-                <button v-if="res.status == 'Active'" class="info" @click="showReview = true; currentReservationId = res.id">
+                <button v-if="res.status == 'Active'" class="info" @click="showReview = true; currentReservationId = res.id; currentClientId = res.clientId">
                   Review
                 </button>
                 <button v-else :disabled="true" class="info">Review</button>
@@ -83,8 +83,9 @@
 
           <div class="actions">
             <button type="button" @click="showReview = false">Cancel</button>
-            <button :disabled="!trainingRating" class="info" @click="submitReview(currentReservationId, trainingRating, comment)">
-              Submit Review
+            <button :disabled="!trainingRating" class="info"
+              @click="submitReview(currentReservationId, this.$route.params.id, currentClientId, trainingRating, comment)">
+                Submit Review
             </button>
           </div>
         </div>
@@ -108,7 +109,8 @@ export default {
       reservations: [],
       showReview: false,
       trainingRating: null,
-      currentReservationId: ""
+      currentReservationId: "",
+      currentClientId: ""
     };
   },
 
@@ -162,10 +164,10 @@ export default {
       }
     },
 
-    submitReview(reservationId, rating, comment) {
+    submitReview(reservationId, trainerId, clientId, rating, comment) {
       let request = {
         reservationId: reservationId,
-        trainerId: this.$route.params.id,
+        trainerId: trainerId,
         trainerComment: comment,
         trainerRating: rating,
       }
@@ -238,7 +240,6 @@ export default {
         })
         .map(r => ({
           id: r.id,
-          client: this.findClientName(r.clientId),
           clientId: r.clientId,
           trainingType: this.findTrainingType(r.trainingTypeId),
           price: this.findPrice(r.trainingTypeId),
@@ -256,7 +257,7 @@ export default {
         })
         .map(r => ({
           id: r.id,
-          client: this.findClientName(r.clientId),
+          clientId: r.clientId,
           trainingType: this.findTrainingType(r.trainingTypeId),
           date: r.date,
           time: `${r.startTime} - ${r.endTime}`,
