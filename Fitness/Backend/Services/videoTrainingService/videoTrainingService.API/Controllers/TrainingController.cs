@@ -158,5 +158,27 @@ namespace videoTrainingService.API.Controllers
             var result = await _repository.DeleteTrainingExercises(trainingId);
             return Ok(result);
         }
+
+        [HttpPost("training/{trainingId}/addClient/{clientId}")]
+        public async Task<IActionResult> AddClientToTraining(string trainingId, string clientId)
+        {
+            var success = await _repository.AddClientToTraining(trainingId, clientId);
+
+            if (!success)
+                return BadRequest("Client could not be added to training (maybe already exists or training not found).");
+
+            return Ok($"Client {clientId} added to training {trainingId}.");
+        }
+
+        [HttpGet("training/byClient/{clientId}")]
+        public async Task<ActionResult<List<string>>> GetTrainingsByClient(string clientId)
+        {
+            var trainings = await _repository.GetTrainingsByClient(clientId);
+
+            if (trainings == null || trainings.Count == 0)
+                return NotFound($"No trainings found for client {clientId}.");
+
+            return Ok(trainings);
+        }
     }
 }
