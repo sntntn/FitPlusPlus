@@ -2,7 +2,6 @@
   <div class="trainer-container container py-4">
     <h2 class="mb-3 text-center">Nutrition Plans</h2>
 
-
     <div class="card p-3 mb-4 shadow-sm">
       <h4 class="mb-3">Create or Update Plan</h4>
 
@@ -34,7 +33,6 @@
         Save / Update Plan
       </button>
     </div>
-
 
     <div class="card p-3 shadow-sm">
       <h4 class="mb-3 text-center">Existing Plans Overview</h4>
@@ -70,7 +68,6 @@
         </tbody>
       </table>
 
-
       <div v-if="selectedPlan" class="mt-3">
         <h5>Plan for: <strong>{{ selectedPlan.goalType }}</strong></h5>
         <div class="row">
@@ -88,106 +85,149 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import axios from 'axios'
+<script>
+import axios from "axios";
 
-const route = useRoute()
-const trainerId = route.params.id
-console.log(trainerId)
-
-const trainerName = ref('')
-const foods = ref([])
-const plans = ref([])
-const goalType = ref('')
-const mealPlan = ref({
-  breakfast: [],
-  lunch: [],
-  dinner: [],
-  snacks: []
-})
-const selectedPlan = ref(null)
-const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks']
-
-onMounted(async () => {
-  try {
-    const foodRes = await axios.get('http://localhost:8157/api/food')
-    foods.value = foodRes.data
-
-    if (trainerId) {
-      const plansRes = await axios.get(`http://localhost:8157/api/mealplans/trainer/${trainerId}`)
-      plans.value = plansRes.data || []
-    }
-  } catch (err) {
-    console.error('Error loading data:', err)
-  }
-})
+export default {
+  data() {
+    return {
+      trainerId: null,
+      trainerName: "",
+      foods: [],
+      plans: [],
+      goalType: "",
+      mealPlan: {
+        breakfast: [],
+        lunch: [],
+        dinner: [],
+        snacks: [],
+      },
+      selectedPlan: null,
+      mealTypes: ["breakfast", "lunch", "dinner", "snacks"],
+    };
+  },
 
 
-const savePlan = async () => {
-  if (!goalType.value || !trainerName.value) {
-    alert('Please fill in trainer name and goal type.')
-    return
-  }
+  created() {
+    const routeId = this.$route.params.id || '';
+    this.$parent.$parent.$parent.setUserData(routeId, "trainer");
+    this.trainerId = routeId;
+    this.loadData();
 
-  const plan = {
-    trainerId,
-    trainerName: trainerName.value,
-    goalType: goalType.value,
-    breakfast: mealPlan.value.breakfast,
-    lunch: mealPlan.value.lunch,
-    dinner: mealPlan.value.dinner,
-    snacks: mealPlan.value.snacks
-  }
-
-  try {
-    const existing = plans.value.find(p => p.goalType === goalType.value)
-    if (existing) {
-      const confirmUpdate = confirm(
-        `A plan for "${goalType.value}" already exists for this trainer. Replace it?`
-      )
-      if (!confirmUpdate) return
-      await axios.delete(`http://localhost:8157/api/mealplans/${trainerId}/${goalType.value}`)
-    }
-
-    console.log(plan)
-    await axios.post('http://localhost:8157/api/mealplans', plan)
-    alert(`Plan for "${goalType.value}" saved successfully!`)
-
-    const plansRes = await axios.get(`http://localhost:8157/api/mealplans/trainer/${trainerId}`)
-    console.log(plansRes)
-    plans.value = plansRes.data || []
-
-    // reset
-    mealPlan.value = { breakfast: [], lunch: [], dinner: [], snacks: [] }
-    goalType.value = ''
-    selectedPlan.value = null
-  } catch (err) {
-    console.error(err)
-    alert('Error saving or updating plan.')
-  }
-}
+    this.$watch(
+      () => this.$route.params.id,
+      (newId, oldId) => {
+        if (newId !== oldId) {
+          const safeId = newId || '';
+          console.log(`Trainer ID changed from ${oldId} to ${safeId}`);
+          this.$parent.$parent.$parent.setUserData(safeId, "trainer");
+          this.trainerId = safeId;
+          this.loadData();
+        }
+      }
+    );
+  },
 
 
-const selectPlan = (plan) => {
-  selectedPlan.value = plan
-}
+  mounted() {
+    console.log("TrainerNutritionPlan mounted");
+  },
+
+  beforeDestroy() {
+    console.log("TrainerNutritionPlan destroyed");
+  },
 
 
-const deletePlan = async (goalType) => {
-  if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return
-  try {
-    await axios.delete(`http://localhost:8157/api/mealplans/${trainerId}/${goalType}`)
-    alert(`Plan for "${goalType}" deleted successfully!`)
-    const plansRes = await axios.get(`http://localhost:8157/api/mealplans/trainer/${trainerId}`)
-    plans.value = plansRes.data || []
-    selectedPlan.value = null
-  } catch (err) {
-    console.error(err)
-    alert('Error deleting plan.')
-  }
-}
+  methods: {
+    async loadData() {
+      try {
+        const foodRes = await axios.get("http://localhost:8157/api/food");
+        this.foods = foodRes.data;
+
+        if (this.trainerId) {
+          const plansRes = await axios.get(
+            `http://localhost:8157/api/mealplans/trainer/${this.trainerId}`
+          );
+          this.plans = plansRes.data || [];
+        }
+      } catch (err) {
+        console.error("Error loading data:", err);
+      }
+    },
+
+    async savePlan() {
+      if (!this.goalType || !this.trainerName) {
+        alert("Please fill in trainer name and goal type.");
+        return;
+      }
+
+      const plan = {
+        trainerId: this.trainerId,
+        trainerName: this.trainerName,
+        goalType: this.goalType,
+        breakfast: this.mealPlan.breakfast,
+        lunch: this.mealPlan.lunch,
+        dinner: this.mealPlan.dinner,
+        snacks: this.mealPlan.snacks,
+      };
+
+      try {
+        const existing = this.plans.find((p) => p.goalType === this.goalType);
+        if (existing) {
+          const confirmUpdate = confirm(
+            `A plan for "${this.goalType}" already exists for this trainer. Replace it?`
+          );
+          if (!confirmUpdate) return;
+
+          console.log("Deleting existing plan before saving new one:");
+          console.log("TrainerId:", this.trainerId, "GoalType:", this.goalType);
+
+          await axios.delete(
+            `http://localhost:8157/api/MealPlans/trainer/${this.trainerId}/goal/${this.goalType}`
+          );
+        }
+
+        await axios.post("http://localhost:8157/api/mealplans", plan);
+        alert(`Plan for "${this.goalType}" saved successfully!`);
+        await this.loadData();
+
+        this.mealPlan = { breakfast: [], lunch: [], dinner: [], snacks: [] };
+        this.goalType = "";
+        this.selectedPlan = null;
+      } catch (err) {
+        console.error("Error in savePlan:", err);
+        if (err.response) {
+          console.error("Server responded with:", err.response.data);
+        }
+        alert("Error saving or updating plan.");
+      }
+    },
+
+
+    async deletePlan(goalType) {
+      if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return;
+
+      try {
+        console.log("Deleting plan...");
+        console.log("TrainerId:", this.trainerId, "GoalType:", goalType);
+
+        await axios.delete(
+          `http://localhost:8157/api/MealPlans/trainer/${this.trainerId}/goal/${goalType}`
+        );
+
+        alert(`Plan for "${goalType}" deleted successfully!`);
+        await this.loadData();
+        this.selectedPlan = null;
+      } catch (err) {
+        console.error("Error deleting plan:", err);
+        if (err.response) {
+          console.error("Server responded with:", err.response.data);
+        }
+        alert("Error deleting plan.");
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -199,6 +239,3 @@ select.form-select[multiple] {
   height: 120px;
 }
 </style>
-
-
-
