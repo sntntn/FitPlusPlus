@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainerService.Common", "Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainerService.GRPC", "Services\TrainerService\TrainerService.GRPC\TrainerService.GRPC.csproj", "{8A41AB5B-51F7-4F30-9B49-19BF8E09FC5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.API", "Services\ChatService.API\ChatService.API.csproj", "{CE504321-77C1-4981-B815-489CA83FB163}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.API", "Services\ChatService\ChatService.API\ChatService.API.csproj", "{CE504321-77C1-4981-B815-489CA83FB163}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService.API", "Services\GatewayService\GatewayService.API\GatewayService.API.csproj", "{0E6E9A4F-6271-45A4-BA0A-9468C6F15275}"
 EndProject

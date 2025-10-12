@@ -25,14 +25,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\.dockerignore">
+      <Content Include="..\..\..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
-      <ProjectReference Include="..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
+      <ProjectReference Include="..\..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
+      <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
     </ItemGroup>
 
 </Project>
