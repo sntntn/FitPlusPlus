@@ -1,6 +1,7 @@
 <template>
   <div class="client-container container py-4">
     <div class="row">
+
       <div class="col-md-6">
         <div class="card p-3 shadow-sm mb-3">
           <h4 class="mb-3 text-center">Goal Calculator</h4>
@@ -80,28 +81,70 @@
 
           <div v-if="!calculatedGoal">
             <p class="text-muted text-center">
-              Please calculate your goal first so we can suggest a plan.
-            </p>
-          </div>
-
-          <div v-else-if="!plan">
-            <p class="text-muted text-center">
-              Your plan for <strong>{{ goal.goalType }}</strong> is still being prepared.
+              Please calculate your goal first to choose a trainer and view a plan.
             </p>
           </div>
 
           <div v-else>
-            <h5 class="text-center mb-3 text-capitalize">
-              Plan for {{ plan.goalType }}
-            </h5>
+            <div class="mb-3">
+              <label>Select Trainer</label>
+              <select v-model="selectedTrainerName" class="form-select" @change="fetchPlan">
+                <option value="">Select trainer...</option>
+                <option v-for="t in trainers" :key="t.name" :value="t.name">
+                  {{ t.name }}
+                </option>
+              </select>
+            </div>
 
-            <div v-for="mealType in mealTypes" :key="mealType" class="mb-3">
-              <h6 class="text-capitalize">{{ mealType }}</h6>
-              <ul>
-                <li v-for="food in plan[mealType]" :key="food.name">
-                  {{ food.name }} — <small>{{ food.calories }} kcal</small>
-                </li>
-              </ul>
+            <div v-if="!plan">
+              <p class="text-muted text-center">
+                No plan found for this trainer and goal type.
+              </p>
+            </div>
+
+            <div v-else>
+              <h5 class="text-center mb-3 text-capitalize">
+                Plan for {{ plan.goalType }} ({{ selectedTrainerName }})
+              </h5>
+
+              <div v-for="mealType in mealTypes" :key="mealType" class="mb-3">
+                <h6 class="text-capitalize">{{ mealType }}</h6>
+                <ul>
+                  <li v-for="food in plan[mealType]" :key="food.name">
+                    {{ food.name }} — <small>{{ food.calories }} kcal</small>
+                  </li>
+                </ul>
+              </div>
+
+            
+              <div class="mt-4">
+                <h5 class="text-center mb-3">Calorie Intake Tracker</h5>
+                <p class="text-center text-muted">
+                  Enter how much (in grams) of each food you consumed:
+                </p>
+
+                <div v-for="mealType in mealTypes" :key="mealType + '-input'" class="mb-3">
+                  <h6 class="text-capitalize">{{ mealType }}</h6>
+                  <div v-for="food in plan[mealType]" :key="food.name + '-input'" class="d-flex align-items-center mb-2">
+                    <div class="flex-grow-1">
+                      {{ food.name }} — <small>{{ food.calories }} kcal/100g</small>
+                    </div>
+                    <input type="number" class="form-control ms-2" style="width: 90px"
+                      v-model.number="foodQuantities[food.name]" @input="calculateConsumed" min="0" />
+                    <span class="ms-2 text-muted small">
+                      ≈ {{ ((foodQuantities[food.name] || 0) * (food.calories || 0) / 100).toFixed(0) }} kcal
+                    </span>
+                  </div>
+                </div>
+
+                <div class="text-center mt-3 border-top pt-3">
+                  <p><strong>Total Consumed:</strong> {{ consumedCalories }} kcal</p>
+                  <p>
+                    <strong>Remaining:</strong>
+                    {{ Math.max(0, calculatedGoal.targetKcal - consumedCalories) }} kcal left
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -117,7 +160,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const goal = ref({
@@ -133,34 +176,66 @@ const goal = ref({
 
 const calculatedGoal = ref(null)
 const plan = ref(null)
+const trainers = ref([]) 
+const selectedTrainerName = ref('')
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks']
 
+const consumedCalories = ref(0)
+const foodQuantities = ref({})
+
+
+onMounted(async () => {
+  try {
+    const res = await axios.get('http://localhost:8103/api/mealplans')
+    const seen = new Map()
+    for (const p of res.data) {
+      if (!seen.has(p.trainerId)) {
+        seen.set(p.trainerId, { id: p.trainerId, name: p.trainerName })
+      }
+    }
+    trainers.value = Array.from(seen.values())
+  } catch (err) {
+    console.error('Error loading trainers:', err)
+  }
+})
+
+const calculateConsumed = () => {
+  if (!plan.value) return
+  let total = 0
+  for (const mealType of mealTypes) {
+    for (const food of plan.value[mealType]) {
+      const qty = parseFloat(foodQuantities.value[food.name]) || 0
+      total += (food.calories || 0) * (qty / 100)
+    }
+  }
+  consumedCalories.value = Math.round(total)
+}
 
 const calculateGoal = async () => {
   try {
     const res = await axios.post('http://localhost:8103/api/goals', goal.value)
     calculatedGoal.value = res.data
-    await fetchPlan()
   } catch (error) {
     console.error(error)
-    alert('Error calculating or fetching plan.')
+    alert('Error calculating goal.')
   }
 }
 
 
 const fetchPlan = async () => {
   try {
-    const allPlans = await axios.get('http://localhost:8103/api/mealplans')
-    const match = allPlans.data.find(
-      p => p.goalType === goal.value.goalType
+    const trainer = trainers.value.find(t => t.name === selectedTrainerName.value)
+    if (!trainer) return
+
+    const res = await axios.get(
+      `http://localhost:8103/api/mealplans/trainer/${trainer.id}/goal/${goal.value.goalType}`
     )
-    plan.value = match || null
+    plan.value = res.data
   } catch (error) {
     console.error(error)
-    alert('Error fetching plan.')
+    plan.value = null
   }
 }
-
 
 const refreshPlan = async () => {
   await fetchPlan()
@@ -176,7 +251,13 @@ ul {
   list-style-type: square;
   padding-left: 1.2rem;
 }
+
+input[type="number"] {
+  text-align: center;
+}
 </style>
+
+
 
 
 
