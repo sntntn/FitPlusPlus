@@ -145,7 +145,7 @@ services:
     image: ${DOCKER_REGISTRY-}chatserviceapi
     build:
       context: .
-      dockerfile: Services/ChatService.API/Dockerfile
+      dockerfile: Services/ChatService/ChatService.API/Dockerfile
     depends_on:
       - chatdb
       - rabbitmq
