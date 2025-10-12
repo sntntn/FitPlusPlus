@@ -2,8 +2,14 @@
   <div class="trainer-container container py-4">
     <h2 class="mb-3 text-center">Nutrition Plans</h2>
 
+
     <div class="card p-3 mb-4 shadow-sm">
       <h4 class="mb-3">Create or Update Plan</h4>
+
+      <div class="form-group mb-3">
+        <label>Trainer Name</label>
+        <input v-model="trainerName" type="text" class="form-control" placeholder="Enter your name" required />
+      </div>
 
       <div class="form-group mb-3">
         <label>Select Goal Type</label>
@@ -29,11 +35,12 @@
       </button>
     </div>
 
+
     <div class="card p-3 shadow-sm">
       <h4 class="mb-3 text-center">Existing Plans Overview</h4>
 
       <div v-if="plans.length === 0" class="text-muted text-center">
-        No nutrition plans created yet.
+        No nutrition plans created yet for this trainer.
       </div>
 
       <table v-else class="table table-bordered text-center align-middle">
@@ -63,6 +70,7 @@
         </tbody>
       </table>
 
+
       <div v-if="selectedPlan" class="mt-3">
         <h5>Plan for: <strong>{{ selectedPlan.goalType }}</strong></h5>
         <div class="row">
@@ -82,8 +90,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 
+const route = useRoute()
+const trainerId = route.params.id
+console.log(trainerId)
+
+const trainerName = ref('')
 const foods = ref([])
 const plans = ref([])
 const goalType = ref('')
@@ -96,27 +110,30 @@ const mealPlan = ref({
 const selectedPlan = ref(null)
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks']
 
-//Load 
 onMounted(async () => {
   try {
     const foodRes = await axios.get('http://localhost:8103/api/food')
     foods.value = foodRes.data
 
-    const plansRes = await axios.get('http://localhost:8103/api/mealplans')
-    plans.value = plansRes.data
+    if (trainerId) {
+      const plansRes = await axios.get(`http://localhost:8103/api/mealplans/trainer/${trainerId}`)
+      plans.value = plansRes.data || []
+    }
   } catch (err) {
     console.error('Error loading data:', err)
   }
 })
 
-//Create plan
+
 const savePlan = async () => {
-  if (!goalType.value) {
-    alert('Please select a goal type.')
+  if (!goalType.value || !trainerName.value) {
+    alert('Please fill in trainer name and goal type.')
     return
   }
 
   const plan = {
+    trainerId,
+    trainerName: trainerName.value,
     goalType: goalType.value,
     breakfast: mealPlan.value.breakfast,
     lunch: mealPlan.value.lunch,
@@ -125,29 +142,27 @@ const savePlan = async () => {
   }
 
   try {
-
     const existing = plans.value.find(p => p.goalType === goalType.value)
-
     if (existing) {
       const confirmUpdate = confirm(
-        `A plan for "${goalType.value}" already exists. Do you want to replace it?`
+        `A plan for "${goalType.value}" already exists for this trainer. Replace it?`
       )
       if (!confirmUpdate) return
-
-
-      await axios.delete(`http://localhost:8103/api/mealplans/${goalType.value}`)
-      await axios.post('http://localhost:8103/api/mealplans', plan)
-      alert(`Plan for "${goalType.value}" updated successfully!`)
-    } else {
-      await axios.post('http://localhost:8103/api/mealplans', plan)
-      alert(`Plan for "${goalType.value}" created successfully!`)
+      await axios.delete(`http://localhost:8103/api/mealplans/${trainerId}/${goalType.value}`)
     }
 
+    console.log(plan)
+    await axios.post('http://localhost:8103/api/mealplans', plan)
+    alert(`Plan for "${goalType.value}" saved successfully!`)
 
-    const plansRes = await axios.get('http://localhost:8103/api/mealplans')
-    plans.value = plansRes.data
+    const plansRes = await axios.get(`http://localhost:8103/api/mealplans/trainer/${trainerId}`)
+    console.log(plansRes)
+    plans.value = plansRes.data || []
+
+    // reset
     mealPlan.value = { breakfast: [], lunch: [], dinner: [], snacks: [] }
     goalType.value = ''
+    selectedPlan.value = null
   } catch (err) {
     console.error(err)
     alert('Error saving or updating plan.')
@@ -162,12 +177,12 @@ const selectPlan = (plan) => {
 
 const deletePlan = async (goalType) => {
   if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return
-
   try {
-    await axios.delete(`http://localhost:8103/api/mealplans/${goalType}`)
+    await axios.delete(`http://localhost:8103/api/mealplans/${trainerId}/${goalType}`)
     alert(`Plan for "${goalType}" deleted successfully!`)
-    const res = await axios.get('http://localhost:8103/api/mealplans')
-    plans.value = res.data
+    const plansRes = await axios.get(`http://localhost:8103/api/mealplans/trainer/${trainerId}`)
+    plans.value = plansRes.data || []
+    selectedPlan.value = null
   } catch (err) {
     console.error(err)
     alert('Error deleting plan.')
@@ -184,4 +199,6 @@ select.form-select[multiple] {
   height: 120px;
 }
 </style>
+
+
 
