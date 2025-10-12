@@ -20,6 +20,7 @@ namespace videoTrainingService.API.Repositories
         Task CreateTrainingExercise(TrainingExercise trainingExercise);
         Task<bool> UpdateTrainingExercise(TrainingExercise trainingExercise);
         Task<bool> DeleteTrainingExercises(string trainingId);
-        
+        Task<bool> AddClientToTraining(string trainingId, string clientId);
+        Task<List<Training>> GetTrainingsByClient(string clientId);
     }
 }
