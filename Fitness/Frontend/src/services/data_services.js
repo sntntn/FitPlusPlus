@@ -284,6 +284,16 @@ export default {
         delete_training_exercises(training_id){
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           return axios.delete(`${TRAININGS}/trainingExercise/${training_id}`);
+        },
+
+        get_purchased_trainings(client_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.get(`${TRAININGS}/training/byClient/${client_id}`);
+        },
+
+        buy_training(training_id, client_id){
+          axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          return axios.post(`${TRAININGS}/training/${training_id}/addClient/${client_id}`);
         }
         
     }
