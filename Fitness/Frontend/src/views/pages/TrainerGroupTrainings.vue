@@ -320,6 +320,7 @@ export default {
     submitReview(reservationId, trainerId, clientId, rating, comment) {
       let request = {
         reservationId: reservationId,
+        clientId: clientId,
         trainerId: trainerId,
         trainerComment: comment,
         trainerRating: rating,

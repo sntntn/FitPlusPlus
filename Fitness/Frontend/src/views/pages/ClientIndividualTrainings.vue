@@ -290,7 +290,8 @@ export default {
     submitReview(reservationId, trainerId, clientId, rating, comment) {
       let request = {
         reservationId: reservationId,
-        clientId: this.$route.params.id,
+        trainerId: trainerId,
+        clientId: clientId,
         clientComment: comment,
         clientRating: rating,
       }
