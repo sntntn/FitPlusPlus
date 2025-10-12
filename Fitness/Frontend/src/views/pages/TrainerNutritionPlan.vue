@@ -112,11 +112,11 @@ const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks']
 
 onMounted(async () => {
   try {
-    const foodRes = await axios.get('http://localhost:8103/api/food')
+    const foodRes = await axios.get('http://localhost:8157/api/food')
     foods.value = foodRes.data
 
     if (trainerId) {
-      const plansRes = await axios.get(`http://localhost:8103/api/mealplans/trainer/${trainerId}`)
+      const plansRes = await axios.get(`http://localhost:8157/api/mealplans/trainer/${trainerId}`)
       plans.value = plansRes.data || []
     }
   } catch (err) {
@@ -148,14 +148,14 @@ const savePlan = async () => {
         `A plan for "${goalType.value}" already exists for this trainer. Replace it?`
       )
       if (!confirmUpdate) return
-      await axios.delete(`http://localhost:8103/api/mealplans/${trainerId}/${goalType.value}`)
+      await axios.delete(`http://localhost:8157/api/mealplans/${trainerId}/${goalType.value}`)
     }
 
     console.log(plan)
-    await axios.post('http://localhost:8103/api/mealplans', plan)
+    await axios.post('http://localhost:8157/api/mealplans', plan)
     alert(`Plan for "${goalType.value}" saved successfully!`)
 
-    const plansRes = await axios.get(`http://localhost:8103/api/mealplans/trainer/${trainerId}`)
+    const plansRes = await axios.get(`http://localhost:8157/api/mealplans/trainer/${trainerId}`)
     console.log(plansRes)
     plans.value = plansRes.data || []
 
@@ -178,9 +178,9 @@ const selectPlan = (plan) => {
 const deletePlan = async (goalType) => {
   if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return
   try {
-    await axios.delete(`http://localhost:8103/api/mealplans/${trainerId}/${goalType}`)
+    await axios.delete(`http://localhost:8157/api/mealplans/${trainerId}/${goalType}`)
     alert(`Plan for "${goalType}" deleted successfully!`)
-    const plansRes = await axios.get(`http://localhost:8103/api/mealplans/trainer/${trainerId}`)
+    const plansRes = await axios.get(`http://localhost:8157/api/mealplans/trainer/${trainerId}`)
     plans.value = plansRes.data || []
     selectedPlan.value = null
   } catch (err) {

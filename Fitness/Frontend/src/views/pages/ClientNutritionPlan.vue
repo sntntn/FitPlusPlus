@@ -186,7 +186,7 @@ const foodQuantities = ref({})
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:8103/api/mealplans')
+    const res = await axios.get('http://localhost:8157/api/mealplans')
     const seen = new Map()
     for (const p of res.data) {
       if (!seen.has(p.trainerId)) {
@@ -213,7 +213,7 @@ const calculateConsumed = () => {
 
 const calculateGoal = async () => {
   try {
-    const res = await axios.post('http://localhost:8103/api/goals', goal.value)
+    const res = await axios.post('http://localhost:8157/api/goals', goal.value)
     calculatedGoal.value = res.data
   } catch (error) {
     console.error(error)
@@ -228,7 +228,7 @@ const fetchPlan = async () => {
     if (!trainer) return
 
     const res = await axios.get(
-      `http://localhost:8103/api/mealplans/trainer/${trainer.id}/goal/${goal.value.goalType}`
+      `http://localhost:8157/api/mealplans/trainer/${trainer.id}/goal/${goal.value.goalType}`
     )
     plan.value = res.data
   } catch (error) {
