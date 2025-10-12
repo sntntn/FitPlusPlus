@@ -99,5 +99,26 @@ namespace videoTrainingService.API.Repositories
             var res = await _context.TrainingExercises.DeleteManyAsync(p => p.TrainingId == trainingId);
             return res.IsAcknowledged && res.DeletedCount > 0;
         }
+
+        public async Task<bool> AddClientToTraining(string trainingId, string clientId)
+        {
+            var filter = Builders<Training>.Filter.Eq(t => t.TrainingId, trainingId);
+            var update = Builders<Training>.Update.AddToSet(t => t.ClientIds, clientId);
+
+            var result = await _context.Trainings.UpdateOneAsync(filter, update);
+
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
+
+        public async Task<List<Training>> GetTrainingsByClient(string clientId)
+        {
+            var filter = Builders<Training>.Filter.AnyEq(t => t.ClientIds, clientId);
+
+            var trainings = await _context.Trainings
+                .Find(filter)
+                .ToListAsync();
+
+            return trainings;
+        }
     }
 }
