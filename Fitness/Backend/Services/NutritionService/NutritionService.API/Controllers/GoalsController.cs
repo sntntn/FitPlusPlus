@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using NutritionService.API.Models;
 using MongoDB.Driver;
+using NutritionService.API.Models;
 
 namespace NutritionService.API.Controllers
 {
@@ -14,47 +14,49 @@ namespace NutritionService.API.Controllers
         {
             _goals = db.GetCollection<UserGoal>("Goals");
         }
-        [HttpPost]
-        public  async Task<IActionResult> SetGoal([FromBody] UserGoal goal)
-        {
-            // 1) BMR (Mifflin–St Jeor sa interneta formula)
-            int bmr = goal.Sex == "male"
-                ? (int)(10 * goal.CurrentWeight + 6.25 * goal.Height - 5 * goal.Age + 5)
-                : (int)(10 * goal.CurrentWeight + 6.25 * goal.Height - 5 * goal.Age - 161);
 
-            // 2) Aktivnost (TDEE)
+        [HttpPost]
+        public async Task<IActionResult> SetGoal([FromBody] UserGoal goal)
+        {
+            int bmr =
+                goal.Sex == "male"
+                    ? (int)(10 * goal.CurrentWeight + 6.25 * goal.Height - 5 * goal.Age + 5)
+                    : (int)(10 * goal.CurrentWeight + 6.25 * goal.Height - 5 * goal.Age - 161);
+
             double activityFactor = goal.ActivityLevel switch
             {
-                "sedentary"  => 1.2,
-                "light"      => 1.375,
-                "moderate"   => 1.55,
-                "active"     => 1.725,
+                "sedentary" => 1.2,
+                "light" => 1.375,
+                "moderate" => 1.55,
+                "active" => 1.725,
                 "veryActive" => 1.9,
-                _ => 1.2
+                _ => 1.2,
             };
             int tdee = (int)(bmr * activityFactor);
 
-            // 3) Intensity
             int adjust = goal.Intensity switch
             {
-                "low"    => 300,
+                "low" => 300,
                 "medium" => 500,
-                "high"   => 700,
-                _ => 500
+                "high" => 700,
+                _ => 500,
             };
 
-            // 4) GoalType
             goal.TargetKcal = goal.GoalType switch
             {
-                "lose"     => Math.Max(1200, tdee - adjust),
-                "gain"     => tdee + adjust,
+                "lose" => Math.Max(1200, tdee - adjust),
+                "gain" => tdee + adjust,
                 "maintain" => tdee,
-                _          => tdee
+                _ => tdee,
             };
 
-            // 5) BMI
             var h = goal.Height / 100.0;
             goal.BMI = Math.Round(goal.CurrentWeight / (h * h), 2);
+
+            if (string.IsNullOrWhiteSpace(goal.ClientId))
+            {
+                goal.ClientId = Guid.NewGuid().ToString();
+            }
 
             await _goals.InsertOneAsync(goal);
             return Ok(goal);
@@ -68,11 +70,27 @@ namespace NutritionService.API.Controllers
                 .SortByDescending(g => g.Id)
                 .FirstOrDefaultAsync();
 
-            if (goal == null) return NotFound("No goal found for this client.");
+            if (goal == null)
+                return NotFound("No goal found for this client.");
             return Ok(goal);
         }
 
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllGoals()
+        {
+            var allGoals = await _goals.Find(_ => true).ToListAsync();
 
-        
+            if (allGoals == null || allGoals.Count == 0)
+                return NotFound("No goals found.");
+
+            var simplified = allGoals.Select(g => new
+            {
+                g.ClientId,
+                g.BMI,
+                g.TargetKcal,
+            });
+
+            return Ok(simplified);
+        }
     }
 }

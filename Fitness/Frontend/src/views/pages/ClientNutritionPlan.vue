@@ -1,70 +1,117 @@
 <template>
-  <div class="container mt-5">
-    <h2 class="mb-4 text-center">Calorie Goal Calculator</h2>
+  <div class="client-container container py-4">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card p-3 shadow-sm mb-3">
+          <h4 class="mb-3 text-center">Goal Calculator</h4>
 
-    <form @submit.prevent="submitGoal" class="mb-4">
-      <div class="form-group mb-3">
-        <label>Gender</label>
-        <select v-model="goal.sex" class="form-control">
-          <option value="female">Female</option>
-          <option value="male">Male</option>
-        </select>
+          <form @submit.prevent="calculateGoal">
+            <div class="mb-2">
+              <label>Sex</label>
+              <select v-model="goal.sex" class="form-select" required>
+                <option value="">Select...</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col">
+                <label>Age</label>
+                <input v-model.number="goal.age" type="number" class="form-control" required />
+              </div>
+              <div class="col">
+                <label>Height (cm)</label>
+                <input v-model.number="goal.height" type="number" class="form-control" required />
+              </div>
+              <div class="col">
+                <label>Weight (kg)</label>
+                <input v-model.number="goal.currentWeight" type="number" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label>Activity Level</label>
+              <select v-model="goal.activityLevel" class="form-select" required>
+                <option value="">Select...</option>
+                <option value="sedentary">Sedentary</option>
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="active">Active</option>
+                <option value="veryActive">Very Active</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label>Goal Type</label>
+              <select v-model="goal.goalType" class="form-select" required>
+                <option value="">Select...</option>
+                <option value="lose">Lose Weight</option>
+                <option value="gain">Gain Weight</option>
+                <option value="maintain">Maintain Weight</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label>Intensity</label>
+              <select v-model="goal.intensity" class="form-select" required>
+                <option value="">Select...</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Calculate</button>
+          </form>
+        </div>
+
+        <div v-if="calculatedGoal" class="card p-3 shadow-sm text-center">
+          <h5>Results</h5>
+          <p><strong>BMI:</strong> {{ calculatedGoal.bmi }}</p>
+          <p><strong>Target Kcal:</strong> {{ calculatedGoal.targetKcal }}</p>
+        </div>
       </div>
 
-      <div class="form-group mb-3">
-        <label>Age</label>
-        <input v-model.number="goal.age" type="number" class="form-control" />
+
+      <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+          <h4 class="mb-3 text-center">Your Nutrition Plan</h4>
+
+          <div v-if="!calculatedGoal">
+            <p class="text-muted text-center">
+              Please calculate your goal first so we can suggest a plan.
+            </p>
+          </div>
+
+          <div v-else-if="!plan">
+            <p class="text-muted text-center">
+              Your plan for <strong>{{ goal.goalType }}</strong> is still being prepared.
+            </p>
+          </div>
+
+          <div v-else>
+            <h5 class="text-center mb-3 text-capitalize">
+              Plan for {{ plan.goalType }}
+            </h5>
+
+            <div v-for="mealType in mealTypes" :key="mealType" class="mb-3">
+              <h6 class="text-capitalize">{{ mealType }}</h6>
+              <ul>
+                <li v-for="food in plan[mealType]" :key="food.name">
+                  {{ food.name }} — <small>{{ food.calories }} kcal</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div v-if="plan" class="text-center mt-3">
+            <button @click="refreshPlan" class="btn btn-outline-primary btn-sm">
+              Refresh Plan
+            </button>
+          </div>
+        </div>
       </div>
-
-      <div class="form-group mb-3">
-        <label>Height (cm)</label>
-        <input v-model.number="goal.height" type="number" class="form-control" />
-      </div>
-
-      <div class="form-group mb-3">
-        <label>Current Weight (kg)</label>
-        <input v-model.number="goal.currentWeight" type="number" class="form-control" />
-      </div>
-
-      <div class="form-group mb-3">
-        <label>Activity Level</label>
-        <select v-model="goal.activityLevel" class="form-control">
-          <option value="sedentary">Sedentary (little or no exercise)</option>
-          <option value="light">Light (1–3 days/week)</option>
-          <option value="moderate">Moderate (3–5 days/week)</option>
-          <option value="active">Active (6–7 days/week)</option>
-          <option value="veryActive">Very Active (physical job or intense training)</option>
-        </select>
-      </div>
-
-      <div class="form-group mb-3">
-        <label>Goal</label>
-        <select v-model="goal.goalType" class="form-control">
-          <option value="lose">Lose weight</option>
-          <option value="gain">Gain weight</option>
-          <option value="maintain">Maintain weight</option>
-        </select>
-      </div>
-
-      <div class="form-group mb-3">
-        <label>Intensity</label>
-        <select v-model="goal.intensity" class="form-control">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100">
-        Calculate Calories
-      </button>
-    </form>
-
-
-    <div v-if="result" class="alert alert-success mt-4">
-      <h4>Results</h4>
-      <p><strong>BMI:</strong> {{ result.bmi }}</p>
-      <p><strong>Recommended Calories:</strong> {{ result.targetKcal }} kcal/day</p>
     </div>
   </div>
 </template>
@@ -72,46 +119,64 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import jwtDecode from 'jwt-decode'
 
 const goal = ref({
   clientId: '',
-  sex: 'null',
+  sex: '',
   age: null,
   height: null,
   currentWeight: null,
-  activityLevel: 'null',
-  goalType: 'null',
-  intensity: 'null'
+  activityLevel: '',
+  goalType: '',
+  intensity: ''
 })
 
+const calculatedGoal = ref(null)
+const plan = ref(null)
+const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks']
 
-const result = ref(null)
 
-//token to get user id
-const token = localStorage.getItem('token')
-if (token) {
+const calculateGoal = async () => {
   try {
-    const decoded = jwtDecode(token)
-    goal.value.clientId = decoded.sub
-  } catch (err) {
-    console.error('Failed to decode token:', err)
+    const res = await axios.post('http://localhost:8103/api/goals', goal.value)
+    calculatedGoal.value = res.data
+    await fetchPlan()
+  } catch (error) {
+    console.error(error)
+    alert('Error calculating or fetching plan.')
   }
 }
 
-const submitGoal = async () => {
+
+const fetchPlan = async () => {
   try {
-    const res = await axios.post('http://localhost:8103/api/goals', goal.value)
-    result.value = res.data
-  } catch (err) {
-    console.error('Failed to submit goal:', err)
+    const allPlans = await axios.get('http://localhost:8103/api/mealplans')
+    const match = allPlans.data.find(
+      p => p.goalType === goal.value.goalType
+    )
+    plan.value = match || null
+  } catch (error) {
+    console.error(error)
+    alert('Error fetching plan.')
   }
+}
+
+
+const refreshPlan = async () => {
+  await fetchPlan()
 }
 </script>
 
 <style scoped>
-.container {
-  max-width: 600px;
+.client-container {
+  max-width: 1000px;
+}
+
+ul {
+  list-style-type: square;
+  padding-left: 1.2rem;
 }
 </style>
+
+
 
