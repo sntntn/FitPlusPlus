@@ -5,5 +5,6 @@ namespace AnalyticsService.Common.Data;
 
 public interface IAnalyticsContext
 {
-    IMongoCollection<Training> Trainings { get; set; }
+    IMongoCollection<IndividualTraining> IndividualTrainings { get; set; }
+    IMongoCollection<GroupTraining> GroupTrainings { get; set; }
 }

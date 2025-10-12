@@ -55,6 +55,14 @@ services:
     volumes:
       - reservationmongo_data:/data/db
   
+  analyticsdb:
+    container_name: analyticsdb
+    restart: always
+    ports:
+      - 27027:27017
+    volumes:
+      - analyticsmongo_data:/data/db
+  
   rabbitmq:
     container_name: rabbitmq
     restart: always

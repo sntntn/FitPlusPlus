@@ -1,17 +1,22 @@
-using AnalyticsService.Common.DTOs;
 using AnalyticsService.Common.Entities;
 
 namespace AnalyticsService.Common.Repositories;
 
 public interface IAnalyticsRepository
 {
-    Task CreateTraining(Training training);
-    Task<bool> DeleteTraining(string id);
-    Task<double> GetTrainerAverageTrainingRating(string trainerId);
-    Task<int> GetTrainerNumOfTrainings(string trainerId);
-    Task<int> GetClientNumOfTrainings(string clientId);
-    Task<int> GetClientNumOfHeldTrainings(string clientId);
-    Task<int> GetClientNumOfCancelledTrainings(string clientId);
-    Task<IEnumerable<string>> GetTrainerClientIds(string trainerId);
-    Task<IEnumerable<ClientTrainingDTO>> GetClientTrainings(string clientId);
+    // Individual Trainings
+    Task CreateIndividualTraining(IndividualTraining individualTraining);
+    Task<IndividualTraining> GetIndividualTrainingByReservationId(string reservationId);
+    Task<IEnumerable<IndividualTraining>> GetIndividualTrainingsByTrainerId(string trainerId);
+    Task<IEnumerable<IndividualTraining>> GetIndividualTrainingsByClientId(string clientId);
+    Task<bool> UpdateIndividualTraining(IndividualTraining individualTraining);
+    Task<bool> DeleteIndividualTraining(string id);
+    
+    // Group Trainings
+    Task CreateGroupTraining(GroupTraining groupTraining);
+    Task<GroupTraining> GetGroupTrainingByReservationId(string reservationId);
+    Task<IEnumerable<GroupTraining>> GetGroupTrainingsByTrainerId(string trainerId);
+    Task<IEnumerable<GroupTraining>> GetGroupTrainingsByClientId(string clientId);
+    Task<bool> UpdateGroupTraining(GroupTraining groupTraining);
+    Task<bool> DeleteGroupTraining(string id);
 }
