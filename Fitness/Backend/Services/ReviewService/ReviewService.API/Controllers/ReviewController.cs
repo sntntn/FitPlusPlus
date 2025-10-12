@@ -57,7 +57,7 @@ namespace ReviewService.API.Controllers
             var review = await _repository.GetReviewByReservationId(reviewDTO.ReservationId);
             if (review == null)
             {
-                await _repository.CreateReview(reviewDTO.ReservationId); 
+                await _repository.CreateReview(reviewDTO.ReservationId, reviewDTO.ClientId, reviewDTO.TrainerId); 
             }
             var updated = await _repository.SubmitTrainerReview(reviewDTO);
             if (updated)
@@ -75,7 +75,7 @@ namespace ReviewService.API.Controllers
             var review = await _repository.GetReviewByReservationId(reviewDTO.ReservationId);
             if (review == null)
             {
-                await _repository.CreateReview(reviewDTO.ReservationId); 
+                await _repository.CreateReview(reviewDTO.ReservationId, reviewDTO.ClientId, reviewDTO.TrainerId); 
             }
             var updated = await _repository.SubmitClientReview(reviewDTO);
             if (updated)
