@@ -9,7 +9,8 @@ const AUTH_URL = `${GATEWAY_URL}/authentication`;
 const MSSQL_USERS = `${GATEWAY_URL}/user`;
 const PAYMENT = `${GATEWAY_URL}/payment`;
 
-const TRAININGS = "http://localhost:8007";
+const TRAININGS = "http://localhost:8007/api/v1/Training";
+const UPLOAD = "http://localhost:8007/api/v1/Upload"
 
 
 //const TRAINERS = "http://localhost:8000/api/v1/Trainer";
@@ -232,7 +233,7 @@ export default {
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
           const formData = new FormData();
           formData.append("file", file);
-          const response = axios.post(`http://localhost:8004/api/v1/upload/video`, formData, {
+          const response = axios.post(`${UPLOAD}/video`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
 
@@ -241,11 +242,12 @@ export default {
 
         delete_video(fileName){
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-          const response = axios.delete(`http://localhost:8004/api/v1/upload/video/delete/${fileName}`);
+          const response = axios.delete(`${UPLOAD}/video/delete/${fileName}`);
         },
 
         create_training(training){
           axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+          console.log(JSON.stringify(training))
           return axios.post(`${TRAININGS}/training`, training);
         },
 
