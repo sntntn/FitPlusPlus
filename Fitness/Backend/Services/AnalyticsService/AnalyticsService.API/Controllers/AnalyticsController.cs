@@ -1,6 +1,4 @@
-using System.Collections;
 using AnalyticsService.API.GrpcServices;
-using AnalyticsService.Common.DTOs;
 using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
 using AutoMapper;
@@ -8,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AnalyticsService.API.Controllers;
 
+// [Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class AnalyticsController : ControllerBase
@@ -23,83 +22,41 @@ public class AnalyticsController : ControllerBase
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult> CreateTraining([FromQuery] Training training)
+    // Individual Trainings
+    // [Authorize(Roles = "Admin, Trainer")]
+    [HttpGet("individual/trainer/{trainerId}")]
+    [ProducesResponseType(typeof(IEnumerable<IndividualTraining>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<IndividualTraining>>> GetIndividualTrainingsByTrainerId(string trainerId)
     {
-        await _repository.CreateTraining(training);
-        return Created();
+        var reservations = await _repository.GetIndividualTrainingsByTrainerId(trainerId);
+        return Ok(reservations);
     }
 
-    [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> DeleteTraining([FromQuery] string id)
+    // [Authorize(Roles = "Admin, Client")]
+    [HttpGet("individual/client/{clientId}")]
+    [ProducesResponseType(typeof(IEnumerable<IndividualTraining>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<IndividualTraining>>> GetIndividualTrainingsByClientId(string clientId)
     {
-        return Ok(await _repository.DeleteTraining(id));
-    }
-
-    [HttpGet("[action]")]
-    [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(double), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<double>> GetTrainerAverageTrainingRating([FromQuery] string trainerId)
-    {
-        var rating = await _repository.GetTrainerAverageTrainingRating(trainerId);
-        return rating != 0.0 ? Ok(rating) : NotFound();
-    }
-
-    [HttpGet("[action]")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<ActionResult<int>> GetTrainerNumOfTrainings([FromQuery] string trainerId)
-    {
-        var numOfTrainings = await _repository.GetTrainerNumOfTrainings(trainerId);
-        return Ok(numOfTrainings);
-    }
-
-    [HttpGet("[action]")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<ActionResult<int>> GetClientNumOfTrainingForClient([FromQuery] string clientId)
-    {
-        var numOfTrainings = await _repository.GetClientNumOfTrainings(clientId);
-        return Ok(numOfTrainings);
+        var reservations = await _repository.GetIndividualTrainingsByClientId(clientId);
+        return Ok(reservations);
     }
     
-    [HttpGet("[action]")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<ActionResult<int>> GetClientNumOfHeldTrainings([FromQuery] string clientId)
+    // Group Trainings
+    // [Authorize(Roles = "Admin, Trainer")]
+    [HttpGet("group/trainer/{trainerId}")]
+    [ProducesResponseType(typeof(IEnumerable<GroupTraining>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<GroupTraining>>> GetGroupTrainingsByTrainerId(string trainerId)
     {
-        var numOfHeldTrainings = await _repository.GetClientNumOfHeldTrainings(clientId);
-        return Ok(numOfHeldTrainings);
+        var reservations = await _repository.GetGroupTrainingsByTrainerId(trainerId);
+        return Ok(reservations);
     }
 
-    [HttpGet("[action]")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    public async Task<ActionResult<int>> GetClientNumOfCancelledTrainings([FromQuery] string clientId)
+    // [Authorize(Roles = "Admin, Client")]
+    [HttpGet("group/client/{clientId}")]
+    [ProducesResponseType(typeof(IEnumerable<GroupTraining>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<GroupTraining>>> GetGroupTrainingsByClientId(string clientId)
     {
-        var numOfCancelledTrainings = await _repository.GetClientNumOfCancelledTrainings(clientId);
-        return Ok(numOfCancelledTrainings);
-    }
-
-    [HttpGet("[action]")]
-    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<string>>> GetTrainerClientIds([FromQuery] string trainerId)
-    {
-        var clientIds = await _repository.GetTrainerClientIds(trainerId);
-        return Ok(clientIds);
-    }
-
-    [HttpGet("TrainerReviews")]
-    [ProducesResponseType(typeof(IEnumerable<ReviewType>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ReviewType>>> GetTrainerReviews([FromQuery] string trainerId)
-    {
-        var response = await _reviewGrpcService.GetReviews(trainerId);
-        var reviews = _mapper.Map<IEnumerable<ReviewType>>(response.Reviews);
-        return Ok(reviews);
-    }
-
-    [HttpGet("ClientTrainings")]
-    [ProducesResponseType(typeof(IEnumerable<ClientTrainingDTO>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ClientTrainingDTO>>> GetClientTrainings(string clientId)
-    {
-        return Ok(await _repository.GetClientTrainings(clientId));
+        var reservations = await _repository.GetGroupTrainingsByClientId(clientId);
+        return Ok(reservations);
     }
 }
