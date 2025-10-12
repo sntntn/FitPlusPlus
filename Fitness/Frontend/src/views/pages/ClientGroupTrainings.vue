@@ -57,7 +57,7 @@
                 <button class="info" @click="showDetails = true; currentReservationId = res.id">Expand</button>
               </td>
               <td>
-                <button class="info" @click="showReview = true; currentReservationId = res.id">Review</button>
+                <button class="info" @click="showReview = true; currentReservationId = res.id; currentTrainerId = res.trainerId;">Review</button>
               </td>
             </tr>
           </tbody>
@@ -111,8 +111,9 @@
 
           <div class="actions">
             <button type="button" @click="showReview = false">Cancel</button>
-            <button :disabled="!trainingRating" class="info" @click="submitReview(currentReservationId, trainingRating, comment)">
-              Submit Review
+            <button :disabled="!trainingRating" class="info"
+              @click="submitReview(currentReservationId, currentTrainerId, this.$route.params.id, trainingRating, comment)">
+                Submit Review
             </button>
           </div>
         </div>
@@ -139,7 +140,9 @@ export default {
       trainers: [],
       showDetails: false,
       showReview: false,
-      trainingRating: null
+      trainingRating: null,
+      currentReservationId: "",
+      currentTrainerId: ""
     };
   },
 
@@ -189,27 +192,29 @@ export default {
       }
     },
 
-    submitReview(reservationId, rating, comment) {
-      let request = {
-        reservationId: reservationId,
-        clientId: this.$route.params.id,
-        clientComment: comment,
-        clientRating: rating,
-      }
-      data_services.methods.submit_review_client(request)
-        .then(response => {
-            location.reload();
-          })
-          .catch(error => {
-            console.error("Reviewing error:", error);
-            alert("An error occurred while reviewing a reservation from the trainer side.");
-          });
+    submitReview(reservationId, trainerId, clientId, rating, comment) {
+      console.log("Client Group Trainings SUBMIT REVIEW:", trainerId, clientId);
+      // let request = {
+      //   reservationId: reservationId,
+      //   clientId: clientId,
+      //   clientComment: comment,
+      //   clientRating: rating,
+      // }
+      // data_services.methods.submit_review_client(request)
+      //   .then(response => {
+      //       location.reload();
+      //     })
+      //     .catch(error => {
+      //       console.error("Reviewing error:", error);
+      //       alert("An error occurred while reviewing a reservation from the trainer side.");
+      //     });
     },
 
     fetchGroupReservations() {
       getAllGroupReservations()
         .then(response => {
           this.groupReservations = response.data;
+          console.log(this.groupReservations);
           return data_services.methods.get_trainers();
         })
         .then(response => {

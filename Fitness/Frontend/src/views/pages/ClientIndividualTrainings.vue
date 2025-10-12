@@ -73,7 +73,7 @@
           </thead>
           <tbody>
             <tr v-for="res in reservedTrainings" :key="res.id">
-              <td>{{ res.trainer }}</td>
+              <td>{{ this.findTrainerName(res.trainerId) }}</td>
               <td>{{ res.trainingType }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
@@ -101,13 +101,13 @@
           </thead>
           <tbody>
             <tr v-for="res in completedOrCancelled" :key="res.id">
-              <td>{{ res.trainer }}</td>
+              <td>{{ this.findTrainerName(res.trainerId) }}</td>
               <td>{{ res.trainingType }}</td>
               <td>{{ res.date }}</td>
               <td>{{ res.time }}</td>
               <td>{{ res.status }}</td>
               <td>
-                <button v-if="res.status == 'Active'" class="info" @click="showReview = true; currentReservationId = res.id">
+                <button v-if="res.status == 'Active'" class="info" @click="showReview = true; currentReservationId = res.id; currentTrainerId = res.trainerId">
                   Review
                 </button>
                 <button v-else :disabled="true" class="info">Review</button>
@@ -139,7 +139,8 @@
 
           <div class="actions">
             <button type="button" @click="showReview = false">Cancel</button>
-            <button :disabled="!trainingRating" class="info" @click="submitReview(currentReservationId, trainingRating, comment)">
+            <button :disabled="!trainingRating" class="info"
+              @click="submitReview(currentReservationId, currentTrainerId, this.$route.params.id, trainingRating, comment)">
               Submit Review
             </button>
           </div>
@@ -156,7 +157,6 @@ import {
   cancelClientIndividualReservation,
   getGroupReservationsByTrainer,
   getIndividualReservationsByTrainer,
-  createIndividualReservation
 } from '@/services/ReservationService'
 import FullCalendar from '@fullcalendar/vue3'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -177,6 +177,7 @@ export default {
       trainingDate: "",
       trainingRating: null,
       currentReservationId: "",
+      currentTrainerId: "",
       today: new Date().toISOString().split("T")[0], // e.g. "2025-09-30"
       startTime: "",
       calendarOptions: {
@@ -286,7 +287,7 @@ export default {
       }
     },
 
-    submitReview(reservationId, rating, comment) {
+    submitReview(reservationId, trainerId, clientId, rating, comment) {
       let request = {
         reservationId: reservationId,
         clientId: this.$route.params.id,
@@ -368,7 +369,7 @@ export default {
         })
         .map(r => ({
           id: r.id,
-          trainer: this.findTrainerName(r.trainerId),
+          trainerId: r.trainerId,
           trainingType: this.findTrainingType(r.trainingTypeId),
           date: r.date,
           time: `${r.startTime} - ${r.endTime}`
@@ -384,7 +385,7 @@ export default {
         })
         .map(r => ({
           id: r.id,
-          trainer: this.findTrainerName(r.trainerId),
+          trainerId: r.trainerId,
           trainingType: this.findTrainingType(r.trainingTypeId),
           date: r.date,
           time: `${r.startTime} - ${r.endTime}`,
