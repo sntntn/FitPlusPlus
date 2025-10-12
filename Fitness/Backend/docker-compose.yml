@@ -11,9 +11,6 @@ services:
   paymentdb:
     image: mongo
     
-  analyticsdb:
-    image: mongo
-    
   notificationdb:
     image: mongo
     
@@ -21,6 +18,9 @@ services:
     image: mongo
     
   reservationdb:
+    image: mongo
+  
+  analyticsdb:
     image: mongo
   
   rabbitmq:
