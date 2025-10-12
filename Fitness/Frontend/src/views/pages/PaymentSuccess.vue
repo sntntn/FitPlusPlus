@@ -43,7 +43,7 @@ export default {
       const cancelData = sessionStorage.getItem("cancelData");
       const chatData = sessionStorage.getItem("chatData");
       const extendData = sessionStorage.getItem("extendData");
-
+    
       if (bookData) {
         this.processBooking(JSON.parse(bookData));
         sessionStorage.removeItem("bookData");
@@ -66,9 +66,6 @@ export default {
         .then((response) => {
           if (response.status === 201) {
             alert("Training booked successfully!");
-            this.$router.push(
-              `/client/${bookData.clientId}/individualTrainings`
-            );
           } else {
             alert(`Booking failed. Status: ${response.status}`);
           }
@@ -76,6 +73,9 @@ export default {
         .catch((error) => {
           console.error("Booking error:", error);
           alert("An error occurred while booking the training.");
+        })
+        .then(() => {
+          this.$router.push(`/client/${bookData.clientId}/individualTrainings`);
         });
     },
 
@@ -84,9 +84,6 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             alert("Training cancelled successfully!");
-            this.$router.push(
-              `/trainer/${cancelData.trainerId}/individualTrainings`
-            );
           } else {
             alert(`Cancellation failed. Status: ${response.status}`);
           }
@@ -94,7 +91,10 @@ export default {
         .catch((error) => {
           console.error("Cancellation error:", error);
           alert("An error occurred while cancelling the training.");
-        });
+        })
+        .then(() => {
+          this.$router.push(`/trainer/${cancelData.trainerId}/individualTrainings`);
+        });;
     },
 
     processChat(chatData) {
@@ -107,14 +107,13 @@ export default {
           } else {
             alert("Failed to create chat session.");
           }
-
-          setTimeout(() => {
-            this.$router.push(`/client/${chatData.clientId}/chat`);
-          }, 2000);
         })
         .catch((error) => {
           console.error("Chat creation error:", error);
           alert("An error occurred while creating the chat session.");
+        })
+        .then(() => {
+          this.$router.push(`/client/${chatData.clientId}/chat`);
         });
     },
 
@@ -128,14 +127,13 @@ export default {
           } else {
             alert("Failed to extend chat session.");
           }
-
-          setTimeout(() => {
-            this.$router.push(`/client/${extendData.clientId}/chat`);
-          }, 2000);
         })
         .catch((error) => {
           console.error("Chat extension error:", error);
           alert("An error occurred while extending the chat session.");
+        })
+        .then(() => {
+          this.$router.push(`/client/${extendData.clientId}/chat`);
         });
     },
   },
