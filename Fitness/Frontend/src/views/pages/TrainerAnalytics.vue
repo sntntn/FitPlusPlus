@@ -195,11 +195,6 @@ export default {
     },
     fetchAnalytics() {
       const clientId = this.$route.params.id;
-      analyticsService.getClientAnalytics(clientId).then(response => {
-        this.clientTrainings = response.data;
-        this.calculateTrainingStatistics();
-        this.calculateTrainersStatistics();
-      });
     },
     calculateTrainingStatistics() {
       this.clientTrainings.forEach(training => {

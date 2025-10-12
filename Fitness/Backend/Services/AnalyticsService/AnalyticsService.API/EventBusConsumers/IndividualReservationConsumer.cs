@@ -9,11 +9,51 @@ namespace AnalyticsService.API.EventBusConsumers;
 
 public class IndividualReservationConsumer : IConsumer<IndividualReservationEvent>
 {
-    public Task Consume(ConsumeContext<IndividualReservationEvent> context)
+    private readonly IAnalyticsRepository _repository;
+
+    public IndividualReservationConsumer(IAnalyticsRepository repository)
     {
-        var individualReservation = context.Message;
-        Console.WriteLine(JsonSerializer.Serialize(individualReservation));
-        // TODO(Handle reservation)
-        return Task.CompletedTask;
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+    public async Task Consume(ConsumeContext<IndividualReservationEvent> context)
+    {
+        IndividualReservationEvent individualReservation = context.Message;
+        switch (individualReservation.EventType)
+        {
+            case IndividualReservationEventType.Booked:
+            {
+                IndividualTraining individualTraining = new IndividualTraining
+                {
+                    ReservationId = individualReservation.ReservationId,
+                    TrainerId = individualReservation.TrainerId,
+                    ClientId = individualReservation.ClientId,
+                    TrainingTypeId = individualReservation.TrainingTypeId,
+                    StartTime = individualReservation.StartTime,
+                    EndTime = individualReservation.EndTime,
+                    Date = individualReservation.Date,
+                    TrainerReview = null,
+                    ClientReview = null,
+                    Status = IndividualTrainingStatus.Active
+                };
+                await _repository.CreateIndividualTraining(individualTraining);
+                break;
+            }
+            case IndividualReservationEventType.CancelledByClient:
+            {
+                IndividualTraining individualTraining =
+                    await _repository.GetIndividualTrainingByReservationId(individualReservation.ReservationId);
+                individualTraining.Status = IndividualTrainingStatus.ClientCancelled;
+                await _repository.UpdateIndividualTraining(individualTraining);
+                break;
+            }
+            case IndividualReservationEventType.CancelledByTrainer:
+            {
+                IndividualTraining individualTraining =
+                    await _repository.GetIndividualTrainingByReservationId(individualReservation.ReservationId);
+                individualTraining.Status = IndividualTrainingStatus.TrainerCancelled;
+                await _repository.UpdateIndividualTraining(individualTraining);
+                break;
+            }
+        }
     }
 }

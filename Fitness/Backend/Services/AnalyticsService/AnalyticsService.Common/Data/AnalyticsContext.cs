@@ -10,37 +10,10 @@ public class AnalyticsContext : IAnalyticsContext
     {
         var mongoClient = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
         var database = mongoClient.GetDatabase("AnalyticsDB");
-        Trainings = database.GetCollection<Training>("Trainings");
-        // SeedData(Trainings);
+        IndividualTrainings = database.GetCollection<IndividualTraining>("IndividualTrainings");
+        GroupTrainings = database.GetCollection<GroupTraining>("GroupTrainings");
     }
     
-    public IMongoCollection<Training> Trainings { get; set; }
-
-    private static void SeedData(IMongoCollection<Training> trainings)
-    {
-        if (!trainings.Find(t => true).Any())
-        {
-            trainings.InsertOneAsync(
-                new Training()
-                {
-                    ClientId = "1234567890abcdef12345678",
-                    TrainerId = "1234567890abcdef12345678",
-                    TrainingDate = new DateTime(2020, 01, 01),
-                    TrainerRating = 5,
-                    Status = TrainingStatus.HELD
-                }
-            );
-            trainings.InsertOneAsync(
-                new Training()
-                {
-                    ClientId = "5F6D3326597F61D77AD99969",
-                    TrainerId = "1234567890abcdef12345678",
-                    TrainingDate = new DateTime(2021, 01, 01),
-                    ClientRating = 7,
-                    Status = TrainingStatus.CANCELLED,
-                    ClientComment = "Unpleasant experience"
-                }
-            );
-        }
-    }
+    public IMongoCollection<IndividualTraining> IndividualTrainings { get; set; }
+    public IMongoCollection<GroupTraining> GroupTrainings { get; set; }
 }
