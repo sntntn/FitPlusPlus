@@ -1,52 +1,15 @@
+version: "3.9"
+
 services:
-  trainerdb:
-    container_name: trainerdb
+  # === Databases ===
+  analyticsdb:
+    container_name: analyticsdb
     restart: always
     ports:
-      - "27017:27017"
+      - "27027:27017"
     volumes:
-      - trainermongo_data:/data/db
+      - analyticsmongo_data:/data/db
 
-  clientdb:
-    container_name: clientdb
-    restart: always
-    ports:
-      - "27019:27017"
-    volumes: 
-      - clientmongo_data:/data/db
-
-  reviewdb:
-    container_name: reviewdb
-    restart: always
-    ports:
-      - "27018:27017"
-    volumes:
-      - reviewmongo_data:/data/db
- 
-  paymentdb:
-    container_name: paymentdb
-    restart: always
-    ports:
-      - "27020:27017"
-    volumes:
-      - paymentmongo_data:/data/db
-        
-  videotrainingdb:
-    container_name: videotrainingdb
-    restart: always
-    ports:
-      - "27030:27017"
-    volumes:
-      - videotrainingmongo_data:/data/db
-  
-  notificationdb:
-    container_name: notificationdb
-    restart: always
-    ports:
-      - "27021:27017"
-    volumes:
-      - notificationmongo_data:/data/db
-  
   chatdb:
     container_name: chatdb
     restart: always
@@ -54,7 +17,23 @@ services:
       - "27022:27017"
     volumes:
       - chatmongo_data:/data/db
-      
+
+  clientdb:
+    container_name: clientdb
+    restart: always
+    ports:
+      - "27019:27017"
+    volumes:
+      - clientmongo_data:/data/db
+
+  notificationdb:
+    container_name: notificationdb
+    restart: always
+    ports:
+      - "27021:27017"
+    volumes:
+      - notificationmongo_data:/data/db
+
   nutritiondb:
     container_name: nutritiondb
     restart: always
@@ -63,7 +42,14 @@ services:
     volumes:
       - nutritionmongo_data:/data/db
 
-  
+  paymentdb:
+    container_name: paymentdb
+    restart: always
+    ports:
+      - "27020:27017"
+    volumes:
+      - paymentmongo_data:/data/db
+
   reservationdb:
     container_name: reservationdb
     restart: always
@@ -71,22 +57,47 @@ services:
       - "27023:27017"
     volumes:
       - reservationmongo_data:/data/db
-  
-  analyticsdb:
-    container_name: analyticsdb
+
+  reviewdb:
+    container_name: reviewdb
     restart: always
     ports:
-      - 27027:27017
+      - "27018:27017"
     volumes:
-      - analyticsmongo_data:/data/db
-  
+      - reviewmongo_data:/data/db
+
+  trainerdb:
+    container_name: trainerdb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - trainermongo_data:/data/db
+
+  videotrainingdb:
+    container_name: videotrainingdb
+    restart: always
+    ports:
+      - "27030:27017"
+    volumes:
+      - videotrainingmongo_data:/data/db
+
+  # === Infrastructure ===
+  consul:
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+    volumes:
+      - consul_data:/consul/data
+
   rabbitmq:
     container_name: rabbitmq
     restart: always
     ports:
       - "5672:5672"
       - "15672:15672"
-  
+
   mssql:
     container_name: mssql
     environment:
@@ -99,33 +110,26 @@ services:
     volumes:
       - mssql_data:/var/opt/mssql/
       - mssql_volume:/var/opt/sqlserver/
-  
-  consul:
-    container_name: consul
-    ports:
-      - "8500:8500"
-    command: "agent -dev -client=0.0.0.0"
-    volumes:
-      - consul_data:/consul/data
-      
-  
+
+  # === Gateway ===
   gatewayservice.api:
     container_name: gatewayservice.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "8005:8080"    
-  
+      - "8005:8080"
+
+  # === Trainer Service ===
   trainerservice.api:
     container_name: trainerservice.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://trainerdb:27017"
       - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
-      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672" 
+      - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8000:8080"
-  
+
   trainerservice.grpc:
     container_name: trainerservice.grpc
     environment:
@@ -134,6 +138,7 @@ services:
     ports:
       - "8102:8080"
 
+  # === Client Service ===
   clientservice.api:
     container_name: clientservice.api
     environment:
@@ -142,7 +147,7 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8100:8080"
-        
+
   clientservice.grpc:
     container_name: clientservice.grpc
     environment:
@@ -151,6 +156,7 @@ services:
     ports:
       - "8101:8080"
 
+  # === Identity Server ===
   identityserver:
     container_name: identityserver
     environment:
@@ -159,6 +165,7 @@ services:
     ports:
       - "4000:8080"
 
+  # === Review Service ===
   reviewservice.api:
     container_name: reviewservice.api
     environment:
@@ -176,6 +183,7 @@ services:
     ports:
       - "8002:8080"
 
+  # === Payment Service ===
   paymentservice.api:
     container_name: paymentservice.api
     environment:
@@ -185,7 +193,8 @@ services:
       - ./Services/PaymentService/PaymentService.API/.env
     ports:
       - "8003:8080"
-  
+
+  # === Notification Service ===
   notificationservice.api:
     container_name: notificationservice.api
     environment:
@@ -203,7 +212,8 @@ services:
       - ./Services/NotificationService/NotificationService.API/.env
     ports:
       - "8004:8080"
-    
+
+  # === Analytics Service ===
   analyticsservice.api:
     container_name: analyticsservice.api
     environment:
@@ -213,6 +223,7 @@ services:
     ports:
       - "8018:8080"
 
+  # === Chat Service ===
   chatservice.api:
     container_name: chatService.api
     environment:
@@ -221,7 +232,8 @@ services:
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8082:8080"
-        
+
+  # === Reservation Service ===
   reservationservice.api:
     container_name: reservationservice.api
     environment:
@@ -231,6 +243,7 @@ services:
     ports:
       - "8103:8080"
 
+  # === Video Training Service ===
   videotrainingservice.api:
     container_name: videotrainingservice.api
     environment:
@@ -238,14 +251,13 @@ services:
       - "DatabaseSetting:ConnectionString=mongodb://videotrainingdb:27017"
     ports:
       - "8007:8080"
-      
+
+  # === Nutrition Service ===
   nutritionservice.api:
     container_name: nutritionservice.api
     build:
       context: .
       dockerfile: Services/NutritionService/NutritionService.API/Dockerfile
-    ports:
-      - "8157:8080"
     #volumes:
      # - ./Services/NutritionService/NutritionService.API:/app
     environment:
@@ -256,8 +268,21 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - "DatabaseSettings:ConnectionString=mongodb://nutritiondb:27017"
       - "DatabaseSettings:DatabaseName=NutritionDb"
-    depends_on:
-      - nutritiondb
-      - consul
-      
+    ports:
+      - "8157:8080"
+
+volumes:
+  analyticsmongo_data:
+  chatmongo_data:
+  clientmongo_data:
+  consul_data:
+  mssql_data:
+  mssql_volume:
+  notificationmongo_data:
+  nutritionmongo_data:
+  paymentmongo_data:
+  reservationmongo_data:
+  reviewmongo_data:
+  trainermongo_data:
+  videotrainingmongo_data:
 
