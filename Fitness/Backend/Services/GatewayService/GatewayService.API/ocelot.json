@@ -55,6 +55,62 @@
       "ServiceName": "NotificationService.API",
       "UpstreamPathTemplate": "/notification/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/analytics/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "AnalyticsService.API",
+      "UpstreamPathTemplate": "/analytics/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/reservation/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "ReservationService.API",
+      "UpstreamPathTemplate": "/reservation/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/training/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "VideoTrainingService.API",
+      "UpstreamPathTemplate": "/training/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/upload/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "VideoTrainingService.API",
+      "UpstreamPathTemplate": "/upload/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/food/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "NutritionService.API",
+      "UpstreamPathTemplate": "/food/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/goals/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "NutritionService.API",
+      "UpstreamPathTemplate": "/goals/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/health/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "NutritionService.API",
+      "UpstreamPathTemplate": "/health/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/mealplans/{everything}",
+      "DownstreamScheme": "http",
+      "ServiceName": "NutritionService.API",
+      "UpstreamPathTemplate": "/mealplans/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"]
     }
   ]
 }
