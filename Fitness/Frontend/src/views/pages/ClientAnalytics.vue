@@ -1,5 +1,5 @@
 <template>
-  <h2>Your Analytics</h2>
+  <h2>Analytics</h2>
 
   <div class="page">
     <div class="training-statistics">
@@ -218,7 +218,6 @@ export default {
       analyticsService.getClientIndividualTrainings(clientId)
         .then(response => {
           this.individualTrainings = response.data;
-          console.log(this.individualTrainings);
         });
     },
 
@@ -227,7 +226,6 @@ export default {
       analyticsService.getClientGroupTrainings(clientId)
         .then(response => {
           this.groupTrainings = response.data;
-          console.log(this.groupTrainings);
         });
     },
 

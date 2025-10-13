@@ -20,7 +20,7 @@ const analyticsService = {
 
     async getTrainerGroupTrainings(trainerId) {
         axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
-        let response = await axios.get(`${ANALYTICS_URL}/group/trainer/${clientId}`);
+        let response = await axios.get(`${ANALYTICS_URL}/group/trainer/${trainerId}`);
         return response;
     },
 

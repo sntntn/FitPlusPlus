@@ -1,5 +1,5 @@
 <template>
-  <h2>Your Analytics</h2>
+  <h2>Analytics</h2>
 
   <div class="page">
     <div class="training-statistics">
@@ -8,24 +8,57 @@
         <h2>Individual trainings</h2>
         <hr>
         <div class="stats-section">
-          <div class="stat">
+          <div class="num-stat">
             <span class="label">Total number of individual trainings:</span>
-            <span class="value">{{ totalTrainings }}</span>
+            <span class="value">{{ numberOfIndividualTrainings }}</span>
           </div>
 
           <div class="stat">
-            <span class="label">Number of different clients:</span>
-            <span class="value">{{ numberOfIndividualClients }}</span>
+            <span class="label">Individual training status:</span>
+            <div class="pie-chart">
+              <Pie
+                id="trainers-worked-with"
+                :options="{ responsive: true }"
+                :data="{
+                  labels: ['Active', 'Cancelled by Trainer', 'Cancelled by Client'],
+                  datasets: [{
+                    backgroundColor: ['#eba834', '#eb3d34', '#a5e339'],
+                    data: individualTrainingStatus
+                  }]
+                }"
+              />
+            </div>
           </div>
 
-          <div class="stat">
+          <div class="num-stat">
             <span class="label">My average rating:</span>
-            <span class="value">{{ myAverageRating }}</span>
+            <span class="value">{{ averageIndividualRating }}</span>
+          </div>
+
+          <div class="num-stat">
+            <span class="label">Average client rating:</span>
+            <span class="value">{{ clientAverageIndividualRating }}</span>
           </div>
 
           <div class="stat">
-            <span class="label">Average client rating:</span>
-            <span class="value">{{ trainerAverageRating }}</span>
+            <span class="label">Monthy income:</span>
+            <div class="histogram">
+              <Line
+                id="trainings-per-month"
+                :options="{
+                  responsive: true,
+                  animation: { duration: 1000 }
+                }"
+                :data="{
+                  labels: this.months,
+                  datasets: [{
+                    label: 'Income ($)',
+                    data: individualIncomePerMonth,
+                    backgroundColor: 'lightgreen'
+                  }]
+                }"
+              />
+            </div>
           </div>
 
           <div class="stat">
@@ -41,7 +74,7 @@
                   labels: this.months,
                   datasets: [{
                     label: 'Trainings',
-                    data: this.trainingsPerMonth,
+                    data: individualTrainingsPerMonth,
                     backgroundColor: '#31872e'
                   }]
                 }"
@@ -59,10 +92,10 @@
                   animation: { duration: 1000 }
                 }"
                 :data="{
-                  labels: ['Milan', 'Stefan', 'Marko', 'Milica', 'Tanja'],
+                  labels: individualClientNames,
                   datasets: [{
                     label: 'Trainings',
-                    data: [10, 3, 2, 0, 0],
+                    data: individualTrainingsPerClient,
                     backgroundColor: '#11322e'
                   }]
                 }"
@@ -72,20 +105,25 @@
 
           <div class="stat">
             <span class="label">Number of trainings per training types:</span>
-            <div class="pie-chart">
-              <Pie
-                id="trainers-worked-with"
-                :options="{ responsive: true }"
+            <div class="histogram">
+              <Bar
+                id="trainings-per-month"
+                :options="{
+                  responsive: true,
+                  animation: { duration: 1000 }
+                }"
                 :data="{
-                  labels: this.trainersWorkedWith,
+                  labels: individualTrainingTypeNames,
                   datasets: [{
-                    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                    data: this.numTrainingsByTrainer
+                    label: 'Trainings',
+                    data: individualTrainingsPerTrainingType,
+                    backgroundColor: trainingsPerTrainingTypeBackgroundColors
                   }]
                 }"
               />
             </div>
           </div>
+
         </div>
 
       </div>
@@ -96,24 +134,36 @@
         <hr>
 
         <div class="stats-section">
-          <div class="stat">
+          <div class="num-stat">
             <span class="label">Total number of group trainings:</span>
-            <span class="value">{{ totalTrainings }}</span>
+            <span class="value">{{ numberOfGroupTrainings }}</span>
           </div>
 
           <div class="stat">
-            <span class="label">Number of different clients:</span>
-            <span class="value">{{ numberOfGroupClients }}</span>
+            <span class="label">Group training status:</span>
+            <div class="pie-chart">
+              <Pie
+                id="trainers-worked-with"
+                :options="{ responsive: true }"
+                :data="{
+                  labels: ['Active', 'Cancelled by Trainer'],
+                  datasets: [{
+                    backgroundColor: ['#eba834', '#eb3d34'],
+                    data: groupTrainingStatus
+                  }]
+                }"
+              />
+            </div>
           </div>
 
-          <div class="stat">
+          <div class="num-stat">
             <span class="label">My average rating:</span>
-            <span class="value">{{ myAverageRating }}</span>
+            <span class="value">{{ averageMyGroupRating }}</span>
           </div>
 
-          <div class="stat">
+          <div class="num-stat">
             <span class="label">Average group rating:</span>
-            <span class="value">{{ trainerAverageRating }}</span>
+            <span class="value">{{ averageGroupRating }}</span>
           </div>
 
           <div class="stat">
@@ -129,7 +179,7 @@
                   labels: this.months,
                   datasets: [{
                     label: 'Trainings',
-                    data: this.trainingsPerMonth,
+                    data: groupTrainingsPerMonth,
                     backgroundColor: '#31872e'
                   }]
                 }"
@@ -147,10 +197,10 @@
                   animation: { duration: 1000 }
                 }"
                 :data="{
-                  labels: ['Milan', 'Stefan', 'Marko', 'Milica', 'Tanja'],
+                  labels: groupClientNames,
                   datasets: [{
                     label: 'Trainings',
-                    data: [10, 3, 2, 0, 0],
+                    data: groupTrainingsPerClient,
                     backgroundColor: '#11322e'
                   }]
                 }"
@@ -166,77 +216,228 @@
 </template>
 
 <script>
-// import dataServices from '@/services/data_services';
-import analyticsService from '@/services/AnalyticsService'
 import dataServices from '@/services/data_services';
+import analyticsService from '@/services/AnalyticsService'
 
-import { Bar, Pie } from 'vue-chartjs'
-import { Chart as ChartJS, ArcElement, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Bar, Pie, Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement
+} from 'chart.js'
 
-ChartJS.register(ArcElement, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement
+)
 
 export default {
   name: "ClientAnalytics",
-  components: { Bar, Pie },
+  components: { Bar, Pie, Line },
   data() {
     return {
-      clientTrainings: [],
-      numOfHeldTrainings: 0,
-      numOfCancelledTrainings: 0,
-      trainersWorkedWith: ["Vukasin", "Natalija"],
-      numTrainingsByTrainer: [16, 29],
-      months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-      trainingsPerMonth: [0, 0, 0, 0, 12, 7, 9, 11, 6, 8, 0, 13]
+      individualTrainings: [],
+      groupTrainings: [],
+      trainers: [],
+      clients: [],
+      months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     };
   },
-  methods: {
-    getTrainingTypes(trainingTypes) {
-      return trainingTypes.map(type => type.name).join(', ');
-    },
-    fetchAnalytics() {
-      const clientId = this.$route.params.id;
-    },
-    calculateTrainingStatistics() {
-      this.clientTrainings.forEach(training => {
-        if (training.status == 0) {
-          this.numOfHeldTrainings++;
-        }
-        else {
-          this.numOfCancelledTrainings++;
-        }
-      });
-    },
-    calculateTrainersStatistics() {
-      let trainers = new Map();
-      this.clientTrainings.forEach(training => {
-        let id = training.trainerId;
-        if (trainers.has(id)) {
-          trainers.set(id, trainers.get(id) + 1);
-        }
-        else {
-          trainers.set(id, 1);
-        }
-      });
 
-      dataServices.methods.get_trainers().then(response => {
-        response.data.forEach(trainer => {
-          if (trainers.has(trainer.id)) {
-            this.trainersWorkedWith.push({
-              "id": trainer.id,
-              "fullName": trainer.fullName,
-              "contactEmail": trainer.contactEmail,
-              "contactPhone": trainer.contactPhone,
-              "numOfTrainings": trainers.get(trainer.id)
-            });
-          }
+  methods: {
+    fetchIndividualTrainings() {
+      const trainerId = this.$route.params.id;
+      analyticsService.getTrainerIndividualTrainings(trainerId)
+        .then(response => {
+          this.individualTrainings = response.data;
         });
-      });
+    },
+
+    fetchGroupTrainings() {
+      const trainerId = this.$route.params.id;
+      analyticsService.getTrainerGroupTrainings(trainerId)
+        .then(response => {
+          this.groupTrainings = response.data;
+        });
+    },
+
+    fetchTrainers() {
+      dataServices.methods.get_trainers()
+        .then(response => {
+          this.trainers = response.data;
+        })
+        .catch(error => {
+          console.error("Failed to fetch trainers:", error);
+        });
+    },
+
+    fetchClients() {
+      dataServices.methods.get_clients()
+        .then(response => {
+          this.clients = response.data;
+        })
+        .catch(error => {
+          console.error("Failed to fetch clients:", error);
+        });
+    },
+
+    randomColor(i, total) {
+      return `hsl(${(i * 360) / total}, 70%, 60%)`;
     }
   },
 
   mounted() {
-    this.fetchAnalytics();
+    this.fetchIndividualTrainings();
+    this.fetchGroupTrainings();
+    this.fetchTrainers();
+    this.fetchClients();
     this.$parent.$parent.$parent.setUserData(this.$route.params.id, "trainer");
+  },
+
+  computed: {
+    // Individual Trainings
+    numberOfIndividualTrainings() {
+      return this.individualTrainings.filter(it => it.status == 0).length;
+    },
+
+    individualTrainingStatus() {
+      const trainingStatus = ['Active', 'Cancelled by Trainer', 'Cancelled by Client'];
+      return trainingStatus.map((_, i) => this.individualTrainings.filter(it => it.status == i).length);
+    },
+
+    averageIndividualRating() {
+      const reviews = this.individualTrainings.map(it => it.trainerReview ?? []).flat();
+      return reviews.length == 0 ? "--" : reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+    },
+
+    clientAverageIndividualRating() {
+      const reviews = this.individualTrainings.map(it => it.clientReview ?? []).flat();
+      return reviews.length == 0 ? "--" : reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+    },
+
+    individualIncomePerMonth() {
+      const trainerId = this.$route.params.id;
+      let trainer = this.trainers.find(t => t.id == trainerId);
+      let trainingTypes = trainer !== undefined ? trainer.trainingTypes : [];
+
+      let months = new Array(12).fill(0);
+      let trainingTypesPerMonth = months.map((_, i) =>
+        this.individualTrainings
+          .filter(it => {
+            let date = new Date(it.date);
+            return it.status == 0 && date.getMonth() == i && date.getFullYear() == (new Date).getFullYear();
+          })
+          .map(it => trainingTypes.find(tt => tt.id == it.trainingTypeId))
+        );
+      return trainingTypesPerMonth.map(m => m.reduce((a, tt) => a + (tt !== undefined ? tt.price : 0), 0));
+    },
+
+    individualTrainingsPerMonth() {
+      let trainingsPerMonth = new Array(12).fill(0);
+      return trainingsPerMonth.map((_, i) =>
+        this.individualTrainings
+          .filter(it => {
+            let date = new Date(it.date);
+            return it.status == 0 && date.getMonth() == i && date.getFullYear() == (new Date).getFullYear();
+          })
+          .length
+        );
+    },
+
+    individualClients() {
+      return this.clients
+        .filter(c => this.individualTrainings.filter(it => it.status == 0).map(it => it.clientId).includes(c.id));
+    },
+
+    individualClientNames() {
+      return this.individualClients.map(c => c.name + " " + c.surname);
+    },
+
+    individualTrainingsPerClient() {
+      return this.individualClients.map(c => this.individualTrainings.filter(it => it.status == 0 && it.clientId == c.id).length)
+    },
+
+    individualTrainingTypes() {
+      const trainerId = this.$route.params.id;
+      let trainer = this.trainers.find(t => t.id == trainerId);
+      let trainingTypes = trainer !== undefined ? trainer.trainingTypes : [];
+      return trainingTypes.filter(tt => this.individualTrainings
+        .filter(it => it.status == 0)
+        .map(it => it.trainingTypeId).includes(tt.id));
+    },
+
+    individualTrainingTypeNames() {
+      return this.individualTrainingTypes.map(t => t.name);
+    },
+
+    individualTrainingsPerTrainingType() {
+      return this.individualTrainingTypes.map(t => this.individualTrainings.filter(it => it.status == 0 && it.trainingTypeId == t.id).length);
+    },
+
+    trainingsPerTrainingTypeBackgroundColors() {
+      return this.individualTrainingsPerTrainingType.map((_, i) => this.randomColor(i, this.individualTrainingsPerTrainingType.length))
+    },
+
+    // Group Trainings
+    numberOfGroupTrainings() {
+      return this.groupTrainings.filter(gt => gt.status == 0).length;
+    },
+
+    groupTrainingStatus() {
+      const trainingStatus = ['Active', 'Cancelled by Trainer'];
+      return trainingStatus.map((_, i) => this.groupTrainings.filter(gt => gt.status == i).length);
+    },
+
+    averageMyGroupRating() {
+      const myReviews =
+        this.groupTrainings.map(gt => gt.trainerReview ?? []).flat();
+      return myReviews.length == 0 ? "--" : myReviews.reduce((a, r) => a + r.rating, 0) / myReviews.length;
+    },
+
+    averageGroupRating() {
+      const reviews = this.groupTrainings.map(gt => gt.clientReviews ?? []).flat();
+      return reviews.length == 0 ? "--" : reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+    },
+
+    groupTrainingsPerMonth() {
+      let trainingsPerMonth = new Array(12).fill(0);
+      return trainingsPerMonth.map((_, i) =>
+        this.groupTrainings
+          .filter(it => {
+            let date = new Date(it.date);
+            return it.status == 0 && date.getMonth() == i && date.getFullYear() == (new Date).getFullYear();
+          })
+          .length
+        );
+    },
+
+    groupClients() {
+      return this.clients
+        .filter(c => this.groupTrainings.filter(gt => gt.status == 0).map(gt => gt.clientIds).flat().includes(c.id));
+    },
+
+    groupClientNames() {
+      return this.groupClients.map(c => c.name + " " + c.surname);
+    },
+
+    groupTrainingsPerClient() {
+      return this.groupClients
+        .map(c => this.groupTrainings.filter(gt => gt.status == 0 && gt.clientIds.includes(c.id)).length)
+    },
   }
 }
 </script>
@@ -430,6 +631,12 @@ button:disabled {
   flex-direction: column;
 }
 
+.num-stat {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
 .label {
   font-weight: bold;
 }
@@ -437,6 +644,8 @@ button:disabled {
 .value {
   font-size: 1.2rem;
   color: #333;
+  margin-top: -2px;
+  margin-left: 5px;
 }
 
 .histogram {
