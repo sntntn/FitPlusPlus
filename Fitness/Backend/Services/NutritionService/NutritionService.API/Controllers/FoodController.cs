@@ -5,7 +5,7 @@ using NutritionService.API.Models;
 namespace NutritionService.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class FoodController : ControllerBase
     {
         private readonly IMongoCollection<Food> _foods;

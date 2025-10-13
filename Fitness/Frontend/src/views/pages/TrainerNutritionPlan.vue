@@ -86,7 +86,12 @@
 </template>
 
 <script>
-import axios from "axios";
+import { 
+  getAllFoods,
+  getMealPlansForTrainer,
+  saveMealPlan,
+  deleteMealPlan
+} from "../../services/NutritionService";
 
 export default {
   data() {
@@ -96,63 +101,23 @@ export default {
       foods: [],
       plans: [],
       goalType: "",
-      mealPlan: {
-        breakfast: [],
-        lunch: [],
-        dinner: [],
-        snacks: [],
-      },
+      mealPlan: { breakfast: [], lunch: [], dinner: [], snacks: [] },
       selectedPlan: null,
       mealTypes: ["breakfast", "lunch", "dinner", "snacks"],
     };
   },
-
 
   created() {
     const routeId = this.$route.params.id || '';
     this.$parent.$parent.$parent.setUserData(routeId, "trainer");
     this.trainerId = routeId;
     this.loadData();
-
-    this.$watch(
-      () => this.$route.params.id,
-      (newId, oldId) => {
-        if (newId !== oldId) {
-          const safeId = newId || '';
-          console.log(`Trainer ID changed from ${oldId} to ${safeId}`);
-          this.$parent.$parent.$parent.setUserData(safeId, "trainer");
-          this.trainerId = safeId;
-          this.loadData();
-        }
-      }
-    );
   },
-
-
-  mounted() {
-    console.log("TrainerNutritionPlan mounted");
-  },
-
-  beforeDestroy() {
-    console.log("TrainerNutritionPlan destroyed");
-  },
-
 
   methods: {
     async loadData() {
-      try {
-        const foodRes = await axios.get("http://localhost:8157/api/food");
-        this.foods = foodRes.data;
-
-        if (this.trainerId) {
-          const plansRes = await axios.get(
-            `http://localhost:8157/api/mealplans/trainer/${this.trainerId}`
-          );
-          this.plans = plansRes.data || [];
-        }
-      } catch (err) {
-        console.error("Error loading data:", err);
-      }
+      this.foods = await getAllFoods();
+      if (this.trainerId) this.plans = await getMealPlansForTrainer(this.trainerId);
     },
 
     async savePlan() {
@@ -165,70 +130,37 @@ export default {
         trainerId: this.trainerId,
         trainerName: this.trainerName,
         goalType: this.goalType,
-        breakfast: this.mealPlan.breakfast,
-        lunch: this.mealPlan.lunch,
-        dinner: this.mealPlan.dinner,
-        snacks: this.mealPlan.snacks,
+        ...this.mealPlan,
       };
 
-      try {
-        const existing = this.plans.find((p) => p.goalType === this.goalType);
-        if (existing) {
-          const confirmUpdate = confirm(
-            `A plan for "${this.goalType}" already exists for this trainer. Replace it?`
-          );
-          if (!confirmUpdate) return;
-
-          console.log("Deleting existing plan before saving new one:");
-          console.log("TrainerId:", this.trainerId, "GoalType:", this.goalType);
-
-          await axios.delete(
-            `http://localhost:8157/api/MealPlans/trainer/${this.trainerId}/goal/${this.goalType}`
-          );
-        }
-
-        await axios.post("http://localhost:8157/api/mealplans", plan);
-        alert(`Plan for "${this.goalType}" saved successfully!`);
-        await this.loadData();
-
-        this.mealPlan = { breakfast: [], lunch: [], dinner: [], snacks: [] };
-        this.goalType = "";
-        this.selectedPlan = null;
-      } catch (err) {
-        console.error("Error in savePlan:", err);
-        if (err.response) {
-          console.error("Server responded with:", err.response.data);
-        }
-        alert("Error saving or updating plan.");
+      const existing = this.plans.find((p) => p.goalType === this.goalType);
+      if (existing) {
+        const confirmUpdate = confirm(
+          `A plan for "${this.goalType}" already exists. Replace it?`
+        );
+        if (!confirmUpdate) return;
+        await deleteMealPlan(this.trainerId, this.goalType);
       }
-    },
 
+      await saveMealPlan(plan);
+      alert(`Plan for "${this.goalType}" saved successfully!`);
+      await this.loadData();
+
+      this.mealPlan = { breakfast: [], lunch: [], dinner: [], snacks: [] };
+      this.goalType = "";
+      this.selectedPlan = null;
+    },
 
     async deletePlan(goalType) {
       if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return;
-
-      try {
-        console.log("Deleting plan...");
-        console.log("TrainerId:", this.trainerId, "GoalType:", goalType);
-
-        await axios.delete(
-          `http://localhost:8157/api/MealPlans/trainer/${this.trainerId}/goal/${goalType}`
-        );
-
-        alert(`Plan for "${goalType}" deleted successfully!`);
-        await this.loadData();
-        this.selectedPlan = null;
-      } catch (err) {
-        console.error("Error deleting plan:", err);
-        if (err.response) {
-          console.error("Server responded with:", err.response.data);
-        }
-        alert("Error deleting plan.");
-      }
+      await deleteMealPlan(this.trainerId, goalType);
+      alert(`Plan for "${goalType}" deleted successfully!`);
+      await this.loadData();
     },
   },
 };
 </script>
+
 
 <style scoped>
 .trainer-container {
