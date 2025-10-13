@@ -9,7 +9,9 @@ const NOTIFICATIONS = "http://localhost:8004/api/v1/Notification";
 
 // Admin
 export async function getNotifications() {
+  axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${NOTIFICATIONS}`);
     return response.data;
   } catch (error) {
@@ -20,6 +22,7 @@ export async function getNotifications() {
 
 export async function getNotificationsByUserId(userId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${NOTIFICATIONS}/user/${userId}`);
     return response.data;
   } catch (error) {
@@ -30,6 +33,7 @@ export async function getNotificationsByUserId(userId) {
 
 export async function getNotificationById(id) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${NOTIFICATIONS}/${id}`);
     return response.data;
   } catch (error) {
@@ -40,6 +44,7 @@ export async function getNotificationById(id) {
 
 export async function updateNotification(notification) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.put(`${NOTIFICATIONS}`, notification, {
       headers: { "Content-Type": "application/json" }
     });
@@ -52,6 +57,7 @@ export async function updateNotification(notification) {
 }
 
 export async function markNotificationAsRead(notificationId) {
+  axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
   return axios.put(
     `${NOTIFICATIONS}/${notificationId}/read`, 
     {}, 
@@ -67,6 +73,7 @@ export async function markNotificationAsRead(notificationId) {
 
 export async function deleteAllNotifications() {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.delete(`${NOTIFICATIONS}`);
     return response.data;
   } catch (error) {
@@ -77,6 +84,7 @@ export async function deleteAllNotifications() {
 
 export async function deleteNotificationsByUserId(userId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.delete(`/user/${userId}`);
     return response.data;
   } catch (error) {
@@ -87,6 +95,7 @@ export async function deleteNotificationsByUserId(userId) {
 
 export async function deleteNotificationById(id) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.delete(`${NOTIFICATIONS}/${id}`);
     return response.data;
   } catch (error) {

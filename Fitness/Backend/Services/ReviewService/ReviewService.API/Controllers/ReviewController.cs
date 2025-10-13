@@ -7,7 +7,7 @@ using ReviewService.Common.Repositories;
 
 namespace ReviewService.API.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ReviewController : ControllerBase
@@ -21,7 +21,7 @@ namespace ReviewService.API.Controllers
             _reviewPublisher = reviewPublisher ?? throw new ArgumentNullException(nameof(reviewPublisher));
         }
 
-        // [Authorize(Roles = "Admin, Trainer")]
+        [Authorize(Roles = "Admin, Trainer")]
         [HttpGet("trainer/{trainerId}", Name = "GetReviewsByTrainerId")]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
@@ -35,7 +35,7 @@ namespace ReviewService.API.Controllers
             return Ok(reviews);
         }
         
-        // [Authorize(Roles = "Admin, Client")]
+        [Authorize(Roles = "Admin, Client")]
         [HttpGet("client/{clientId}", Name = "GetReviewsByClientId")]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
@@ -49,7 +49,7 @@ namespace ReviewService.API.Controllers
             return Ok(reviews);
         }
         
-        // [Authorize(Roles = "Trainer")]
+        [Authorize(Roles = "Trainer")]
         [HttpPost("trainer/{trainerId}")]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status201Created)]
         public async Task<ActionResult<ReviewDTO>> TrainerReview(string trainerId, [FromBody] SubmitReviewDTO reviewDTO)
@@ -67,7 +67,7 @@ namespace ReviewService.API.Controllers
             return updated ? Ok(review) : BadRequest();
         }
         
-        // [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client")]
         [HttpPost("client/{clientId}")]
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status201Created)]
         public async Task<ActionResult<ReviewDTO>> ClientReview(string clientId, [FromBody] SubmitReviewDTO reviewDTO)

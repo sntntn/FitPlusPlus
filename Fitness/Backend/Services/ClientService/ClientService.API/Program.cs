@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-// using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using Consul;
@@ -96,10 +95,11 @@ app.Lifetime.ApplicationStopping.Register(() =>
     consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
 });
 
-// app.UseAuthentication();
-// app.UseAuthorization();
-
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

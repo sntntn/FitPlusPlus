@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace videoTrainingService.API.Controllers
 
 {
-
+    
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class UploadController : ControllerBase
@@ -22,7 +24,8 @@ namespace videoTrainingService.API.Controllers
                 Directory.CreateDirectory(_uploadsPath);
             }
         }
-
+        
+        [Authorize(Roles="Trainer")]
         [HttpPost("video")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UploadVideo([FromForm] IFormFile file)
@@ -39,7 +42,8 @@ namespace videoTrainingService.API.Controllers
 
             return Ok(new { FileName = file.FileName });
         }
-
+        
+        [Authorize(Roles="Admin, Trainer")]
         [HttpDelete("video/delete/{fileName}")]
         public IActionResult DeleteVideo(string fileName)
         {

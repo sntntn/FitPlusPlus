@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using NutritionService.API.Models;
 
 namespace NutritionService.API.Controllers
-{
+{   
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class MealPlansController : ControllerBase
@@ -16,7 +18,8 @@ namespace NutritionService.API.Controllers
             _plans = db.GetCollection<MealPlan>("MealPlans");
             _foods = db.GetCollection<Food>("Food");
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpPost]
         public async Task<IActionResult> CreatePlan([FromBody] MealPlan plan)
         {
@@ -57,7 +60,8 @@ namespace NutritionService.API.Controllers
             await _plans.InsertOneAsync(plan);
             return Ok(plan);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("trainer/{trainerId}/goal/{goalType}")]
         public async Task<IActionResult> GetPlanByTrainerAndGoal(string trainerId, string goalType)
         {
@@ -71,14 +75,16 @@ namespace NutritionService.API.Controllers
 
             return Ok(plan);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet]
         public async Task<IActionResult> GetAllPlans()
         {
             var plans = await _plans.Find(_ => true).ToListAsync();
             return Ok(plans);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("trainer/{trainerId}")]
         public async Task<IActionResult> GetPlansForTrainer(string trainerId)
         {
@@ -89,7 +95,8 @@ namespace NutritionService.API.Controllers
 
             return Ok(trainerPlans);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpDelete("trainer/{trainerId}/goal/{goalType}")]
         public async Task<IActionResult> DeletePlan(string trainerId, string goalType)
         {
