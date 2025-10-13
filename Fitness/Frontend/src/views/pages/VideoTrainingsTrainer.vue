@@ -17,7 +17,7 @@
         </p>
 
         <div v-for="(exercise, index) in trainingExercises.filter(e => e.trainingId === training.trainingId)" :key="index" class="exercise-item">
-          <span>{{ index + 1 }}.{{ getExerciseName(exercise.exerciseId) }} - {{ exercise.exerciseReps }} ponavljanja, {{ exercise.setReps }} setova</span>
+          <span>{{ index + 1 }}.{{ getExerciseName(exercise.exerciseId) }} - {{ exercise.exerciseReps }} ponavljanja, {{ exercise.setReps }} {{ exercise.setReps < 5 ? 'seta ' : 'setova'}}</span>
         </div>
 
         <button class="delete-btn" @click="deleteTraining(training.trainingId)">
@@ -124,7 +124,7 @@
               </div>
                 
               <div v-else>
-                <span>{{ getExerciseName(exercise.selectedExercise) }} - {{ exercise.reps }} ponavljanja, {{ exercise.sets }} setova</span>
+                <span>{{ getExerciseName(exercise.selectedExercise) }} - {{ exercise.reps }} ponavljanja, {{ exercise.sets }} {{ exercise.sets < 5 ? 'seta ' : 'setova'}} </span>
                 <button @click="editExercise(index)" type="button">Izmeni</button>
                 <button @click="deleteExercise(index)" type="button">Obriši</button>
               </div>
