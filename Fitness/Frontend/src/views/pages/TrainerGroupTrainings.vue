@@ -89,7 +89,7 @@
                 <button class="info" @click="showDetails = true; currentReservationId = res.id">Expand</button>
               </td>
               <td>
-                <button class="info" @click="showReview = true; currentReservationId = res.id; currentClientId = res.clientId;">Review</button>
+                <button class="info" @click="showReview = true; currentReservationId = res.id;">Review</button>
               </td>
             </tr>
           </tbody>
@@ -144,7 +144,7 @@
           <div class="actions">
             <button type="button" @click="showReview = false">Cancel</button>
             <button :disabled="!trainingRating" class="info"
-              @click="submitReview(currentReservationId, this.$route.params.id, currentClientId, trainingRating, comment)">
+              @click="submitReview(currentReservationId, this.$route.params.id, trainingRating, comment)">
               Submit Review
             </button>
           </div>
@@ -187,7 +187,6 @@ export default {
       showReview: false,
       trainingRating: null,
       currentReservationId: "",
-      currentClientId: "",
       calendarOptions: {
         plugins: [ timeGridPlugin, interactionPlugin ],
         initialView: 'timeGridWeek',
@@ -317,13 +316,12 @@ export default {
         });
     },
 
-    submitReview(reservationId, trainerId, clientId, rating, comment) {
+    submitReview(reservationId, trainerId, rating, comment) {
       let request = {
         reservationId: reservationId,
-        clientId: clientId,
         trainerId: trainerId,
         trainerComment: comment,
-        trainerRating: rating,
+        trainerRating: rating
       }
       dataServices.methods.submit_review_trainer(request)
         .then(response => {
