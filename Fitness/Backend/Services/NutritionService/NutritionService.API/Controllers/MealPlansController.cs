@@ -19,7 +19,7 @@ namespace NutritionService.API.Controllers
             _foods = db.GetCollection<Food>("Food");
         }
         
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        [Authorize(Roles = "Trainer")]
         [HttpPost]
         public async Task<IActionResult> CreatePlan([FromBody] MealPlan plan)
         {
@@ -96,7 +96,7 @@ namespace NutritionService.API.Controllers
             return Ok(trainerPlans);
         }
         
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        [Authorize(Roles = "Trainer")]
         [HttpDelete("trainer/{trainerId}/goal/{goalType}")]
         public async Task<IActionResult> DeletePlan(string trainerId, string goalType)
         {

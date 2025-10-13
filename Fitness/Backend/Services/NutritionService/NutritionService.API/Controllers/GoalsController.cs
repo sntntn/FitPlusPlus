@@ -17,7 +17,7 @@ namespace NutritionService.API.Controllers
             _goals = db.GetCollection<UserGoal>("Goals");
         }
         
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        [Authorize(Roles = "Client")]
         [HttpPost]
         public async Task<IActionResult> SetGoal([FromBody] UserGoal goal)
         {
@@ -65,7 +65,7 @@ namespace NutritionService.API.Controllers
             return Ok(goal);
         }
         
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        [Authorize(Roles = "Client")]
         [HttpGet("plan/{clientId}")]
         public async Task<IActionResult> GetPlan(string clientId)
         {
