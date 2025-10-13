@@ -1,51 +1,57 @@
+version: "3.9"
+
 services:
-  trainerdb:
+  # === Databases ===
+  analyticsdb:
     image: mongo
-    
+
+  chatdb:
+    image: mongo
+
   clientdb:
+    image: mongo
+
+  notificationdb:
+    image: mongo
+
+  nutritiondb:
+    image: mongo
+
+  paymentdb:
+    image: mongo
+
+  reservationdb:
     image: mongo
 
   reviewdb:
     image: mongo
 
-  paymentdb:
+  trainerdb:
     image: mongo
-    
-  notificationdb:
-    image: mongo
-    
-  chatdb:
-    image: mongo
-    
-  reservationdb:
-    image: mongo
-  
+
   videotrainingdb:
     image: mongo
-  
-  analyticsdb:
-    image: mongo
-    
-  nutritiondb:
-    image: mongo
-  
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest  
-  
+
+  # === Infrastructure ===
   consul:
     image: consul:1.15.4
-    
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  # === Gateway ===
   gatewayservice.api:
-    image: ${DOCKER_REGIRSTRY-}gatewayserviceapi
+    image: ${DOCKER_REGISTRY-}gatewayserviceapi
     build:
       context: .
       dockerfile: Services/GatewayService/GatewayService.API/Dockerfile
     depends_on:
       - consul
-  
+
+  # === Trainer Service ===
   trainerservice.api:
     image: ${DOCKER_REGISTRY-}trainerserviceapi
     build:
@@ -53,9 +59,9 @@ services:
       dockerfile: Services/TrainerService/TrainerService.API/Dockerfile
     depends_on:
       - trainerdb
-      - rabbitmq
+      - reviewservice.grpc
       - consul
-  
+
   trainerservice.grpc:
     image: ${DOCKER_REGISTRY-}trainerservicegrpc
     build:
@@ -63,7 +69,8 @@ services:
       dockerfile: Services/TrainerService/TrainerService.GRPC/Dockerfile
     depends_on:
       - trainerdb
-  
+
+  # === Client Service ===
   clientservice.api:
     image: ${DOCKER_REGISTRY-}clientserviceapi
     build:
@@ -71,10 +78,8 @@ services:
       dockerfile: Services/ClientService/ClientService.API/Dockerfile
     depends_on:
       - clientdb
-      - rabbitmq
       - consul
-  
-      
+
   clientservice.grpc:
     image: ${DOCKER_REGISTRY-}clientservicegrpc
     build:
@@ -82,7 +87,9 @@ services:
       dockerfile: Services/ClientService/ClientService.GRPC/Dockerfile
     depends_on:
       - clientdb
+      - consul
 
+  # === Identity Service ===
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
     build:
@@ -92,6 +99,7 @@ services:
       - consul
       - mssql
 
+  # === Review Service ===
   reviewservice.api:
     image: ${DOCKER_REGISTRY-}reviewserviceapi
     build:
@@ -99,6 +107,7 @@ services:
       dockerfile: Services/ReviewService/ReviewService.API/Dockerfile
     depends_on:
       - reviewdb
+      - rabbitmq
       - consul
 
   reviewservice.grpc:
@@ -110,6 +119,7 @@ services:
       - reviewdb
       - consul
 
+  # === Payment Service ===
   paymentservice.api:
     image: ${DOCKER_REGISTRY-}paymentserviceapi
     build:
@@ -117,7 +127,8 @@ services:
       dockerfile: Services/PaymentService/PaymentService.API/Dockerfile
     depends_on:
       - consul
-      
+
+  # === Reservation Service ===
   reservationservice.api:
     image: ${DOCKER_REGISTRY-}reservationserviceapi
     build:
@@ -126,7 +137,9 @@ services:
     depends_on:
       - paymentdb
       - consul
+      - rabbitmq
 
+  # === Analytics Service ===
   analyticsservice.api:
     image: ${DOCKER_REGISTRY-}analyticsserviceapi
     build:
@@ -136,7 +149,8 @@ services:
       - analyticsdb
       - consul
       - rabbitmq
-      
+
+  # === Notification Service ===
   notificationservice.api:
     image: ${DOCKER_REGISTRY-}notificationserviceapi
     build:
@@ -146,7 +160,8 @@ services:
       - consul
       - notificationdb
       - rabbitmq
-      
+
+  # === Chat Service ===
   chatservice.api:
     image: ${DOCKER_REGISTRY-}chatserviceapi
     build:
@@ -156,16 +171,18 @@ services:
       - chatdb
       - rabbitmq
       - consul
-      
+
+  # === Nutrition Service ===
   nutritionservice.api:
     image: ${DOCKER_REGISTRY-}nutritionserviceapi
     build:
       context: .
       dockerfile: Services/NutritionService/NutritionService.API/Dockerfile
     depends_on:
+      - nutritiondb
       - consul
 
-
+  # === Video Training Service ===
   videotrainingservice.api:
     image: ${DOCKER_REGISTRY-}videotrainingserviceapi
     build:
@@ -173,21 +190,21 @@ services:
       dockerfile: Services/videoTrainingService/videoTrainingService.API/Dockerfile
     depends_on:
       - videotrainingdb
+      - consul
     volumes:
       - ./uploads:/app/uploads
-      
+
 volumes:
-  trainermongo_data:
-  clientmongo_data:
-  reviewmongo_data:
-  paymentmongo_data:
   analyticsmongo_data:
-  notificationmongo_data:
   chatmongo_data:
-  reservationmongo_data:
-  videotrainingmongo_data:
-  nutritionmongo_data:
+  clientmongo_data:
+  consul_data:
   mssql_data:
   mssql_volume:
-  consul_data:
-  
+  notificationmongo_data:
+  nutritionmongo_data:
+  paymentmongo_data:
+  reservationmongo_data:
+  reviewmongo_data:
+  trainermongo_data:
+  videotrainingmongo_data:

@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="14.0.0" />
+        <PackageReference Include="Consul" Version="1.7.14.5" />
         <PackageReference Include="MassTransit" Version="8.3.5-develop.2187" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.5-develop.2187" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
@@ -17,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
       <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
       <ProjectReference Include="..\AnalyticsService.Common\AnalyticsService.Common.csproj" />
     </ItemGroup>
