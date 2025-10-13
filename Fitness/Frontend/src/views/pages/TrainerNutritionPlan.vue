@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { 
+import {
   getAllFoods,
   getMealPlansForTrainer,
   saveMealPlan,
@@ -158,7 +158,7 @@ export default {
       if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return;
       await deleteMealPlan(this.trainerId, goalType);
       alert(`Plan for "${goalType}" deleted successfully!`);
-      await this.loadData(); 
+      await this.loadData();
       this.selectedPlan = null;
     },
   },
