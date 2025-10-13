@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using NutritionService.API.Models;
 
 namespace NutritionService.API.Controllers
-{
+{   
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class GoalsController : ControllerBase
@@ -14,7 +16,8 @@ namespace NutritionService.API.Controllers
         {
             _goals = db.GetCollection<UserGoal>("Goals");
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpPost]
         public async Task<IActionResult> SetGoal([FromBody] UserGoal goal)
         {
@@ -61,7 +64,8 @@ namespace NutritionService.API.Controllers
             await _goals.InsertOneAsync(goal);
             return Ok(goal);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("plan/{clientId}")]
         public async Task<IActionResult> GetPlan(string clientId)
         {
@@ -74,7 +78,8 @@ namespace NutritionService.API.Controllers
                 return NotFound("No goal found for this client.");
             return Ok(goal);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllGoals()
         {

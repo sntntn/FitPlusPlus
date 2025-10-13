@@ -67,7 +67,7 @@ app.Lifetime.ApplicationStopping.Register(() =>
 });
 
 
-// app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
 

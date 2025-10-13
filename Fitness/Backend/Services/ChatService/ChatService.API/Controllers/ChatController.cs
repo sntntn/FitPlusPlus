@@ -1,11 +1,11 @@
 using ChatService.API.Models;
 using ChatService.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatService.API.Controllers;
 
-//TO DO AUTHORIZATION AND AUTHENTICATION
-
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ChatController : ControllerBase
@@ -17,7 +17,7 @@ public class ChatController : ControllerBase
         _chatService = chatService;
     }
 
-
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpGet("sessions/{userId}/my-sessions-summary")]
     public async Task<IActionResult> GetBasicInfoForSessions(string userId)
     {
@@ -30,7 +30,7 @@ public class ChatController : ControllerBase
         return Ok(basicInfo);
     }
 
-    
+    [Authorize(Roles = "Trainer, Client")]
     [HttpPost("sessions/messages")]
     public async Task<IActionResult> AddMessageToSession([FromQuery] string trainerId, [FromQuery] string clientId, [FromBody] string content, [FromQuery] string senderType)
     {
@@ -45,6 +45,7 @@ public class ChatController : ControllerBase
         }
     }
     
+    [Authorize(Roles = "Trainer, Client")]
     [HttpGet("sessions/messages")]
     public async Task<IActionResult> GetMessagesFromSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
@@ -65,7 +66,7 @@ public class ChatController : ControllerBase
         return Ok(messages);
     }
 
-
+    [Authorize(Roles = "Client")]
     [HttpPost("sessions")]
     public async Task<IActionResult> CreateChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
@@ -80,6 +81,7 @@ public class ChatController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpGet("sessions")]
     public async Task<IActionResult> GetChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
@@ -87,6 +89,7 @@ public class ChatController : ControllerBase
         return session != null ? Ok(session) : NotFound(new { Message = "Chat session not found." });
     }
 
+    [Authorize(Roles = "Admin")]   
     [HttpDelete("sessions")]
     public async Task<IActionResult> DeleteChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {
@@ -95,6 +98,7 @@ public class ChatController : ControllerBase
             : NotFound(new { Message = "Session not found or already deleted." });
     }
     
+    [Authorize(Roles = "Client")]  
     [HttpPost("sessions/extend")]
     public async Task<IActionResult> ExtendChatSession([FromQuery] string trainerId, [FromQuery] string clientId)
     {

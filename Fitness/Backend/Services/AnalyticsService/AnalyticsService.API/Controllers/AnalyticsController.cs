@@ -1,11 +1,12 @@
 using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnalyticsService.API.Controllers;
 
-// [Authorize]
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class AnalyticsController : ControllerBase
@@ -18,7 +19,7 @@ public class AnalyticsController : ControllerBase
     }
     
     // Individual Trainings
-    // [Authorize(Roles = "Admin, Trainer")]
+    [Authorize(Roles = "Admin, Trainer")]
     [HttpGet("individual/trainer/{trainerId}")]
     [ProducesResponseType(typeof(IEnumerable<IndividualTraining>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualTraining>>> GetIndividualTrainingsByTrainerId(string trainerId)
@@ -27,7 +28,7 @@ public class AnalyticsController : ControllerBase
         return Ok(reservations);
     }
 
-    // [Authorize(Roles = "Admin, Client")]
+    [Authorize(Roles = "Admin, Client")]
     [HttpGet("individual/client/{clientId}")]
     [ProducesResponseType(typeof(IEnumerable<IndividualTraining>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualTraining>>> GetIndividualTrainingsByClientId(string clientId)
@@ -37,7 +38,7 @@ public class AnalyticsController : ControllerBase
     }
     
     // Group Trainings
-    // [Authorize(Roles = "Admin, Trainer")]
+    [Authorize(Roles = "Admin, Trainer")]
     [HttpGet("group/trainer/{trainerId}")]
     [ProducesResponseType(typeof(IEnumerable<GroupTraining>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupTraining>>> GetGroupTrainingsByTrainerId(string trainerId)
@@ -46,7 +47,7 @@ public class AnalyticsController : ControllerBase
         return Ok(reservations);
     }
 
-    // [Authorize(Roles = "Admin, Client")]
+    [Authorize(Roles = "Admin, Client")]
     [HttpGet("group/client/{clientId}")]
     [ProducesResponseType(typeof(IEnumerable<GroupTraining>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupTraining>>> GetGroupTrainingsByClientId(string clientId)
