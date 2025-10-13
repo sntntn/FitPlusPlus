@@ -25,7 +25,7 @@ namespace videoTrainingService.API.Controllers
             }
         }
         
-        [Authorize(Roles="Trainer")]
+        [Authorize(Roles="Admin, Trainer")]
         [HttpPost("video")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UploadVideo([FromForm] IFormFile file)
