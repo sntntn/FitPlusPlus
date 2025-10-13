@@ -157,7 +157,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import {
+  loadTrainers,
+  calculateGoal,
+  fetchPlan
+} from "../../services/NutritionService";
 
 export default {
   data() {
@@ -188,76 +192,26 @@ export default {
     this.$parent.$parent.$parent.setUserData(routeId, "client");
     this.clientId = routeId;
     this.goal.clientId = routeId;
-    this.loadTrainers();
-
-    this.$watch(
-      () => this.$route.params.id,
-      (newId, oldId) => {
-        if (newId !== oldId) {
-          const safeId = newId || "";
-          console.log(`Client ID changed from ${oldId} to ${safeId}`);
-          this.$parent.$parent.$parent.setUserData(safeId, "client");
-          this.clientId = safeId;
-          this.goal.clientId = safeId;
-          this.loadTrainers();
-        }
-      }
-    );
-  },
-
-  mounted() {
-    console.log("ClientNutritionPlan mounted");
-  },
-
-  beforeDestroy() {
-    console.log("ClientNutritionPlan destroyed");
+    this.loadTrainersList();
   },
 
   methods: {
-    async loadTrainers() {
-      try {
-        const res = await axios.get("http://localhost:8157/api/mealplans");
-        const seen = new Map();
-        for (const p of res.data) {
-          if (!seen.has(p.trainerId)) {
-            seen.set(p.trainerId, { id: p.trainerId, name: p.trainerName });
-          }
-        }
-        this.trainers = Array.from(seen.values());
-      } catch (err) {
-        console.error("Error loading trainers:", err);
-      }
+    async loadTrainersList() {
+      this.trainers = await loadTrainers();
     },
 
-    async calculateGoal() {
-      try {
-        console.log("Calculating goal for client:", this.goal);
-        const res = await axios.post("http://localhost:8157/api/goals", this.goal);
-        this.calculatedGoal = res.data;
-      } catch (error) {
-        console.error("Error calculating goal:", error);
-        alert("Error calculating goal.");
-      }
+    async calculateGoalForClient() {
+      this.calculatedGoal = await calculateGoal(this.goal);
     },
 
-    async fetchPlan() {
-      try {
-        const trainer = this.trainers.find((t) => t.name === this.selectedTrainerName);
-        if (!trainer) return;
-
-        console.log("Fetching plan for:", trainer.id, this.goal.goalType);
-        const res = await axios.get(
-          `http://localhost:8157/api/MealPlans/trainer/${trainer.id}/goal/${this.goal.goalType}`
-        );
-        this.plan = res.data;
-      } catch (error) {
-        console.error("Error fetching plan:", error);
-        this.plan = null;
-      }
+    async fetchPlanForTrainer() {
+      const trainer = this.trainers.find((t) => t.name === this.selectedTrainerName);
+      if (!trainer) return;
+      this.plan = await fetchPlan(trainer.id, this.goal.goalType);
     },
 
     async refreshPlan() {
-      await this.fetchPlan();
+      await this.fetchPlanForTrainer();
     },
 
     calculateConsumed() {
@@ -274,6 +228,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .client-container {
