@@ -17,7 +17,7 @@ namespace NutritionService.API.Controllers
             _foods = db.GetCollection<Food>("Food");
         }
         
-        [Authorize(Roles = "Admin, Trainer, Client")]
+        [Authorize(Roles = "Admin, Trainer")]
         [HttpPost]
         public async Task<IActionResult> AddFood([FromBody] Food food)
         {
