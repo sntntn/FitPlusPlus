@@ -62,7 +62,7 @@
               </select>
             </div>
 
-            <button type="submit" class="btn btn-success w-100">Calculate</button>
+            <button @click="calculateGoalForClient" type="submit" class="btn btn-success w-100">Calculate</button>
           </form>
         </div>
 
@@ -86,7 +86,7 @@
           <div v-else>
             <div class="mb-3">
               <label>Select Trainer</label>
-              <select v-model="selectedTrainerName" class="form-select" @change="fetchPlan">
+              <select v-model="selectedTrainerName" class="form-select" @change="fetchPlanForTrainer">
                 <option value="">Select trainer...</option>
                 <option v-for="t in trainers" :key="t.name" :value="t.name">
                   {{ t.name }}
@@ -201,6 +201,8 @@ export default {
     },
 
     async calculateGoalForClient() {
+      this.plan = null;
+      this.selectedTrainerName = "";
       this.calculatedGoal = await calculateGoal(this.goal);
     },
 

@@ -150,12 +150,16 @@ export default {
       this.goalType = "";
       this.selectedPlan = null;
     },
+    selectPlan(plan) {
+      this.selectedPlan = plan;
+    },
 
     async deletePlan(goalType) {
       if (!confirm(`Are you sure you want to delete the "${goalType}" plan?`)) return;
       await deleteMealPlan(this.trainerId, goalType);
       alert(`Plan for "${goalType}" deleted successfully!`);
-      await this.loadData();
+      await this.loadData(); 
+      this.selectedPlan = null;
     },
   },
 };
