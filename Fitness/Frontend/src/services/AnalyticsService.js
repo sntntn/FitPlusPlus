@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const GATEWAY_URL = "http://localhost:8005";
-// const ANALYTICS_URL = `${GATEWAY_URL}/analytics`;
-
-const ANALYTICS_URL = "http://localhost:8018/api/v1/Analytics";
+const ANALYTICS_URL = `${GATEWAY_URL}/analytics`
+// const ANALYTICS_URL = "http://localhost:8018/api/v1/Analytics";
 
 const analyticsService = {
     async getTrainerIndividualTrainings(trainerId) {

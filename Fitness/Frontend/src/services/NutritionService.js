@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8157/api/v1";
+const GATEWAY_URL = "http://localhost:8005";
+const FOOD_URL = `${GATEWAY_URL}/food`
+const MEAL_PLANS_URL = `${GATEWAY_URL}/mealplans`
+const GOALS_URL = `${GATEWAY_URL}/goals`
+
+// const BASE_URL = "http://localhost:8157/api/v1";
 
 export async function addFood(food) {
   try {
@@ -14,7 +19,7 @@ export async function addFood(food) {
 
 export async function getAllFoods() {
   try {
-    const res = await axios.get(`${BASE_URL}/food`);
+    const res = await axios.get(`${FOOD_URL}`);
     return res.data;
   } catch (err) {
     console.error("Error fetching foods:", err);
@@ -27,7 +32,7 @@ export async function getAllFoods() {
 
 export async function getMealPlansForTrainer(trainerId) {
   try {
-    const res = await axios.get(`${BASE_URL}/mealplans/trainer/${trainerId}`);
+    const res = await axios.get(`${MEAL_PLANS_URL}/trainer/${trainerId}`);
     return res.data || [];
   } catch (err) {
     console.error("Error fetching trainer meal plans:", err);
@@ -37,7 +42,7 @@ export async function getMealPlansForTrainer(trainerId) {
 
 export async function saveMealPlan(plan) {
   try {
-    const res = await axios.post(`${BASE_URL}/mealplans`, plan);
+    const res = await axios.post(`${MEAL_PLANS_URL}`, plan);
     return res.data;
   } catch (err) {
     console.error("Error saving meal plan:", err);
@@ -47,7 +52,7 @@ export async function saveMealPlan(plan) {
 
 export async function deleteMealPlan(trainerId, goalType) {
   try {
-    const res = await axios.delete(`${BASE_URL}/MealPlans/trainer/${trainerId}/goal/${goalType}`);
+    const res = await axios.delete(`${MEAL_PLANS_URL}/trainer/${trainerId}/goal/${goalType}`);
     return res.data;
   } catch (err) {
     console.error("Error deleting meal plan:", err);
@@ -59,7 +64,7 @@ export async function deleteMealPlan(trainerId, goalType) {
 
 export async function loadTrainers() {
   try {
-    const res = await axios.get(`${BASE_URL}/mealplans`);
+    const res = await axios.get(`${MEAL_PLANS_URL}`);
     const seen = new Map();
     for (const p of res.data) {
       if (!seen.has(p.trainerId)) {
@@ -75,7 +80,7 @@ export async function loadTrainers() {
 
 export async function calculateGoal(goal) {
   try {
-    const res = await axios.post(`${BASE_URL}/goals`, goal);
+    const res = await axios.post(`${GOALS_URL}`, goal);
     return res.data;
   } catch (error) {
     console.error("Error calculating goal:", error);
@@ -85,7 +90,7 @@ export async function calculateGoal(goal) {
 
 export async function fetchPlan(trainerId, goalType) {
   try {
-    const res = await axios.get(`${BASE_URL}/MealPlans/trainer/${trainerId}/goal/${goalType}`);
+    const res = await axios.get(`${MEAL_PLANS_URL}/trainer/${trainerId}/goal/${goalType}`);
     return res.data;
   } catch (error) {
     console.error("Error fetching plan:", error);
