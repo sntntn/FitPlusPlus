@@ -1,11 +1,8 @@
 using System.Reflection;
 using AnalyticsService.API.EventBusConsumers;
-using AnalyticsService.API.GrpcServices;
-using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Extensions;
 using EventBus.Messages.Constants;
 using MassTransit;
-using ReviewService.GRPC.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +13,6 @@ builder.Services.AddAnalyticsCommonExtensions();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddGrpcClient<ReviewProtoService.ReviewProtoServiceClient>(
-    options => options.Address = new Uri(builder.Configuration["GrpcSettings:ReviewUrl"]));
-builder.Services.AddScoped<ReviewGrpcService>();
 
 // cors
 builder.Services.AddCors(options =>

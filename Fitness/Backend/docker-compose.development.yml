@@ -209,7 +209,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://analyticsdb:27017"
-      - "GrpcSettings:ReviewUrl=http://reviewservice.grpc:8080"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
     ports:
       - "8018:8080"
