@@ -72,7 +72,7 @@ namespace ReviewService.API.Controllers
         [ProducesResponseType(typeof(ReviewDTO), StatusCodes.Status201Created)]
         public async Task<ActionResult<ReviewDTO>> ClientReview(string clientId, [FromBody] SubmitReviewDTO reviewDTO)
         {
-            var review = await _repository.GetReviewByReservationId(reviewDTO.ReservationId);
+            var review = await _repository.GetReviewByReservationIdClientId(reviewDTO.ReservationId, reviewDTO.ClientId);
             if (review == null)
             {
                 await _repository.CreateReview(reviewDTO.ReservationId, reviewDTO.ClientId, reviewDTO.TrainerId); 

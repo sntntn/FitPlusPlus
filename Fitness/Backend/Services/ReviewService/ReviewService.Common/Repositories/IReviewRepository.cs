@@ -10,6 +10,7 @@ namespace ReviewService.Common.Repositories
     public interface IReviewRepository
     {
         Task<ReviewDTO?> GetReviewByReservationId(string reservationId);
+        Task<ReviewDTO?> GetReviewByReservationIdClientId(string reservationId, string clientId);
         Task<IEnumerable<ReviewDTO>> GetReviewsByTrainerId(string trainerId);
         Task<IEnumerable<ReviewDTO>> GetReviewsByClientId(string clientId);
         Task CreateReview(string reservationId, string clientId, string trainerId);

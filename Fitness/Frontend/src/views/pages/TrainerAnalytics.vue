@@ -321,12 +321,12 @@ export default {
 
     averageIndividualRating() {
       const reviews = this.individualTrainings.map(it => it.trainerReview ?? []).flat();
-      return reviews.length == 0 ? "--" : reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+      return reviews.length == 0 ? "--" : (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(2);
     },
 
     clientAverageIndividualRating() {
       const reviews = this.individualTrainings.map(it => it.clientReview ?? []).flat();
-      return reviews.length == 0 ? "--" : reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+      return reviews.length == 0 ? "--" : (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(2);
     },
 
     individualIncomePerMonth() {
@@ -405,12 +405,12 @@ export default {
     averageMyGroupRating() {
       const myReviews =
         this.groupTrainings.map(gt => gt.trainerReview ?? []).flat();
-      return myReviews.length == 0 ? "--" : myReviews.reduce((a, r) => a + r.rating, 0) / myReviews.length;
+      return myReviews.length == 0 ? "--" : (myReviews.reduce((a, r) => a + r.rating, 0) / myReviews.length).toFixed(2);
     },
 
     averageGroupRating() {
       const reviews = this.groupTrainings.map(gt => gt.clientReviews ?? []).flat();
-      return reviews.length == 0 ? "--" : reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+      return reviews.length == 0 ? "--" : (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(2);
     },
 
     groupTrainingsPerMonth() {
