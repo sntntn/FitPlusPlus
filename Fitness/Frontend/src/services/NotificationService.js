@@ -1,11 +1,9 @@
 import axios from "axios";
 
-const NOTIFICATIONS = "http://localhost:8004/api/v1/Notification";
+// const NOTIFICATIONS = "http://localhost:8004/api/v1/Notification";
 
-// TO DO when Mitreski switch Notification to Gateway 
-
-//const GATEWAY_URL = "http://localhost:8005";
-//const NOTIFICATIONS = `${GATEWAY_URL}/api/v1/Notification`;
+const GATEWAY_URL = "http://localhost:8005";
+const NOTIFICATIONS = `${GATEWAY_URL}/notification`;
 
 // Admin
 export async function getNotifications() {
