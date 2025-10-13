@@ -1,11 +1,12 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.API.Entities;
 using NotificationService.API.Repositories;
 
 namespace NotificationService.API.Controller;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class NotificationController : ControllerBase
@@ -17,7 +18,7 @@ public class NotificationController : ControllerBase
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Notification>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
@@ -26,7 +27,7 @@ public class NotificationController : ControllerBase
         return Ok(notifications);
     }
 
-    //[Authorize(Roles = "Admin, Trainer, Client")]
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpGet("user/{userId}")]
     [ProducesResponseType(typeof(IEnumerable<Notification>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserId(string userId)
@@ -35,7 +36,7 @@ public class NotificationController : ControllerBase
         return Ok(notifications);
     }
 
-    //[Authorize(Roles = "Admin, Trainer, Client")]
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
     public async Task<ActionResult<Notification>> GetNotificationById(string id)
@@ -44,7 +45,7 @@ public class NotificationController : ControllerBase
         return Ok(notification);
     }
 
-    //[Authorize(Roles = "Admin, Trainer, Client")]
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpPut]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateNotification([FromBody] Notification notification)
@@ -53,6 +54,7 @@ public class NotificationController : ControllerBase
     }
     
     // PUT api/notifications/{id}/read
+    [Authorize(Roles = "Trainer, Client")]
     [HttpPut("{id}/read")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,7 +69,7 @@ public class NotificationController : ControllerBase
     }
 
     
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpDelete]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteNotifications()
@@ -76,7 +78,7 @@ public class NotificationController : ControllerBase
         return Ok();
     }
 
-    //[Authorize(Roles = "Admin, Trainer, Client")]
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpDelete("/user/{userId}")]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteNotificationsByUserTypeAndUserId(string userId)
@@ -84,7 +86,7 @@ public class NotificationController : ControllerBase
         return Ok( await _repository.DeleteNotificationsByUserId(userId));
     }
 
-    //[Authorize(Roles = "Admin, Trainer, Client")]
+    [Authorize(Roles = "Admin, Trainer, Client")]
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteNotification(string id)

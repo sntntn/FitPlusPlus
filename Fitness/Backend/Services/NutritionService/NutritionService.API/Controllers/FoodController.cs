@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using NutritionService.API.Models;
 
 namespace NutritionService.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class FoodController : ControllerBase
@@ -14,7 +16,8 @@ namespace NutritionService.API.Controllers
         {
             _foods = db.GetCollection<Food>("Food");
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpPost]
         public async Task<IActionResult> AddFood([FromBody] Food food)
         {
@@ -24,7 +27,8 @@ namespace NutritionService.API.Controllers
             await _foods.InsertOneAsync(food);
             return Ok(food);
         }
-
+        
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet]
         public async Task<IActionResult> GetAllFoods()
         {

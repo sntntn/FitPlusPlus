@@ -1,3 +1,4 @@
+using System.Text;
 using ClientService.GRPC.Protos;
 using Consul;
 using ConsulConfig.Settings;
@@ -5,6 +6,8 @@ using EventBus.Messages.Constants;
 using EventBus.Messages.Events;
 using FluentEmail.MailKitSmtp;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using NotificationService.API.Data;
 using NotificationService.API.Email;
 using NotificationService.API.Entities;
@@ -90,7 +93,6 @@ builder.Services.AddMassTransit(config =>
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings.GetValue<string>("secretKey")!;
 
-/*
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -110,7 +112,6 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
-    */
 
 var app = builder.Build();
 
@@ -146,8 +147,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
