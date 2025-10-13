@@ -1,4 +1,3 @@
-using AnalyticsService.API.GrpcServices;
 using AnalyticsService.Common.Entities;
 using AnalyticsService.Common.Repositories;
 using AutoMapper;
@@ -12,13 +11,11 @@ namespace AnalyticsService.API.Controllers;
 public class AnalyticsController : ControllerBase
 {
     private readonly IAnalyticsRepository _repository;
-    private readonly ReviewGrpcService _reviewGrpcService;
     private readonly IMapper _mapper;
 
-    public AnalyticsController(IAnalyticsRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper)
+    public AnalyticsController(IAnalyticsRepository repository, IMapper mapper)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _reviewGrpcService = reviewGrpcService ?? throw new ArgumentNullException(nameof(reviewGrpcService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     

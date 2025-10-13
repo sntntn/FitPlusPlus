@@ -29,8 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.Common", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.API", "Services\AnalyticsService\AnalyticsService.API\AnalyticsService.API.csproj", "{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.GRPC", "Services\AnalyticsService\AnalyticsService.GRPC\AnalyticsService.GRPC.csproj", "{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationService.API", "Services\ReservationService\ReservationService.API\ReservationService.API.csproj", "{F3C942A5-0892-4451-9092-900F63365EC1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.API", "Services\NotificationService\NotificationService.API\NotificationService.API.csproj", "{42D48CA2-5675-47F2-BAE7-91E595258CBA}"
@@ -143,10 +141,6 @@ Global
 		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29B1A1CD-24C1-41D5-B8C8-AD1CE3AE180A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F5A1A04-D36F-45F1-84D7-D1AAC5439AA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A3A398E-4133-43EF-A92C-338E8E13715C}.Release|Any CPU.ActiveCfg = Release|Any CPU
