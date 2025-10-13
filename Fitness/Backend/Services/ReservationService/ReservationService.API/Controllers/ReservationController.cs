@@ -7,7 +7,7 @@ using ReservationService.API.Services;
 
 namespace ReservationService.API.Controllers;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ReservationController : ControllerBase
@@ -19,7 +19,7 @@ public class ReservationController : ControllerBase
         _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService)); 
     }
 
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("individual")]
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservations()
@@ -28,7 +28,7 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("group")]
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservations()
@@ -37,7 +37,7 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("individual/{id}", Name="GetIndividualReservation")]
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,7 +48,7 @@ public class ReservationController : ControllerBase
         return Ok(reservation);
     }
     
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("group/{id}", Name = "GetGroupReservation")]
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,7 +59,7 @@ public class ReservationController : ControllerBase
         return Ok(reservation);
     }
     
-    //[Authorize(Roles = "Admin, Client")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("individual/client/{clientId}")]
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservationsByClientId(string clientId)
@@ -68,7 +68,7 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     
-    //[Authorize(Roles = "Admin, Client")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("group/client/{clientId}")]
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservationsByClientId(string clientId)
@@ -77,7 +77,7 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
 
-    //[Authorize(Roles = "Admin, Trainer")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("individual/trainer/{trainerId}")]
     [ProducesResponseType(typeof(IEnumerable<IndividualReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<IndividualReservation>>> GetIndividualReservationsByTrainerId(string trainerId)
@@ -86,7 +86,7 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     
-    //[Authorize(Roles = "Admin, Trainer")]
+    [Authorize(Roles = "Admin, Client, Trainer")]
     [HttpGet("group/trainer/{trainerId}")]
     [ProducesResponseType(typeof(IEnumerable<GroupReservation>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<GroupReservation>>> GetGroupReservationsByTrainerId(string trainerId)
@@ -95,7 +95,7 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     
-    //[Authorize(Roles = "Client")]
+    [Authorize(Roles = "Client")]
     [HttpPost("individual")]
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<IndividualReservation>> CreateIndividualReservation([FromBody] IndividualReservation reservation)
@@ -111,7 +111,7 @@ public class ReservationController : ControllerBase
         }
     }
     
-    //[Authorize(Roles = "Trainer")]
+    [Authorize(Roles = "Trainer")]
     [HttpPost("group")]
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status201Created)]
     public async Task<ActionResult<GroupReservation>> CreateGroupReservation([FromBody] GroupReservation reservation)
@@ -127,7 +127,7 @@ public class ReservationController : ControllerBase
         }
     }
 
-    //[Authorize(Roles = "Trainer")]
+    [Authorize(Roles = "Trainer")]
     [HttpDelete("group/{id}")]
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteGroupReservation(string id)
@@ -143,7 +143,7 @@ public class ReservationController : ControllerBase
         }
     }
     
-    //[Authorize(Roles = "Client")]
+    [Authorize(Roles = "Client")]
     [HttpPut("individual/client/cancel/{id}")]
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelClientIndividualReservation(string id)
@@ -152,7 +152,7 @@ public class ReservationController : ControllerBase
         return cancelled ? Ok(cancelled) : BadRequest();
     }
 
-    //[Authorize(Roles = "Trainer")]
+    [Authorize(Roles = "Trainer")]
     [HttpPut("individual/trainer/cancel/{id}")]
     [ProducesResponseType(typeof(IndividualReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelTrainerIndividualReservation(string id)
@@ -161,7 +161,7 @@ public class ReservationController : ControllerBase
         return cancelled ? Ok(cancelled) : BadRequest();
     }
 
-    //[Authorize(Roles = "Client")]
+    [Authorize(Roles = "Client")]
     [HttpPost("group/book/{id}")]
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status200OK)]
     public async Task<IActionResult> BookGroupReservation(string id, [FromQuery] string clientId)
@@ -177,7 +177,7 @@ public class ReservationController : ControllerBase
         }
     }
 
-    //[Authorize(Roles = "Client")]
+    [Authorize(Roles = "Client")]
     [HttpPost("group/cancel/{id}")]
     [ProducesResponseType(typeof(GroupReservation), StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CancelGroupReservation(string id, [FromQuery] string clientId)

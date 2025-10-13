@@ -1,3 +1,4 @@
+using System.Text;
 using ChatService.API.Data;
 using ChatService.API.Middleware;
 using ChatService.API.Models;
@@ -10,6 +11,8 @@ using Consul;
 using ConsulConfig.Settings;
 using EventBus.Messages.Events;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +73,32 @@ builder.Services.AddMassTransit(config =>
     });
 });
 
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings.GetValue<string>("secretKey");
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings.GetSection("validIssuer").Value,
+            ValidAudience = jwtSettings.GetSection("validAudience").Value,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        };
+    });
+
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 app.Lifetime.ApplicationStarted.Register(() =>
 {
@@ -93,8 +121,6 @@ app.Lifetime.ApplicationStopping.Register(() =>
     consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
 });
 
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -103,11 +129,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseCors("AllowAll");
-app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
+// app.UseHttpsRedirection();
 app.UseWebSockets();
 app.UseMiddleware<WebSocketMiddleware>();
+
 app.MapControllers();
 
 app.Run();
