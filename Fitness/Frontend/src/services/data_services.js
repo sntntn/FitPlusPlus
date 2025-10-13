@@ -8,10 +8,8 @@ const CLIENT = `${GATEWAY_URL}/client`;
 const AUTH_URL = `${GATEWAY_URL}/authentication`;
 const MSSQL_USERS = `${GATEWAY_URL}/user`;
 const PAYMENT = `${GATEWAY_URL}/payment`;
-
-const TRAININGS = "http://localhost:8007/api/v1/Training";
-const UPLOAD = "http://localhost:8007/api/v1/Upload"
-
+const TRAININGS = `${GATEWAY_URL}/training`;
+const UPLOAD = `${GATEWAY_URL}/upload`
 
 //const TRAINERS = "http://localhost:8000/api/v1/Trainer";
 //const REVIEW = "http://localhost:8001/api/v1/Review";
@@ -19,7 +17,8 @@ const UPLOAD = "http://localhost:8007/api/v1/Upload"
 //const AUTH_URL = "http://localhost:4000/api/v1/authentication/";
 //const MSSQL_USERS = "http://localhost:4000/api/v1/User/";
 //const PAYMENT = "http://localhost:8003/api/v1/Payment";
-//const TRAININGS = `${GATEWAY_URL}/training`;
+//const TRAININGS = "http://localhost:8007/api/v1/Training";
+// const UPLOAD = "http://localhost:8007/api/v1/Upload"
 
 export default {
     methods: {
