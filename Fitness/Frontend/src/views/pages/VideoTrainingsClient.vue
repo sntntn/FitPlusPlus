@@ -48,6 +48,7 @@
 
         <button class="overlay" @click="handleTrainingClick(training)"> View training </button>
       </figure>
+      
     </div>
 
   </div>
@@ -61,10 +62,22 @@
       </p>
 
       <div v-for="(exercise, index) in getExercisesForTraining(expandedTrainingId)" :key="exercise.exerciseId" class="exercise-item">
-        <span>{{ index + 1 }}.{{ getExerciseName(exercise.exerciseId) }} - {{ exercise.exerciseReps }} ponavljanja, {{ exercise.setReps }} setova</span>
+        <span>{{ index + 1 }}.{{ getExerciseName(exercise.exerciseId) }} - {{ exercise.exerciseReps }} ponavljanja, {{ exercise.setReps }} {{ exercise.setReps < 5 ? 'seta ' : 'setova'}}</span>
+        <button class="video-btn" @click="getExercise(exercise.exerciseId)">Prikaži video</button>
       </div>
-      <button @click="expandedTrainingId = null" class="close-btn">Zatvori</button>
+      <button @click="expandedTrainingId = null; viewExerciseVideo = null" class="close-btn">Zatvori</button>
     </div>
+
+    <div v-if="viewExerciseVideo !== null" class="video-box">
+      <video 
+        v-if="viewExerciseVideo.path" 
+        :src="`http://localhost:8007/uploads/${viewExerciseVideo.path}`" 
+        controls>
+      </video>
+      <p v-else>Video nije dostupan {{exercise.path}}</p>
+      <button class="video-btn" @click="viewExerciseVideo = null">Zatvori video</button>
+    </div>
+
   </div>
 
 </template>
@@ -91,7 +104,9 @@ export default {
       expandedTrainingId: null,
       expandedTraining: null,
       trainingExercises: [],
-      exerciseNames: [] 
+      exercises: [], 
+
+      viewExerciseVideo: null
     }
   },
 
@@ -119,6 +134,19 @@ export default {
       }
 
       this.trainings = this.trainings.filter(t => !t.clientIds || !t.clientIds.includes(clientId));
+
+      for(const trainer of this.trainers){
+        try {
+          dataServices.methods.get_exercises_by_trainer(trainer.id).then(response => {
+              if(response.data != null){
+                 this.exercises.push(...response.data);
+              }
+            }
+          );
+        } catch (error) {
+          console.error("Greška pri dodavanju vežbi:", error);
+        }
+      }
     
     },
 
@@ -226,9 +254,14 @@ export default {
     },
 
     getExerciseName(exerciseId) {
-      const ex = this.exerciseNames.find(e => e.id === exerciseId);
+      const ex = this.exercises.find(e => e.id === exerciseId);
       return ex ? ex.name : '';
     },
+
+    getExercise(exerciseId){
+      const ex = this.exercises.find(e => e.id === exerciseId);
+      this.viewExerciseVideo = ex;
+    }
 
   },
 
@@ -240,7 +273,9 @@ export default {
     this.$parent.$parent.$parent.setUserData(id, "client");
     this.loadTrainings();
     this.loadPurchased();
-  }
+  },
+
+  
 
 }
 
@@ -382,7 +417,7 @@ export default {
       border-bottom: none;
   }
 
-  .close-btn{
+  .close-btn, .video-btn{
     display: block;        
     margin-left: auto;     
     right: 10px;   
@@ -417,6 +452,14 @@ export default {
     border: 2px solid #e67e22;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+
+  .video-box, video{
+    position: relative;
+    padding: 15px;
+    width: 100%;
+    height: 350px;
+    border-radius: 10px;
   }
 
 </style>
