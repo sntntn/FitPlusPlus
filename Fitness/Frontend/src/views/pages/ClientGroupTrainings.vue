@@ -25,7 +25,10 @@
                 <button class="info" @click="showDetails = true; currentReservationId = res.id">Expand</button>
               </td>
               <td>
-                <button v-if="!res.clientIds.includes(this.$route.params.id)" class="info" @click="bookReservation(res.id)">Book</button>
+                <button :disabled="res.capacity <= res.clientIds.length" v-if="!res.clientIds.includes(this.$route.params.id)" class="info"
+                  @click="bookReservation(res.id)">
+                  Book
+                </button>
                 <button v-else class="danger" @click="cancelReservation(res.id)">Cancel</button>
               </td>
             </tr>
@@ -236,7 +239,7 @@ export default {
       return this.groupReservations.filter(r => {
         let rDate = new Date(`${r.date}T${r.endTime}`);
         let now = new Date();
-        return now <= rDate && r.capacity > r.clientIds.length;
+        return now <= rDate && r.capacity >= r.clientIds.length;
       });
     },
 
