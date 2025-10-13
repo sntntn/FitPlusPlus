@@ -11,12 +11,10 @@ namespace AnalyticsService.API.Controllers;
 public class AnalyticsController : ControllerBase
 {
     private readonly IAnalyticsRepository _repository;
-    private readonly IMapper _mapper;
 
-    public AnalyticsController(IAnalyticsRepository repository, IMapper mapper)
+    public AnalyticsController(IAnalyticsRepository repository)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
     // Individual Trainings
