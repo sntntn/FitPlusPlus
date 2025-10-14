@@ -1,13 +1,11 @@
 using System.Reflection;
 using System.Text;
 using AnalyticsService.API.EventBusConsumers;
-using AnalyticsService.API.GrpcServices;
 using AnalyticsService.Common.Extensions;
 using EventBus.Messages.Constants;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using ReviewService.GRPC.Protos;
 
 var builder = WebApplication.CreateBuilder(args);
 
