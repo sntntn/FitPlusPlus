@@ -209,6 +209,8 @@ export default {
     async fetchPlanForTrainer() {
       const trainer = this.trainers.find((t) => t.name === this.selectedTrainerName);
       if (!trainer) return;
+      this.foodQuantities = {};
+      this.consumedCalories = 0;
       this.plan = await fetchPlan(trainer.id, this.goal.goalType);
     },
 

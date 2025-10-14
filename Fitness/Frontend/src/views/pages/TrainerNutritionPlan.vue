@@ -3,6 +3,28 @@
     <h2 class="mb-3 text-center">Nutrition Plans</h2>
 
     <div class="card p-3 mb-4 shadow-sm">
+      <h4 class="mb-3">Add New Food</h4>
+
+      <form class="row g-3 align-items-end" @submit.prevent="addNewFood">
+        <div class="col-md-4">
+          <label class="form-label">Name</label>
+          <input v-model="newFood.name" type="text" class="form-control" placeholder="e.g. Chicken Breast" required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Calories (per 100g)</label>
+          <input v-model.number="newFood.calories" type="number" class="form-control" min="0" placeholder="165"
+            required />
+        </div>
+
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-success w-100">Add</button>
+        </div>
+      </form>
+    </div>
+
+
+    <div class="card p-3 mb-4 shadow-sm">
       <h4 class="mb-3">Create or Update Plan</h4>
 
       <div class="form-group mb-3">
@@ -87,6 +109,7 @@
 
 <script>
 import {
+  addFood,
   getAllFoods,
   getMealPlansForTrainer,
   saveMealPlan,
@@ -97,6 +120,7 @@ export default {
   data() {
     return {
       trainerId: null,
+      newFood: { name: "", calories: 0 },
       trainerName: "",
       foods: [],
       plans: [],
@@ -115,6 +139,25 @@ export default {
   },
 
   methods: {
+
+
+    async addNewFood() {
+      try {
+        if (!this.newFood.name.trim()) {
+          alert("Please enter food name.");
+          return;
+        }
+
+        const added = await addFood(this.newFood);
+        this.foods.push(added);
+        this.newFood = { name: "", calories: 0 };
+        alert("Food added successfully!");
+      } catch (err) {
+        console.error("Error adding food:", err);
+        alert("Error adding food.");
+      }
+    },
+
     async loadData() {
       this.foods = await getAllFoods();
       if (this.trainerId) this.plans = await getMealPlansForTrainer(this.trainerId);
