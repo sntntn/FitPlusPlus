@@ -9,7 +9,7 @@ const GOALS_URL = `${GATEWAY_URL}/goals`
 
 export async function addFood(food) {
   try {
-    const res = await axios.post(`${BASE_URL}/food`, food);
+    const res = await axios.post(`${FOOD_URL}`, food);
     return res.data;
   } catch (err) {
     console.error("Error adding food:", err);
