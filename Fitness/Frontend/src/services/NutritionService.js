@@ -2,6 +2,15 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8157/api/v1";
 
+export async function addFood(food) {
+  try {
+    const res = await axios.post(`${BASE_URL}/food`, food);
+    return res.data;
+  } catch (err) {
+    console.error("Error adding food:", err);
+    throw err;
+  }
+}
 
 export async function getAllFoods() {
   try {
