@@ -25,6 +25,13 @@ namespace videoTrainingService.API.Controllers
             }
         }
         
+        /// <summary>
+        /// Uploads a video file to the server. The video file is stored inside the Docker container 
+        /// and mapped to a local directory on the host machine.
+        /// </summary>
+        /// <param name="file">
+        /// The uploaded video file sent as a form-data parameter.  
+        /// Must not be null or empty; otherwise, the request is rejected.</param>
         [Authorize(Roles="Admin, Trainer")]
         [HttpPost("video")]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -42,7 +49,13 @@ namespace videoTrainingService.API.Controllers
 
             return Ok(new { FileName = file.FileName });
         }
-        
+
+        /// <summary>
+        /// Deletes a previously uploaded video file from the server.  
+        /// </summary>
+        /// <param name="fileName">
+        /// The name of the video file to be deleted.  
+        /// Must match an existing file in the upload directory.</param>
         [Authorize(Roles="Admin, Trainer")]
         [HttpDelete("video/delete/{fileName}")]
         public IActionResult DeleteVideo(string fileName)
