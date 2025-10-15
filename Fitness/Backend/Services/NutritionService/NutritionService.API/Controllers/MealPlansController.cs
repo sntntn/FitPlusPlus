@@ -4,7 +4,15 @@ using MongoDB.Driver;
 using NutritionService.API.Models;
 
 namespace NutritionService.API.Controllers
-{   
+{
+    /// <summary>
+    /// Provides REST API endpoints for creating, retrieving, and deleting meal plans for clients based on their goals.
+    /// </summary>
+    /// <remarks>
+    /// Trainers can create personalized meal plans for different goal types (lose, gain, maintain),
+    /// while admins, trainers, and clients can retrieve existing plans.
+    /// Each meal plan consists of predefined meals (breakfast, lunch, dinner, snacks) composed of available foods.
+    /// </remarks>
     [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -13,12 +21,29 @@ namespace NutritionService.API.Controllers
         private readonly IMongoCollection<MealPlan> _plans;
         private readonly IMongoCollection<Food> _foods;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MealPlansController"/> class.
+        /// </summary>
+        /// <param name="db">The MongoDB database instance used to access the <c>MealPlans</c> and <c>Food</c> collections.</param>
         public MealPlansController(IMongoDatabase db)
         {
             _plans = db.GetCollection<MealPlan>("MealPlans");
             _foods = db.GetCollection<Food>("Food");
         }
-        
+
+        /// <summary>
+        /// Creates or updates a meal plan for a specific trainer and goal type.
+        /// </summary>
+        /// <param name="plan">The <see cref="MealPlan"/> object containing meals and trainer information.</param>
+        /// <returns>
+        /// Returns:
+        /// <list type="bullet">
+        /// <item><description><c>200 OK</c> — if the plan was successfully created or updated.</description></item>
+        /// <item><description><c>400 Bad Request</c> — if required fields (TrainerId, TrainerName, or GoalType) are missing.</description></item>
+        /// </list>
+        /// </returns>
+        /// <response code="200">Meal plan created or updated successfully.</response>
+        /// <response code="400">Required data missing or invalid.</response>
         [Authorize(Roles = "Trainer")]
         [HttpPost]
         public async Task<IActionResult> CreatePlan([FromBody] MealPlan plan)
@@ -47,7 +72,6 @@ namespace NutritionService.API.Controllers
             plan.Snacks = await FillFoodsAsync(plan.Snacks);
             plan.CreatedAt = DateTime.UtcNow;
 
-            
             var existing = await _plans
                 .Find(p => p.TrainerId == plan.TrainerId && p.GoalType == plan.GoalType)
                 .FirstOrDefaultAsync();
@@ -60,7 +84,21 @@ namespace NutritionService.API.Controllers
             await _plans.InsertOneAsync(plan);
             return Ok(plan);
         }
-        
+
+        /// <summary>
+        /// Retrieves a specific meal plan created by a trainer for a given goal type.
+        /// </summary>
+        /// <param name="trainerId">The unique identifier of the trainer.</param>
+        /// <param name="goalType">The goal type associated with the plan (lose, gain, maintain).</param>
+        /// <returns>
+        /// Returns:
+        /// <list type="bullet">
+        /// <item><description><c>200 OK</c> — the corresponding meal plan was found.</description></item>
+        /// <item><description><c>404 Not Found</c> — no plan exists for the specified trainer and goal type.</description></item>
+        /// </list>
+        /// </returns>
+        /// <response code="200">Meal plan successfully retrieved.</response>
+        /// <response code="404">No matching plan found.</response>
         [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("trainer/{trainerId}/goal/{goalType}")]
         public async Task<IActionResult> GetPlanByTrainerAndGoal(string trainerId, string goalType)
@@ -75,7 +113,17 @@ namespace NutritionService.API.Controllers
 
             return Ok(plan);
         }
-        
+
+        /// <summary>
+        /// Retrieves all meal plans available in the system.
+        /// </summary>
+        /// <returns>
+        /// Returns:
+        /// <list type="bullet">
+        /// <item><description><c>200 OK</c> — all existing meal plans retrieved successfully.</description></item>
+        /// </list>
+        /// </returns>
+        /// <response code="200">List of all meal plans retrieved.</response>
         [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet]
         public async Task<IActionResult> GetAllPlans()
@@ -83,7 +131,20 @@ namespace NutritionService.API.Controllers
             var plans = await _plans.Find(_ => true).ToListAsync();
             return Ok(plans);
         }
-        
+
+        /// <summary>
+        /// Retrieves all meal plans associated with a specific trainer.
+        /// </summary>
+        /// <param name="trainerId">The unique identifier of the trainer.</param>
+        /// <returns>
+        /// Returns:
+        /// <list type="bullet">
+        /// <item><description><c>200 OK</c> — list of all plans created by the specified trainer.</description></item>
+        /// <item><description><c>404 Not Found</c> — no plans found for the trainer.</description></item>
+        /// </list>
+        /// </returns>
+        /// <response code="200">Trainer’s plans retrieved successfully.</response>
+        /// <response code="404">No plans found for the specified trainer.</response>
         [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet("trainer/{trainerId}")]
         public async Task<IActionResult> GetPlansForTrainer(string trainerId)
@@ -95,7 +156,21 @@ namespace NutritionService.API.Controllers
 
             return Ok(trainerPlans);
         }
-        
+
+        /// <summary>
+        /// Deletes a specific meal plan for a trainer and goal type.
+        /// </summary>
+        /// <param name="trainerId">The unique identifier of the trainer.</param>
+        /// <param name="goalType">The goal type of the plan to be deleted.</param>
+        /// <returns>
+        /// Returns:
+        /// <list type="bullet">
+        /// <item><description><c>200 OK</c> — if the plan was deleted successfully.</description></item>
+        /// <item><description><c>404 Not Found</c> — if no plan was found for the specified trainer and goal type.</description></item>
+        /// </list>
+        /// </returns>
+        /// <response code="200">Plan deleted successfully.</response>
+        /// <response code="404">No plan found for the given trainer and goal type.</response>
         [Authorize(Roles = "Trainer")]
         [HttpDelete("trainer/{trainerId}/goal/{goalType}")]
         public async Task<IActionResult> DeletePlan(string trainerId, string goalType)
