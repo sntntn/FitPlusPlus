@@ -15,6 +15,13 @@ public class IndividualReservationConsumer : IConsumer<IndividualReservationEven
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
+    
+    /// <summary>
+    /// Method for processing <c>IndividualReservationEvent</c> object based on the event type.
+    /// In case of the booking event, a new individual training is registered, otherwise, the
+    /// corresponding training is marked as cancelled.
+    /// </summary>
+    /// <param name="context"><c>ConsumeContext</c> object representing the send message through the bus</param>
     public async Task Consume(ConsumeContext<IndividualReservationEvent> context)
     {
         IndividualReservationEvent individualReservation = context.Message;

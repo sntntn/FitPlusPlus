@@ -15,6 +15,12 @@ public class ReviewConsumer : IConsumer<ReviewEvent>
         _repository = repository ??  throw new ArgumentNullException(nameof(repository));
     }
 
+    /// <summary>
+    /// Method for processing <c>ReviewEvent</c> object based on the review type.
+    /// Behavior depends both on the sender of the review (i.e., trainer or client) and
+    /// on the type of the training that is reviewed (i.e., individual or group)
+    /// </summary>
+    /// <param name="context"><c>ConsumeContext</c> object representing the send message through the bus</param>
     public async Task Consume(ConsumeContext<ReviewEvent> context)
     {
         ReviewEvent review = context.Message;

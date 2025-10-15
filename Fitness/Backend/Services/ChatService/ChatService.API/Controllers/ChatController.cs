@@ -28,7 +28,7 @@ public class ChatController : ControllerBase
         _chatService = chatService;
     }
 
-    // <summary>
+    /// <summary>
     /// Retrieves a summary of all chat sessions for a given user (trainer or client).
     /// </summary>
     /// <param name="userId">The ID of the user whose chat sessions are to be retrieved.</param>
