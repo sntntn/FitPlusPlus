@@ -3,13 +3,6 @@ using MongoDB.Driver;
 using ReviewService.Common.Data;
 using ReviewService.Common.DTOs;
 using ReviewService.Common.Entities;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ReviewService.Common.Repositories
 {
@@ -24,32 +17,79 @@ namespace ReviewService.Common.Repositories
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IEnumerable<ReviewDTO>> GetReviews(string trainerId)
+        public async Task<ReviewDTO?> GetReviewByReservationId(string reservationId)
         {
-            var reviews = await _context.Reviews.Find(r => r.TrainerId == trainerId).ToListAsync();
+            var review = await _context.Reviews.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
+            return _mapper.Map<ReviewDTO>(review);
+        }
+
+        public async Task<ReviewDTO?> GetReviewByReservationIdClientId(string reservationId, string clientId)
+        {
+            var review = await _context.Reviews
+                .Find(r => r.ReservationId == reservationId && r.ClientId == clientId)
+                .FirstOrDefaultAsync();
+            return _mapper.Map<ReviewDTO>(review);
+        }
+
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsByTrainerId(string trainerId)
+        {
+            var reviews = await _context.Reviews
+                .Find(r => r.TrainerId == trainerId && r.ClientComment != null && r.ClientRating != null)
+                .ToListAsync();
             return _mapper.Map<IEnumerable<ReviewDTO>>(reviews);
         }
 
-        public async Task CreateReview(CreateReviewDTO review)
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsByClientId(string clientId)
         {
-            var reviewEntity = _mapper.Map<Review>(review);
-            await _context.Reviews.InsertOneAsync(reviewEntity);
+            var reviews = await _context.Reviews
+                .Find(r => r.ClientId == clientId && r.TrainerComment != null && r.TrainerRating != null)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<ReviewDTO>>(reviews);
         }
 
-        public async Task<bool> DeleteReview(string reviewId)
+        public async Task CreateReview(string reservationId, string clientId, string trainerId)
         {
-            var deleteResult = await _context.Reviews.DeleteManyAsync(r => r.Id == reviewId);
-            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
-
+            var review = new ReviewDTO { ReservationId = reservationId, ClientId = clientId, TrainerId = trainerId};
+            await _context.Reviews.InsertOneAsync(_mapper.Map<Review>(review));
         }
 
-        public async Task<bool> UpdateReview(UpdateReviewDTO review)
+        public async Task<bool> SubmitClientReview(SubmitReviewDTO clientReview)
         {
-            var reviewEntity = _mapper.Map<Review>(review);
+            var existingTrainerReview = await _context.Reviews
+                .Find(r => r.ReservationId == clientReview.ReservationId && r.TrainerComment != null && r.TrainerRating != null)
+                .FirstOrDefaultAsync();
 
+            var review = await GetReviewByReservationIdClientId(clientReview.ReservationId, clientReview.ClientId);
+            if (review == null)
+            {
+                throw new InvalidOperationException("Review not found.");
+            }
+            review.ClientComment = clientReview.ClientComment;
+            review.ClientRating = clientReview.ClientRating;
+            review.TrainerComment = existingTrainerReview?.TrainerComment;
+            review.TrainerRating = existingTrainerReview?.TrainerRating;
 
-            var updateResult = await _context.Reviews.ReplaceOneAsync(p => p.Id == reviewEntity.Id, reviewEntity);
-            return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
+            var result = await _context.Reviews.ReplaceOneAsync(r => r.Id == review.Id, _mapper.Map<Review>(review));
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
+        
+        public async Task<bool> SubmitTrainerReview(SubmitReviewDTO trainerReview)
+        {
+            var reviews = await _context.Reviews.Find(r => r.ReservationId == trainerReview.ReservationId).ToListAsync();
+            if (reviews.Count == 0)
+            {
+                throw new InvalidOperationException("Review not found.");
+            }
+
+            var result = true;
+            foreach (Review review in reviews)
+            {
+                review.TrainerComment = trainerReview.TrainerComment;
+                review.TrainerRating = trainerReview.TrainerRating;
+                var reviewResult = await _context.Reviews.ReplaceOneAsync(r => r.Id == review.Id, review);
+                result = result && reviewResult.IsAcknowledged && reviewResult.ModifiedCount > 0;
+            }
+            return result;
         }
     }
 }

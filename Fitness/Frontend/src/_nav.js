@@ -9,15 +9,41 @@ export function generateTrainerNav(id) {
     },
     {
       component: 'CNavItem',
-      name: 'Schedule',
-      to: `/trainer/${id}/schedule`,
-      icon: 'cil-calendar'
+      name: 'Group training',
+      to: `/trainer/${id}/groupTrainings`,
+      icon: 'cil-people',
+    },
+    {
+      component: 'CNavItem',
+      name: 'Individual training',
+      to: `/trainer/${id}/individualTrainings`,
+      icon: 'cil-people',
+    },
+    {
+      component: 'CNavItem',
+      name: 'Nutrition Plan',
+      to: `/trainer/${id}/nutrition-plan`,
+      icon: 'cil-pencil',  
     },
     {
       component: 'CNavItem',
       name: 'Chat',
       to: `/trainer/${id}/chat`,
       icon: 'cil-speech',
+    },
+
+    {
+      component: 'CNavItem',
+      name: 'Video trainings',
+      to: `/trainer/${id}/videotrainings`,
+      icon: 'cil-media-play'
+    },
+
+    {
+      component: 'CNavItem',
+      name: 'Analytics',
+      to: `/trainer/${id}/analytics`,
+      icon: 'cilBarChart'
     },
   ];
 }
@@ -32,15 +58,39 @@ export function generateClientNav(id) {
     },
     {
       component: 'CNavItem',
-      name: 'Schedule',
-      to: `/client/${id}/schedule`,
-      icon: 'cil-calendar'
+      name: 'Group training',
+      to: `/client/${id}/groupTrainings`,
+      icon: 'cil-people',
+    },
+    {
+      component: 'CNavItem',
+      name: 'Individual training',
+      to: `/client/${id}/individualTrainings`,
+      icon: 'cil-user-follow',
+    },
+    {
+      component: 'CNavItem',
+      name: 'Nutrition Plan',
+      to: `/client/${id}/nutrition-plan`,
+      icon: 'cil-pencil',
     },
     {
       component: 'CNavItem',
       name: 'Chat',
       to: `/client/${id}/chat`,
       icon: 'cil-speech'
+    },
+    {
+      component: 'CNavItem',
+      name: 'Video trainings',
+      to: `/client/${id}/videotrainings`,
+      icon: 'cil-media-play'
+    },
+    {
+      component: 'CNavItem',
+      name: 'Analytics',
+      to: `/client/${id}/analytics`,
+      icon: 'cilBarChart'
     },
   ];
 }

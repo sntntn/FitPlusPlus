@@ -46,23 +46,28 @@ const routes = [
         component: () => import('@/views/pages/Client.vue'),
       },
 
-
       {
-        path: '/client/:id/schedule',
-        name: 'Client Schedule',
-        component: () => import('@/views/pages/ClientSchedule.vue')
+        path: '/client/:id/groupTrainings',
+        name: 'Client Group Trainings',
+        component: () => import('@/views/pages/ClientGroupTrainings.vue')
       },
 
       {
-        path: '/client/:id/schedule/:trainerId',
-        name: 'Book Training',
-        component: () => import('@/views/pages/ClientSchedule.vue')
+        path: '/trainer/:id/groupTrainings',
+        name: 'Trainer Group Trainings',
+        component: () => import('@/views/pages/TrainerGroupTrainings.vue')
       },
 
       {
-        path: '/trainer/:id/schedule',
-        name: 'Trainer Schedule',
-        component: () => import('@/views/pages/TrainerSchedule.vue')
+        path: '/client/:id/individualTrainings',
+        name: 'Client Individual Trainings',
+        component: () => import('@/views/pages/ClientIndividualTrainings.vue')
+      },
+
+      {
+        path: '/trainer/:id/individualTrainings',
+        name: 'Trainer Individual Trainings',
+        component: () => import('@/views/pages/TrainerIndividualTrainings.vue')
       },
 
       {
@@ -88,13 +93,47 @@ const routes = [
         name: 'Client Chat',
         component: () => import('@/views/pages/ClientChat.vue'),
       },
+      
+      {
+        path: '/client/:id/nutrition-plan',
+        name: 'Client Nutrition Plan',
+        component: () => import('@/views/pages/ClientNutritionPlan.vue'),
+      },
+      
+      {
+        path: '/trainer/:id/nutrition-plan',
+        name: 'Trainer Nutrition Plan',
+        component: () => import('@/views/pages/TrainerNutritionPlan.vue'),
+      },
+      
+
+      {
+        path: '/client/:id/videotrainings',
+        name: 'Video Trainings Client',
+        component: () => import('@/views/pages/VideoTrainingsClient.vue')
+      },
+
+      {
+        path: '/trainer/:id/videotrainings',
+        name: 'Video Trainings Trainer',
+        component: () => import('@/views/pages/VideoTrainingsTrainer.vue')
+      },
 
       {
         path: '/client/:id/pay-chat/:trainerId',
         name: 'PayChat',
         component: () => import('@/views/pages/PayChat.vue'),
       },
-
+      {
+        path: '/client/:id/analytics',
+        name: 'ClientAnalytics',
+        component: () => import('@/views/pages/ClientAnalytics.vue')
+      },
+      {
+        path: '/trainer/:id/analytics',
+        name: 'TrainerAnalytics',
+        component: () => import('@/views/pages/TrainerAnalytics.vue')
+      }
     ],
   },
   {
@@ -140,7 +179,7 @@ router.beforeEach(async (to, from) => {
 
   var token = sessionStorage.getItem('accessToken');
   if ((token && token != 'null') || to.path == '/login' || to.path == '/registration') {
-    
+
     return true;
   }
   else {

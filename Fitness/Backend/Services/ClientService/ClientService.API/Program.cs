@@ -1,10 +1,5 @@
-using Amazon.Runtime.Internal;
-using ClientService.API.EventBusConsumers;
-using EventBus.Messages.Constants;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-// using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using Consul;
@@ -43,20 +38,6 @@ builder.Services.AddSwaggerGen();
 
 //AutoMapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-//EventBus
-builder.Services.AddMassTransit(config =>
-{
-    config.AddConsumer<CancelTrainingConsumer>();
-    config.UsingRabbitMq((ctx, cfg) =>
-    {
-        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
-        cfg.ReceiveEndpoint(EventBusConstants.CancellingTrainingQueue, c =>
-        {
-            c.ConfigureConsumer<CancelTrainingConsumer>(ctx);
-        });
-    });
-});
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings.GetValue<string>("secretKey");
@@ -114,10 +95,11 @@ app.Lifetime.ApplicationStopping.Register(() =>
     consulClient.Agent.ServiceDeregister(consulConfig.ServiceId).Wait();
 });
 
-// app.UseAuthentication();
-// app.UseAuthorization();
-
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

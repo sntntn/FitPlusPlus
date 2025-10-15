@@ -102,8 +102,8 @@
     <div v-if="showReviews" class="reviews-section">
       <p><strong>Average Rating:</strong> {{ trainer.averageRating.toFixed(1) }}</p>
       <ul>
-        <li v-for="review in trainer.reviews" :key="review.comment">
-          {{ review.comment }} - Rating: {{ review.rating }}
+        <li v-for="review in trainer.reviews" :key="review.clientComment">
+          {{ review.clientComment }} - Rating: {{ review.clientRating }}
         </li>
       </ul>
     </div>

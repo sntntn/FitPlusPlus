@@ -21,7 +21,7 @@ namespace ReviewService.GRPC.Services
 
         public override async Task<GetReviewsResponse> GetReviews(GetReviewsRequest request, ServerCallContext context)
         {
-            var reviews = await _repository.GetReviews(request.TrainerId);
+            var reviews = await _repository.GetReviewsByTrainerId(request.TrainerId);
             var reviewList = new GetReviewsResponse();
             reviewList.Reviews.AddRange(_mapper.Map<IEnumerable<ReviewReply>>(reviews));
             return reviewList;

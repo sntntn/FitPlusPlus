@@ -9,9 +9,12 @@ namespace ReviewService.Common.Repositories
 {
     public interface IReviewRepository
     {
-        Task<IEnumerable<ReviewDTO>> GetReviews(string trainerId);
-        Task CreateReview(CreateReviewDTO review);
-        Task<bool> UpdateReview(UpdateReviewDTO review);
-        Task<bool> DeleteReview(string reviewId);
+        Task<ReviewDTO?> GetReviewByReservationId(string reservationId);
+        Task<ReviewDTO?> GetReviewByReservationIdClientId(string reservationId, string clientId);
+        Task<IEnumerable<ReviewDTO>> GetReviewsByTrainerId(string trainerId);
+        Task<IEnumerable<ReviewDTO>> GetReviewsByClientId(string clientId);
+        Task CreateReview(string reservationId, string clientId, string trainerId);
+        Task<bool> SubmitClientReview(SubmitReviewDTO clientReview);
+        Task<bool> SubmitTrainerReview(SubmitReviewDTO trainerReview);
     }
 }

@@ -1,5 +1,3 @@
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 using ClientService.GRPC.Protos;
 using Consul;
@@ -50,7 +48,6 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-Console.WriteLine(Environment.GetEnvironmentVariable("EMAIL_PASSWORD"));
 var options = new SmtpClientOptions
 {
     Server = emailSettings["SmtpHost"]!,
@@ -96,7 +93,6 @@ builder.Services.AddMassTransit(config =>
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings.GetValue<string>("secretKey")!;
 
-/*
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -116,7 +112,6 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
-    */
 
 var app = builder.Build();
 
@@ -152,8 +147,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

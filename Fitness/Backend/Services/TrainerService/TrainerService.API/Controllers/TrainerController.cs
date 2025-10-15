@@ -10,7 +10,7 @@ using TrainerService.API.GrpcServices;
 
 namespace TrainerService.API.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class TrainerController : ControllerBase
@@ -18,20 +18,18 @@ namespace TrainerService.API.Controllers
         private readonly ITrainerRepository _repository;
         private readonly ReviewGrpcService _reviewGrpcService;
         private readonly IMapper _mapper;
-        private readonly IPublishEndpoint _publishEndpoint;
 
-        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper, IPublishEndpoint publishEndpoint)
+        public TrainerController(ITrainerRepository repository, ReviewGrpcService reviewGrpcService, IMapper mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _reviewGrpcService = reviewGrpcService ?? throw new ArgumentNullException(nameof(reviewGrpcService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
 
 
 
-        // [Authorize(Roles = "Admin, Client")]
+        [Authorize(Roles = "Admin, Trainer, Client")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainers()
@@ -46,7 +44,7 @@ namespace TrainerService.API.Controllers
             return Ok(trainers);
         }
 
-        // [Authorize(Roles = "Admin, Client, Trainer")]
+        [Authorize(Roles = "Admin, Client, Trainer")]
         [HttpGet("{id}", Name = "GetTrainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status404NotFound)]
@@ -65,7 +63,7 @@ namespace TrainerService.API.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin, Client, Trainer")]
+        [Authorize(Roles = "Admin, Client, Trainer")]
         [HttpGet("[action]/{email}", Name = "GetTrainerByEmail")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status404NotFound)]
@@ -84,7 +82,7 @@ namespace TrainerService.API.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin, Client")]
+        [Authorize(Roles = "Admin, Client")]
         [Route("[action]/{minRating}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
@@ -101,7 +99,7 @@ namespace TrainerService.API.Controllers
             return Ok(filteredTrainers);
         }
 
-        // [Authorize(Roles = "Admin, Client")]
+        [Authorize(Roles = "Admin, Client")]
         [Route("[action]/{trainingType}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Trainer>), StatusCodes.Status200OK)]
@@ -117,7 +115,7 @@ namespace TrainerService.API.Controllers
             return Ok(trainers);
         }
 
-        // [Authorize(Roles = "Admin, Client, Trainer")]
+        [Authorize(Roles = "Admin, Client, Trainer")]
         [Route("[action]/{trainerId}/{trainingType}")]
         [HttpGet]
         [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
@@ -128,7 +126,7 @@ namespace TrainerService.API.Controllers
             return Ok(price);
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status201Created)]
         public async Task<ActionResult<Trainer>> CreateTrainer([FromBody] Trainer trainer)
@@ -148,7 +146,7 @@ namespace TrainerService.API.Controllers
             return CreatedAtRoute("GetTrainer", new { id = trainer.Id }, trainer);
         }
 
-        // [Authorize(Roles = "Admin, Trainer")]
+        [Authorize(Roles = "Admin, Trainer")]
         [HttpPut]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateTrainer([FromBody] Trainer trainer)
@@ -164,60 +162,12 @@ namespace TrainerService.API.Controllers
             return Ok(await _repository.UpdateTrainer(trainer));
         }
 
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}", Name = "DeleteTrainer")]
         [ProducesResponseType(typeof(Trainer), StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteTrainer(string id)
         {
             return Ok(await _repository.DeleteTrainer(id));
-        }
-
-        // [Authorize(Roles = "Trainer, Client")]
-        [Route("[action]/{id}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TrainerSchedule>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TrainerSchedule>> GetTrainerScheduleByTrainerId(string id)
-        {
-            var result = await _repository.GetTrainerScheduleByTrainerId(id);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-        // [Authorize(Roles = "Trainer, Client")]
-        [Route("[action]/{trainerId}/{weekId}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(WeeklySchedule), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<WeeklySchedule>> GetTrainerWeekSchedule(string trainerId, int weekId)
-        {
-            var result = await _repository.GetTrainerWeekSchedule(trainerId, weekId);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
-        }
-
-        // [Authorize(Roles = "Trainer")]
-        [Route("[action]")]
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CancelTraining([FromBody] CancelTrainingInformation cti)
-        {
-            var result = await _repository.CancelTraining(cti);
-            if (result)
-            {
-                //send to client
-                var eventMessage = _mapper.Map<TrainerCancellingTrainingEvent>(cti);
-                await _publishEndpoint.Publish(eventMessage);
-                return Ok();
-            }
-            return BadRequest();
         }
     }
 }

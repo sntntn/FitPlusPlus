@@ -1,9 +1,13 @@
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ReviewService.Common.Extensions;
 using System.Text;
 using Consul;
 using ConsulConfig.Settings;
+using ReviewService.API.Publishers;
+using ReviewService.Common.DTOs;
+using ReviewService.Common.Entities;
 using ReviewService.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,9 +26,15 @@ builder.Services.AddSingleton<IConsulClient, ConsulClient>(provider => new Consu
 {
     config.Address = new Uri(consulConfig.Address);
 }));
+builder.Services.AddScoped<IReviewPublisher, ReviewPublisher>();
 
 builder.Services.AddControllers();
 builder.Services.AddReviewCommonExtensions();
+builder.Services.AddAutoMapper(configuration =>
+{
+    configuration.CreateMap<EventBus.Messages.Events.ReviewEventType, ReviewEventType>().ReverseMap();
+    configuration.CreateMap<EventBus.Messages.Events.ReviewEvent, ReviewEvent>().ReverseMap();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -52,6 +62,13 @@ builder.Services.AddAuthentication(options =>
                     };
                 });
 
+builder.Services.AddMassTransit(config =>
+{
+    config.UsingRabbitMq((_, cfg) =>
+    {
+        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+    });
+});
 
 var app = builder.Build();
 
@@ -88,8 +105,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

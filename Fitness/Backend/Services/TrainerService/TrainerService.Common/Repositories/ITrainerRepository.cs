@@ -14,10 +14,5 @@ namespace TrainerService.Common.Repositories
         Task CreateTrainer(Trainer trainer);
         Task<bool> UpdateTrainer(Trainer trainer);
         Task<bool> DeleteTrainer(string id);
-        Task<TrainerSchedule> GetTrainerScheduleByTrainerId(string id);
-        Task<WeeklySchedule> GetTrainerWeekSchedule(string trainerId, int weekId);
-        Task<bool> UpdateTrainerSchedule(TrainerSchedule trainerSchedule);
-        Task BookTraining(BookTrainingInformation bti);
-        Task<bool> CancelTraining(CancelTrainingInformation cti);
     }
 }

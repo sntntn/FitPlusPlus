@@ -11,6 +11,8 @@ var consulConfig = builder.Configuration.GetSection("ConsulConfig").Get<ConsulCo
 
 // Add services to the container.
 
+DotNetEnv.Env.Load();
+
 builder.Services.AddScoped<IPaymentContext, PaymentContext>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddSingleton(consulConfig);
@@ -65,7 +67,7 @@ app.Lifetime.ApplicationStopping.Register(() =>
 });
 
 
-// app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
 

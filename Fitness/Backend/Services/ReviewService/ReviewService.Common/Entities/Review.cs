@@ -13,9 +13,12 @@ namespace ReviewService.Common.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id;
+        public string ReservationId { get; set; }
         public string TrainerId { get; set; }
+        public string? TrainerComment { get; set; }
+        public int? TrainerRating { get; set; }
         public string ClientId { get; set; }
-        public string Comment { get; set; }
-        public int Rating { get; set; }
+        public string? ClientComment { get; set; }
+        public int? ClientRating { get; set; }
     }
 }

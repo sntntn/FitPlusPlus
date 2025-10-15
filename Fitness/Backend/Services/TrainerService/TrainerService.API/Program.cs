@@ -1,13 +1,9 @@
-using EventBus.Messages.Constants;
-using EventBus.Messages.Events;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ReviewService.GRPC.Protos;
 using System.Text;
 using Consul;
 using ConsulConfig.Settings;
-using TrainerService.API.EventBusConsumers;
 using TrainerService.API.GrpcServices;
 using TrainerService.Common.Data;
 using TrainerService.Common.Entities;
@@ -37,22 +33,6 @@ builder.Services.AddAutoMapper(configuration =>
 {
     configuration.CreateMap<GetReviewsResponse, ReviewType>().ReverseMap();
     configuration.CreateMap<GetReviewsResponse.Types.ReviewReply, ReviewType>().ReverseMap();
-    configuration.CreateMap<BookTrainingInformation, BookTrainingEvent>().ReverseMap();
-    configuration.CreateMap<TrainerCancellingTrainingEvent, CancelTrainingInformation>().ReverseMap();
-});
-
-//EventBus
-builder.Services.AddMassTransit(config =>
-{
-    config.AddConsumer<BookTrainingConsumer>();
-    config.UsingRabbitMq((ctx, cfg) =>
-    {
-        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
-        cfg.ReceiveEndpoint(EventBusConstants.BookTrainingQueue,c =>
-        {
-            c.ConfigureConsumer<BookTrainingConsumer>(ctx);
-        });
-    });
 });
 
 builder.Services.AddCors(options =>
@@ -124,8 +104,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

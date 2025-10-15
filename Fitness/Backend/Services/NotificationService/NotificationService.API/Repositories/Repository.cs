@@ -20,7 +20,7 @@ public class Repository : IRepository
 
     public async Task<IEnumerable<Notification>> GetNotificationsByUserId(string userId)
     {
-        return await _context.Notifications.Find(n => n.UserId == userId).ToListAsync();
+        return await _context.Notifications.Find(n => n.UserIdToUserType.ContainsKey(userId)).ToListAsync();
     }
 
     public async Task<Notification> GetNotificationById(string id)
@@ -38,6 +38,18 @@ public class Repository : IRepository
         var result = await _context.Notifications.ReplaceOneAsync(n => n.Id == notification.Id, notification);
         return result.IsAcknowledged && result.ModifiedCount > 0;
     }
+    
+    public async Task<bool> MarkNotificationAsRead(string notificationId)
+    {
+        var filter = Builders<Notification>.Filter.Eq(n => n.Id, notificationId);
+
+        var update = Builders<Notification>.Update
+            .Set(n => n.NotificationRead, true);                 // menjaš polje IsRead
+
+        var result = await _context.Notifications.UpdateOneAsync(filter, update);
+
+        return result.IsAcknowledged && result.ModifiedCount > 0;
+    }
 
     public async Task<bool> DeleteNotification(string id)
     {
@@ -47,7 +59,7 @@ public class Repository : IRepository
 
     public async Task<bool> DeleteNotificationsByUserId(string userId)
     {
-        var result = await _context.Notifications.DeleteManyAsync(n => n.UserId == userId);
+        var result = await _context.Notifications.DeleteManyAsync(n => n.UserIdToUserType.ContainsKey(userId));
         return result.IsAcknowledged && result.DeletedCount > 0;
     }
 

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const GATEWAY_URL = "http://localhost:8005";
 
-//const CHAT = "http://localhost:8082/api/Chat";
+//const CHAT = "http://localhost:8082/api/v1/Chat";
 //const CLIENT = "http://localhost:8100/api/v1/Client";
 //const TRAINERS = "http://localhost:8000/api/v1/Trainer";
 
@@ -13,6 +13,7 @@ const TRAINERS = `${GATEWAY_URL}/trainer`;
 
 export async function getBasicInfoForTrainerSessions(trainerId) {
     try {
+      axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
       const response = await axios.get(`${CHAT}/sessions/${trainerId}/my-sessions-summary`);
       return response.data;
     } catch (error) {
@@ -23,6 +24,7 @@ export async function getBasicInfoForTrainerSessions(trainerId) {
 
 export async function getBasicInfoForClientSessions(clientId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${CHAT}/sessions/${clientId}/my-sessions-summary`);
     return response.data;
   } catch (error) {
@@ -33,6 +35,7 @@ export async function getBasicInfoForClientSessions(clientId) {
 
 export async function getMessagesFromSession(trainerId, clientId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${CHAT}/sessions/messages?trainerId=${trainerId}&clientId=${clientId}`);
     return response.data;
   } catch (error) {
@@ -43,6 +46,7 @@ export async function getMessagesFromSession(trainerId, clientId) {
 
 export async function sendMessageToSession(trainerId, clientId, content, senderType) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.post(
       `${CHAT}/sessions/messages`,
       content,
@@ -66,6 +70,7 @@ export async function sendMessageToSession(trainerId, clientId, content, senderT
 
 export async function createChatSession(trainerId, clientId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.post(
       `${CHAT}/sessions`, 
       null,
@@ -82,14 +87,27 @@ export async function createChatSession(trainerId, clientId) {
     return response;
 
   } catch (error) {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     console.error("Error creating chat session:", error);
     alert("Failed to create chat session. Please try again.");
     throw error;
   }
 }
 
+export async function getChatSession(trainerId, clientId) {
+  try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
+    const response = await axios.get(`${CHAT}/sessions?trainerId=${trainerId}&clientId=${clientId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching chat session:", error);
+    throw error;
+  }
+}
+
 export async function extendChatSession(trainerId, clientId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.post(
       `${CHAT}/sessions/extend`, 
       null,
@@ -114,6 +132,7 @@ export async function extendChatSession(trainerId, clientId) {
 
 export async function getClientById(clientId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${CLIENT}/${clientId}`);
     return response.data;
   } catch (error) {
@@ -124,6 +143,7 @@ export async function getClientById(clientId) {
 
 export async function getTrainerById(trainerId) {
   try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}` };
     const response = await axios.get(`${TRAINERS}/${trainerId}`);
     return response.data;
   } catch (error) {

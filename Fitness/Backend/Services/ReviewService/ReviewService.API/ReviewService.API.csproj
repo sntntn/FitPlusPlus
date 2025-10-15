@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.7.14.5" />
+    <PackageReference Include="MassTransit" Version="8.2.4" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
@@ -19,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ConsulConfig.Settings\ConsulConfig.Settings.csproj" />
+    <ProjectReference Include="..\..\..\Common\EventBus.Messages\EventBus.Messages.csproj" />
     <ProjectReference Include="..\ReviewService.Common\ReviewService.Common.csproj" />
   </ItemGroup>
 
