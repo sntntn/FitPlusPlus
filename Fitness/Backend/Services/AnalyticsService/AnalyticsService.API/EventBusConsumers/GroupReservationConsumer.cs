@@ -16,6 +16,13 @@ public class GroupReservationConsumer : IConsumer<GroupReservationEvent>
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
     
+    /// <summary>
+    /// Method for processing <c>GroupReservationEvent</c> object based on the event type.
+    /// In case of an event where a new group training was added,
+    /// a new group training is also registered in Analytics service. Otherwise, the
+    /// corresponding training to reflect the behavior in the Reservation service.
+    /// </summary>
+    /// <param name="context"><c>ConsumeContext</c> object representing the send message through the bus</param>
     public async Task Consume(ConsumeContext<GroupReservationEvent> context)
     {
         GroupReservationEvent groupReservation = context.Message;
