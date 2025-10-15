@@ -431,7 +431,8 @@ export default {
       }
 
       alert('Obrisali ste trening!');
-      this.exercises = this.trainingExercises.filter(tr => tr.Id !== trainingId);
+      this.trainingExercises = this.trainingExercises.filter(tr => tr.Id !== trainingId);
+      this.loadTrainings();
     },
 
     getExerciseName(id) {
