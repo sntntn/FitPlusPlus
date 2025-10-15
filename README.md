@@ -16,6 +16,7 @@ This project is an **extension of the previous FitPlusPlus application**, which 
 2. **Milenković Stefan** – Student ID: 1076/2024;
 3. **Mitreski Milan** – Student ID: 1073/2024
 4. **Filipović Natalija** – Student ID: 1013/2024
+5. **Čolić Anja** - Student ID: 1059/2024
 
 ### Previous Development Team (2023):
 
@@ -91,7 +92,22 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 6. **Gateway and Discovery Service**
    - A **centralized API gateway** that directs requests to the correct microservice.
    - Facilitates **automatic detection and scaling** of microservices.
-
+  
+7. **Nutrition Service**
+   - Manages **nutrition goals, meal plans and calorie tracking** for clients and trainers.
+   - Allows trainers to define meal plans and clients to calculate personal goals and track calorie intake.
+   - **Trainer Capabilities**
+      - Add food items (name + calories)
+      - Create meal plans for each goal type (lose, gain and maintain)
+      - Each trainer can have up to 3 plans (one per goal type)
+      - View, update and delete existing plans
+      - All plans are stored seperatly per trainer
+    - **Client Capabilities**  
+      - Input personal data (age, sex, height, weight, goal, activity level, intensity)
+      - Automatically calculates: BMI and Target Calories (kcal)
+      - Select a trainer and view their nutrition plan based on goal type.
+      - Interactive Calorie Tracker: Client can enter food in grams and automatically calculates consumed and remaining calories.
+   
 ---
 
 ## Technologies
