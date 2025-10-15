@@ -16,6 +16,7 @@ This project is an **extension of the previous FitPlusPlus application**, which 
 2. **Milenković Stefan** – Student ID: 1076/2024;
 3. **Mitreski Milan** – Student ID: 1073/2024
 4. **Filipović Natalija** – Student ID: 1013/2024
+5. **Čolić Anja** - Student ID: 1059/2024
 
 ### Previous Development Team (2023):
 
@@ -56,38 +57,74 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 1. **ChatService**
    - Enables trainers to provide **online mentorship** to their clients via chat.
    - Clients can directly communicate with trainers for **training advice, progress tracking, and personalized plans**.
-   - Paid mentorship sessions can be booked and managed within the app.
    - Uses **WebSockets** to enable **real-time messaging between clients and trainers**, ensuring instant updates without manual refresh.
    - Each chat session is identified by a unique WebSocket connection based on the trainer and client IDs.
    - This ensures efficient **synchronization** of messages between both participants in the chat.
-
-      ### Real-Time Chat Performance Demo  
-   
-      This **video** demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
-      
+   - **Payment Integration (PayPal)**
+      - Clients can purchase **monthly chat sessions**, with payments validated through the **PaymentService**.  
+      - After successful payment, clients gain **30-day access** to a private chat channel with their trainer.
+    - **Notifications Integration**  
+      - Integrated with the **NotificationService** to provide both **in-app notifications** (visible in the notification panel on the frontend) and **email alerts** after successful payment or new chat session creation.  
+      ### Real-Time Chat Performance Demo
+      This **[video](https://youtu.be/-41OJeE9N1I)** demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
       [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
 
 2. **VideoTrainingService**
-   - Provides a **library of high-quality instructional videos** on correct exercise execution.
-   - Designed for **independent training** at home, covering beginner to advanced levels.
-   - Trainers can **upload and manage** their training materials.
+   - Provides a **library of high-quality instructional trainings**.
+   - Designed for **individual training** at home or gym, covering beginner to advanced levels.
+   - **Provided functionalities for trainers:**
+	   - preview of added exercises
+	   - preview of created trainings
+	   - add/remove exercise and upload video
+	   - create/delete training
+   - **Provided functionalities for clients:**
+	   - preview of existing trainings including traininer's information
+	   - full review of purchased trainings including videos for each exercise.
 
 3. **ReservationService**
    - Enables **booking of individual and group training sessions**.
    - Supports **real-time scheduling, cancellation, and availability tracking**.
+   - Integrated with NotificationService for real-time and email notifications on reservation updates.
 
 4. **NotificationService**
-   - Sends **push and email notifications** to clients, trainers, and administrators.
-   - Includes **reservation confirmations, training reminders, and membership renewal alerts**.
+   - Sends **push and email notifications** to clients and trainers.
+   - Handles real-time **push** and **email notifications** for clients and trainers.
+   - Delivers updates related to **training reservations**, **chat session payments**.
+   - Implements a centralized notification system that ensures consistent communication across all services.
+   - Provides a **notification history view** within the frontend, allowing users to review both **read** and **unread** notifications.
 
 5. **AnalyticsService**
-   - Creates **detailed statistics** on training sessions, client engagement, and trainer performance.
-   - Provides insights into **popular training types and user activity trends**.
+   - Tracks **individual and group** training sessions and provides **insightful statistics** about them
+   - Offers dedicated views for **clients and trainers**, including:
+      - Number of attended sessions
+      - Number of cancelled sessions
+      - A practical **review summary** reflecting client and trainer satisfaction
+      - Detailed **monthly statistics** on training activity, including income information for trainers
+      - **Charts** visualizing collaboration between clients and trainers
 
 6. **Gateway and Discovery Service**
    - A **centralized API gateway** that directs requests to the correct microservice.
    - Facilitates **automatic detection and scaling** of microservices.
+  
+7. **Nutrition Service**
+   - Manages **nutrition goals, meal plans and calorie tracking** for clients and trainers.
+   - Allows trainers to define meal plans and clients to calculate personal goals and track calorie intake.
+   - **Trainer Capabilities**
+      - Add food items (name + calories)
+      - Create meal plans for each goal type (lose, gain and maintain)
+      - Each trainer can have up to 3 plans (one per goal type)
+      - View, update and delete existing plans
+      - All plans are stored seperatly per trainer
+    - **Client Capabilities**  
+      - Input personal data (age, sex, height, weight, goal, activity level, intensity)
+      - Automatically calculates: BMI and Target Calories (kcal)
+      - Select a trainer and view their nutrition plan based on goal type.
+      - Interactive Calorie Tracker: Client can enter food in grams and automatically calculates consumed and remaining calories.
 
+      
+   This **[video](https://youtu.be/nSJhnaC0eAc?si=-Dm2DyJzZ1tnmKfo)** demonstrates the capabilities of the **Nutrition Service**: https://youtu.be/nSJhnaC0eAc?si=-Dm2DyJzZ1tnmKfo
+   ![Adobe Express - file](https://github.com/user-attachments/assets/0ffc42e1-89b1-4107-938d-277fea981f7a)
+   
 ---
 
 ## Technologies
