@@ -65,11 +65,8 @@ The FitPlusPlus application consists of multiple microservices, some developed b
       - After successful payment, clients gain **30-day access** to a private chat channel with their trainer.
     - **Notifications Integration**  
       - Integrated with the **NotificationService** to provide both **in-app notifications** (visible in the notification panel on the frontend) and **email alerts** after successful payment or new chat session creation.  
-
-      ### Real-Time Chat Performance Demo  
-   
+      ### Real-Time Chat Performance Demo
       This **[video](https://youtu.be/-41OJeE9N1I)** demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
-      
       [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
 
 2. **VideoTrainingService**
@@ -84,14 +81,17 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 	   - preview of existing trainings including traininer's information
 	   - full review of purchased trainings including videos for each exercise.
 
-
 3. **ReservationService**
    - Enables **booking of individual and group training sessions**.
    - Supports **real-time scheduling, cancellation, and availability tracking**.
+   - Integrated with NotificationService for real-time and email notifications on reservation updates.
 
 4. **NotificationService**
-   - Sends **push and email notifications** to clients, trainers, and administrators.
-   - Includes **reservation confirmations, training reminders, and membership renewal alerts**.
+   - Sends **push and email notifications** to clients and trainers.
+   - Handles real-time **push** and **email notifications** for clients and trainers.
+   - Delivers updates related to **training reservations**, **chat session payments**.
+   - Implements a centralized notification system that ensures consistent communication across all services.
+   - Provides a **notification history view** within the frontend, allowing users to review both **read** and **unread** notifications.
 
 5. **AnalyticsService**
    - Tracks **individual and group** training sessions and provides **insightful statistics** about them
