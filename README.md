@@ -86,8 +86,13 @@ The FitPlusPlus application consists of multiple microservices, some developed b
    - Includes **reservation confirmations, training reminders, and membership renewal alerts**.
 
 5. **AnalyticsService**
-   - Creates **detailed statistics** on training sessions, client engagement, and trainer performance.
-   - Provides insights into **popular training types and user activity trends**.
+   - Tracks **individual and group** training sessions and provides **insightful statistics** about them
+   - Offers dedicated views for **clients and trainers**, including:
+      - Number of attended sessions
+      - Number of cancelled sessions
+      - A practical **review summary** reflecting client and trainer satisfaction
+      - Detailed **monthly statistics** on training activity, including income information for trainers
+      - **Charts** visualizing collaboration between clients and trainers
 
 6. **Gateway and Discovery Service**
    - A **centralized API gateway** that directs requests to the correct microservice.
