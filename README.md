@@ -56,14 +56,18 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 1. **ChatService**
    - Enables trainers to provide **online mentorship** to their clients via chat.
    - Clients can directly communicate with trainers for **training advice, progress tracking, and personalized plans**.
-   - Paid mentorship sessions can be booked and managed within the app.
    - Uses **WebSockets** to enable **real-time messaging between clients and trainers**, ensuring instant updates without manual refresh.
    - Each chat session is identified by a unique WebSocket connection based on the trainer and client IDs.
    - This ensures efficient **synchronization** of messages between both participants in the chat.
+   - **Payment Integration (PayPal)**
+      - Clients can purchase **monthly chat sessions**, with payments validated through the **PaymentService**.  
+      - After successful payment, clients gain **30-day access** to a private chat channel with their trainer.
+    - **Notifications Integration**  
+      - Integrated with the **NotificationService** to provide both **in-app notifications** (visible in the notification panel on the frontend) and **email alerts** after successful payment or new chat session creation.  
 
       ### Real-Time Chat Performance Demo  
    
-      This **video** demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
+      This **[video](https://youtu.be/-41OJeE9N1I)** demonstrates the real-time messaging capabilities of the **ChatService** using WebSockets.  
       
       [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
 
