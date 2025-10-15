@@ -73,9 +73,17 @@ The FitPlusPlus application consists of multiple microservices, some developed b
       [![Watch the Demo](https://img.youtube.com/vi/-41OJeE9N1I/0.jpg)](https://youtu.be/-41OJeE9N1I)  
 
 2. **VideoTrainingService**
-   - Provides a **library of high-quality instructional videos** on correct exercise execution.
-   - Designed for **independent training** at home, covering beginner to advanced levels.
-   - Trainers can **upload and manage** their training materials.
+   - Provides a **library of high-quality instructional trainings**.
+   - Designed for **individual training** at home or gym, covering beginner to advanced levels.
+   - **Provided functionalities for trainers:**
+	   - preview of added exercises
+	   - preview of created trainings
+	   - add/remove exercise and upload video
+	   - create/delete training
+   - **Provided functionalities for clients:**
+	   - preview of existing trainings including traininer's information
+	   - full review of purchased trainings including videos for each exercise.
+
 
 3. **ReservationService**
    - Enables **booking of individual and group training sessions**.
