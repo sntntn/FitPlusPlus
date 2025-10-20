@@ -20,9 +20,9 @@ This project is an **extension of the previous FitPlusPlus application**, which 
 
 ### Previous Development Team (2023):
 
-3. **Belaković Nikola** – Student ID: 1023/2023
-1. **Stanojević Lazar** – Student ID: 1013/2023
-2. **Todorović Vasilije** – Student ID: 1015/2023
+1. **Belaković Nikola** – Student ID: 1023/2023
+2. **Stanojević Lazar** – Student ID: 1013/2023
+3. **Todorović Vasilije** – Student ID: 1015/2023
 
 GitHub Repository of the Previous Project: [FitPlusPlus](https://github.com/lazars01/FitPlusPlus)
 
@@ -44,7 +44,7 @@ The FitPlusPlus application consists of multiple microservices, some developed b
    - Manages trainer profiles, schedules, and training history.
 
 4. **ReviewService**
-   - Allows clients to leave reviews and ratings for trainers.
+   - Allows clients and trainers to leave reviews for each training.
 
 5. **PaymentService**
    - Processes payments for training sessions.
@@ -84,7 +84,11 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 3. **ReservationService**
    - Enables **booking of individual and group training sessions**.
    - Supports **real-time scheduling, cancellation, and availability tracking**.
-   - Integrated with NotificationService for real-time and email notifications on reservation updates.
+   - Integrated with:
+      - PaymentService, for real-time payments of training sessions
+      - NotificationService, for real-time and email notifications on reservation updates.
+      - AnalyticsService, for real-time updates of various training-related statistics of clients and trainers.
+
 
 4. **NotificationService**
    - Sends **push and email notifications** to clients and trainers.
@@ -103,8 +107,8 @@ The FitPlusPlus application consists of multiple microservices, some developed b
       - **Charts** visualizing collaboration between clients and trainers
 
 6. **Gateway and Discovery Service**
-   - A **centralized API gateway** that directs requests to the correct microservice.
-   - Facilitates **automatic detection and scaling** of microservices.
+   - A **centralized API gateway** that directs requests to the correct microservice, using **Ocelot** - an API Gateway library.
+   - Facilitates **automatic detection and scaling** of microservices, using **Consul** - a Service Discovery library.
   
 7. **Nutrition Service**
    - Manages **nutrition goals, meal plans and calorie tracking** for clients and trainers.
@@ -136,6 +140,8 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 - **Event Bus:** RabbitMQ for microservices communication
 - **Communication Protocols:** WebSockets (real-time chat), GRPC and REST API for microservices communication
 - **Payment Integration:** PayPal for chat session payments and booking training
+- **Gateway and Service Discovery**: Ocelot (API Gateway), Consul (Service Discovery)
+- **Emailing**: FluentEmail (using SMTP protocol)
 
 ## Platform Compatibility
 
@@ -159,20 +165,22 @@ To start the updated application:
    cd FitPlusPlus
    ```
 
-2. Start all microservices from FitPlusPlus/Fitness/Backend:
+2. Create `.env` files, based on templates given in various `.env.template` files. Fill in the fields with your secrets. Required for PaymentService and NotificationService. *Note: For changing the configuration for sending out email notifications, change the configuration variables specified in `docker-compose.development.yml` under the `notificationservice.api` part. Email configuration variables start with `EmailSettings`*
+
+3. Start all microservices from FitPlusPlus/Fitness/Backend:
 
    ```bash
    docker-compose -f docker-compose.yml -f docker-compose.development.yml up -d --build
    ```
 
-3. Start the frontend service from FitPlusPlus/Fitness/Frontend directory:
+4. Start the frontend service from FitPlusPlus/Fitness/Frontend directory:
 
    ```bash
    npm install
    npm run serve
    ```
 
-4. Open the application in your browser:
+5. Open the application in your browser:
 
    ```
    http://localhost:8080
