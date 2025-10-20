@@ -13,6 +13,9 @@ public class EmailService : IEmailService
 
     public async Task<bool> SendEmailAsync(string to, string subject, string body)
     {
+        // Clear all previous recipients -- ADDED AFTER THE DEADLINE -- minor addition
+        _fluentEmail.Data.ToAddresses.Clear();
+        
         var response = await _fluentEmail
             .To(to)
             .Subject(subject)
