@@ -126,7 +126,7 @@ The FitPlusPlus application consists of multiple microservices, some developed b
       - Interactive Calorie Tracker: Client can enter food in grams and automatically calculates consumed and remaining calories.
 
       
-   This **[video](https://youtu.be/nSJhnaC0eAc?si=-Dm2DyJzZ1tnmKfo)** demonstrates the capabilities of the **Nutrition Service**: https://youtu.be/nSJhnaC0eAc?si=-Dm2DyJzZ1tnmKfo
+   This **[video](https://youtu.be/nSJhnaC0eAc?si=-Dm2DyJzZ1tnmKfo)** demonstrates the capabilities of the **Nutrition Service**.
    ![Adobe Express - file](https://github.com/user-attachments/assets/0ffc42e1-89b1-4107-938d-277fea981f7a)
    
 ---
