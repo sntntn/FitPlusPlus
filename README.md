@@ -81,6 +81,11 @@ The FitPlusPlus application consists of multiple microservices, some developed b
 	   - preview of existing trainings including traininer's information
 	   - full review of purchased trainings including videos for each exercise.
 
+	  ### Demo
+      This **[video](https://youtu.be/VM4vAsHGV1Y)** demonstrates the real-time capabilities of the **Video Training Service**.  
+      [![Watch the Demo](https://img.youtube.com/vi/VM4vAsHGV1Y/0.jpg)](https://youtu.be/VM4vAsHGV1Y)   
+	 
+
 3. **ReservationService**
    - Enables **booking of individual and group training sessions**.
    - Supports **real-time scheduling, cancellation, and availability tracking**.
