@@ -111,6 +111,11 @@ The FitPlusPlus application consists of multiple microservices, some developed b
       - Detailed **monthly statistics** on training activity, including income information for trainers
       - **Charts** visualizing collaboration between clients and trainers
 
+      ### Analytics Service Demo
+      The following video demonstrates the features of **Analytics Service**.
+
+      [![Watch the Demo](https://img.youtube.com/vi/f4lE42GLkXY/0.jpg)](https://youtu.be/f4lE42GLkXY)
+
 6. **Gateway and Discovery Service**
    - A **centralized API gateway** that directs requests to the correct microservice, using **Ocelot** - an API Gateway library.
    - Facilitates **automatic detection and scaling** of microservices, using **Consul** - a Service Discovery library.
