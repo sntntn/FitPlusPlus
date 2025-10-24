@@ -6,6 +6,8 @@
 
 This project is an **extension of the previous FitPlusPlus application**, which was developed by a previous team of students. Our team is continuing the development by adding new microservices, improving the existing ones, and expanding the overall functionality of the system.
 
+#### Demo **[video](https://screenrec.com/share/7XwjTY2y31)** demonstrates the whole application.  
+	 
 ---
 
 ## Team Members
